@@ -3,9 +3,7 @@
 # (§4.2, §9.4, §10). It is the single trace that unlocks Phase 2 drift detection.
 # Written by `apply` only (never in dry-run); read later by `doctor`. Hand-edits
 # are not expected. We emit YAML by hand (no yq dependency) in a shape our own
-# awk parser can read back.
-
-STATE_FILE_NAME=".bootstrap.yaml"
+# awk parser can read back. STATE_FILE_NAME is defined in lib/common.sh.
 
 # write_bootstrap_state <target> <profile>
 # Consumes the MANAGED_FILES array (entries: "<relpath>\t<strategy>") populated

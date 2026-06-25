@@ -29,6 +29,10 @@ die() {
   exit 1
 }
 
+# --- Shared constants --------------------------------------------------------
+# The per-project state file written by `apply` and read by `doctor`.
+STATE_FILE_NAME=".bootstrap.yaml"
+
 # --- Global flags (populated by the dispatcher) ------------------------------
 DRY_RUN="${DRY_RUN:-0}"
 
@@ -71,6 +75,17 @@ file_sha256() {
     shasum -a 256 "$1" | awk '{print $1}'
   elif command -v sha256sum >/dev/null 2>&1; then
     sha256sum "$1" | awk '{print $1}'
+  else
+    printf 'sha256-unavailable'
+  fi
+}
+
+# sha256_stdin -> hex sha256 of stdin (portable).
+sha256_stdin() {
+  if command -v shasum >/dev/null 2>&1; then
+    shasum -a 256 | awk '{print $1}'
+  elif command -v sha256sum >/dev/null 2>&1; then
+    sha256sum | awk '{print $1}'
   else
     printf 'sha256-unavailable'
   fi

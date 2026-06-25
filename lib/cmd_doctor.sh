@@ -1,7 +1,7 @@
 # shellcheck shell=bash
-# `bootstrap doctor` — check that the binaries required by the profile are present
-# (blocking step before any deposit). Reports each binary OK/missing and suggests
-# an install command for the missing ones.
+# `bootstrap doctor` — check the binaries required by the profile, and (Phase 2)
+# detect configuration drift against the current templates when the project has a
+# .bootstrap.yaml. Drift is reported, never merged.
 
 # shellcheck source=lib/manifest.sh
 source "$BOOTSTRAP_ROOT/lib/manifest.sh"
@@ -9,23 +9,35 @@ source "$BOOTSTRAP_ROOT/lib/manifest.sh"
 source "$BOOTSTRAP_ROOT/lib/detect.sh"
 # shellcheck source=lib/bincheck.sh
 source "$BOOTSTRAP_ROOT/lib/bincheck.sh"
+# shellcheck source=lib/merge.sh
+source "$BOOTSTRAP_ROOT/lib/merge.sh"
+# shellcheck source=lib/state_read.sh
+source "$BOOTSTRAP_ROOT/lib/state_read.sh"
+# shellcheck source=lib/drift.sh
+source "$BOOTSTRAP_ROOT/lib/drift.sh"
 
 cmd_doctor() {
-  local target="." override=""
+  local target="." override="" strict=0
   while [[ $# -gt 0 ]]; do
     case "$1" in
       -h|--help)
         cat >&2 <<EOF
-Usage: bootstrap doctor [--target <dir>] [--profile <name>]
+Usage: bootstrap doctor [--target <dir>] [--profile <name>] [--strict]
 
-Check that every binary required by the (detected or given) profile is installed.
-Exit code 0 if all present, 1 if at least one is missing.
+Check that every binary required by the (detected or given) profile is installed,
+and report configuration drift against the current templates when the project has
+a .bootstrap.yaml. Drift is informational by default.
+
+  --strict   Exit non-zero if drift is detected (useful in CI).
+
+Exit code: 1 if a required binary is missing (or, with --strict, if drift exists).
 EOF
         return 0 ;;
       --target) target="${2:?--target needs a value}"; shift ;;
       --target=*) target="${1#*=}" ;;
       --profile) override="${2:?--profile needs a value}"; shift ;;
       --profile=*) override="${1#*=}" ;;
+      --strict) strict=1 ;;
       *) die "Unknown option for 'doctor': $1" ;;
     esac
     shift
@@ -51,9 +63,31 @@ EOF
 
   if [[ "$missing" -eq 0 ]]; then
     log_ok "All ${total} required binaries are present."
-    return 0
+  else
+    log_error "${missing}/${total} required binaries are missing (see install commands above)."
   fi
 
-  log_error "${missing}/${total} required binaries are missing (see install commands above)."
-  return 1
+  # --- Phase 2: drift detection (only if the project has a state file) ---------
+  local drift_found=0
+  local state="$target/$STATE_FILE_NAME"
+  if [[ -f "$state" ]]; then
+    local rec_profile rec_version cur_version
+    rec_profile="$(state_profile "$state")"
+    rec_version="$(state_version "$state")"
+    cur_version="$(bootstrap_version)"
+    printf '\n' >&2
+    log_info "Drift check (recorded profile ${C_BOLD}${rec_profile}${C_RESET}, applied $(state_applied_at "$state"))"
+    if [[ "$rec_version" != "$cur_version" ]]; then
+      log_warn "version: recorded ${rec_version} vs current ${cur_version} — templates may have changed"
+    else
+      printf '  %sversion: %s (up to date)%s\n' "$C_DIM" "$rec_version" "$C_RESET" >&2
+    fi
+    # Drift is compared against the profile that was actually applied.
+    detect_drift "$target" "${rec_profile:-$profile}" || drift_found=1
+  fi
+
+  # --- Exit code ---------------------------------------------------------------
+  [[ "$missing" -gt 0 ]] && return 1
+  [[ "$strict" -eq 1 && "$drift_found" -eq 1 ]] && return 1
+  return 0
 }
