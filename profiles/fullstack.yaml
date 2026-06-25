@@ -14,7 +14,10 @@ requires_bin:
 # edits package.json (§5.3/§10); it only prints the command to run.
 suggest_npm:
   - eslint
+  - "@eslint/js"
   - prettier
+  - husky
+  - lint-staged
   - "@commitlint/cli"
   - "@commitlint/config-conventional"
 
@@ -25,7 +28,15 @@ files:
     dest: .prettierrc
   - src: templates/fullstack/.prettierignore
     dest: .prettierignore
+  - src: templates/fullstack/.lintstagedrc.json
+    dest: .lintstagedrc.json
   - src: templates/fullstack/.husky/pre-commit
     dest: .husky/pre-commit
   - src: templates/fullstack/.husky/commit-msg
     dest: .husky/commit-msg
+  # Front CI (added alongside ci.yml and php.yml)
+  - src: templates/fullstack/front.yml
+    dest: .github/workflows/front.yml
+  # Override: add the npm ecosystem on top of github-actions + composer
+  - src: templates/fullstack/dependabot.yml
+    dest: .github/dependabot.yml

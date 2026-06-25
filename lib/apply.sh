@@ -207,31 +207,47 @@ run_apply() {
 }
 
 # install_hooks <target>
-# Activates pre-commit hooks (§9.7) after deposit. Skipped (with a reason) when
-# the target is not a git repo, pre-commit is absent, or no config was deposited.
-# bootstrap installs hooks but never installs the pre-commit binary itself.
+# Activates git hooks (§9.7) after deposit. Two modes, picked by what was
+# deposited so we never run two git-hook managers at once (§11.1):
+#   - .husky/ present (fullstack) -> Husky owns the git hooks; its scripts call
+#     lint-staged + the pre-commit framework. We set core.hooksPath and chmod.
+#   - else .pre-commit-config.yaml present -> pre-commit owns the git hooks.
+# Skipped with a reason when the target isn't a git repo or the tool is absent.
+# bootstrap installs/wires hooks but never installs the binaries themselves.
 install_hooks() {
   local target="$1"
-  local cfg="$target/.pre-commit-config.yaml"
 
-  if [[ ! -f "$cfg" ]]; then
-    log_info "hooks: skipped — no .pre-commit-config.yaml deposited yet"
-    return 0
-  fi
   if ! git -C "$target" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
     log_warn "hooks: skipped — ${target} is not a git repository (run 'git init' then re-apply)"
+    return 0
+  fi
+
+  if [[ -f "$target/.husky/pre-commit" ]]; then
+    if is_dry_run; then
+      log_dry "would wire Husky: git config core.hooksPath .husky (+ chmod hooks)"
+      return 0
+    fi
+    chmod +x "$target/.husky/"* 2>/dev/null || true
+    if git -C "$target" config core.hooksPath .husky; then
+      log_ok "hooks: Husky wired (core.hooksPath=.husky; delegates to lint-staged + pre-commit)"
+    else
+      log_warn "hooks: failed to set core.hooksPath — wire Husky manually in ${target}"
+    fi
+    return 0
+  fi
+
+  if [[ ! -f "$target/.pre-commit-config.yaml" ]]; then
+    log_info "hooks: skipped — no .pre-commit-config.yaml deposited yet"
     return 0
   fi
   if ! has_bin pre-commit; then
     log_warn "hooks: skipped — pre-commit not installed (brew install pre-commit)"
     return 0
   fi
-
   if is_dry_run; then
     log_dry "would run: pre-commit install && pre-commit install --hook-type commit-msg"
     return 0
   fi
-
   if ( cd "$target" && pre-commit install >/dev/null && pre-commit install --hook-type commit-msg >/dev/null ); then
     log_ok "hooks: pre-commit installed (pre-commit + commit-msg)"
   else

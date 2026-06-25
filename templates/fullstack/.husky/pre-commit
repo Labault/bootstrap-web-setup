@@ -1,0 +1,6 @@
+# Managed by bootstrap (fullstack profile). Husky is the single git-hook entry
+# point here; it delegates rather than duplicating pre-commit (§11.1).
+# 1) Auto-fix staged front files.
+npx lint-staged
+# 2) Repo-wide + PHP checks via the pre-commit framework's hook definitions.
+pre-commit run

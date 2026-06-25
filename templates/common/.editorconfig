@@ -21,6 +21,10 @@ trim_trailing_whitespace = false
 [Makefile]
 indent_style = tab
 
+# Extensionless JSON/YAML dotfiles also follow the 2-space norm.
+[.prettierrc]
+indent_size = 2
+
 # NEON (PHPStan) is tab-indented — match the tool's own --generate-baseline output.
 [*.neon]
 indent_style = tab
