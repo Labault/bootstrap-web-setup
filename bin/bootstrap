@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+#
+# bootstrap — deposits a standardized quality/CI/security config layer into a
+# web project. It writes config files only; it never installs binaries (those
+# come from mac-setup). See docs/cahier-des-charges-bootstrap.md.
+#
+set -euo pipefail
+
+# --- Resolve our own location (repo root), following symlinks ----------------
+_src="${BASH_SOURCE[0]}"
+while [[ -h "$_src" ]]; do
+  _dir="$(cd -P "$(dirname "$_src")" >/dev/null 2>&1 && pwd)"
+  _src="$(readlink "$_src")"
+  [[ "$_src" != /* ]] && _src="$_dir/$_src"
+done
+BOOTSTRAP_BIN_DIR="$(cd -P "$(dirname "$_src")" >/dev/null 2>&1 && pwd)"
+BOOTSTRAP_ROOT="$(cd -P "$BOOTSTRAP_BIN_DIR/.." >/dev/null 2>&1 && pwd)"
+export BOOTSTRAP_ROOT
+
+# shellcheck source=lib/common.sh
+source "$BOOTSTRAP_ROOT/lib/common.sh"
+
+bootstrap_version() {
+  if [[ -f "$BOOTSTRAP_ROOT/VERSION" ]]; then
+    local v
+    v="$(tr -d '[:space:]' < "$BOOTSTRAP_ROOT/VERSION")"
+    printf '%s\n' "$v"
+  else
+    echo "unknown"
+  fi
+}
+
+usage() {
+  cat >&2 <<EOF
+${C_BOLD}bootstrap${C_RESET} — deposit a standardized quality/CI/security config into a web project.
+
+${C_BOLD}USAGE${C_RESET}
+  bootstrap <command> [options]
+
+${C_BOLD}COMMANDS${C_RESET}
+  apply      Deposit the profile's config into the target project
+  doctor     Check that the binaries required by the profile are present
+  update     Update bootstrap itself (never touches projects)
+  list       List available profiles and their contents
+
+${C_BOLD}GLOBAL OPTIONS${C_RESET}
+  --dry-run        Show what would change without writing anything
+  -h, --help       Show this help
+  -V, --version    Show the bootstrap version
+
+Run 'bootstrap <command> --help' for command-specific options.
+EOF
+}
+
+# --- Global option parsing ---------------------------------------------------
+# We peel off global flags, then hand the remaining args to the subcommand.
+COMMAND=""
+declare -a ARGS=()
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --dry-run)      DRY_RUN=1 ;;
+    -h|--help)
+      if [[ -z "$COMMAND" ]]; then usage; exit 0; fi
+      ARGS+=("$1") ;;
+    -V|--version)
+      bootstrap_version; exit 0 ;;
+    --)
+      shift
+      while [[ $# -gt 0 ]]; do ARGS+=("$1"); shift; done
+      break ;;
+    -*)
+      if [[ -z "$COMMAND" ]]; then
+        log_error "Unknown global option: $1"
+        usage
+        exit 2
+      fi
+      ARGS+=("$1") ;;
+    *)
+      if [[ -z "$COMMAND" ]]; then
+        COMMAND="$1"
+      else
+        ARGS+=("$1")
+      fi ;;
+  esac
+  shift
+done
+export DRY_RUN
+
+if [[ -z "$COMMAND" ]]; then
+  usage
+  exit 2
+fi
+
+dispatch() {
+  local cmd="$1"; shift
+  local module="$BOOTSTRAP_ROOT/lib/cmd_${cmd}.sh"
+  case "$cmd" in
+    apply|doctor|update|list)
+      if [[ -f "$module" ]]; then
+        # shellcheck source=/dev/null
+        source "$module"
+        "cmd_${cmd}" "$@"
+      else
+        log_warn "Command '${cmd}' is not implemented yet (stub)."
+        exit 0
+      fi
+      ;;
+    *)
+      log_error "Unknown command: ${cmd}"
+      usage
+      exit 2
+      ;;
+  esac
+}
+
+dispatch "$COMMAND" "${ARGS[@]+"${ARGS[@]}"}"
