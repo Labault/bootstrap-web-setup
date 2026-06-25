@@ -337,7 +337,7 @@ setup_phpstan_baseline() {
 
   log_info "phpstan baseline: generating for existing code…"
   if ( cd "$target" && "$phpstan" analyse --configuration phpstan.dist.neon \
-         --generate-baseline phpstan-baseline.neon --no-progress >/dev/null 2>&1 ); then
+      --generate-baseline phpstan-baseline.neon --no-progress >/dev/null 2>&1 ); then
     log_ok "phpstan baseline: generated"
   else
     log_warn "phpstan baseline: generation failed (likely no 'composer install' yet); empty baseline kept. Run later:"

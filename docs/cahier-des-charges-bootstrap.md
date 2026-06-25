@@ -183,7 +183,7 @@ L'héritage (`extends`) évite la duplication : `symfony` = `minimal` + ses ajou
 
 Arborescence du **dépôt `bootstrap`** lui-même (les templates qu'il distribue) :
 
-```
+```text
 bootstrap/
 ├── install.sh                  # point d'entrée, façon mac-setup
 ├── bin/
@@ -235,7 +235,7 @@ bootstrap/
 
 Et voici ce qui **atterrit dans un projet cible** après `bootstrap apply --profile symfony` :
 
-```
+```text
 mon-projet/
 ├── .bootstrap.yaml             # état du dépôt (profil + version + fichiers)
 ├── .editorconfig

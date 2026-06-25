@@ -66,10 +66,12 @@ fi
 # PATH check.
 case ":$PATH:" in
   *":$BIN_DIR:"*) : ;;
-  *) log_warn "$(tildify "$BIN_DIR") is not on your PATH. Add it, e.g.:"
-     # The literal $PATH below is intentional — it's a snippet the user pastes.
-     # shellcheck disable=SC2016
-     printf '    echo '\''export PATH="%s:$PATH"'\'' >> ~/.zshrc\n' "$BIN_DIR" >&2 ;;
+  *)
+    log_warn "$(tildify "$BIN_DIR") is not on your PATH. Add it, e.g.:"
+    # The literal $PATH below is intentional — it's a snippet the user pastes.
+    # shellcheck disable=SC2016
+    printf '    echo '\''export PATH="%s:$PATH"'\'' >> ~/.zshrc\n' "$BIN_DIR" >&2
+    ;;
 esac
 
 if ! is_dry_run; then

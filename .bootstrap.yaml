@@ -1,0 +1,46 @@
+# Managed by bootstrap — do not edit by hand.
+# Written by `bootstrap apply`; read by `bootstrap doctor` (Phase 2).
+profile: minimal
+bootstrap_version: 0.1.0
+applied_at: 2026-06-25T14:51:25Z
+files:
+  - path: .editorconfig
+    sha256: 20f6393a197fb7cf8d5d369fef4e0d2211ad26b5dee3eaac86a880c7d390d139
+  - path: .gitignore
+    sha256: 5e3eaa5d507a3a7d98fd5d10390b801fc69689bc3d99154483b96bf3243dd903
+    strategy: merge-gitignore
+  - path: .pre-commit-config.yaml
+    sha256: 83c085c2c5982f571d03f27a3a6ec692d18cefcd6d9d094254e6c96519f511b9
+  - path: commitlint.config.cjs
+    sha256: 0d8fd23ee3e099e44d915cb830a093903b711627e79348736d5866f470ad91b1
+  - path: .gitleaks.toml
+    sha256: 6c71b73c1e2e8c13310e3d04e5cb6fca82990d4409933e14930929990a21c3ea
+  - path: .shellcheckrc
+    sha256: b7c65104c3500c9ab212e2dac3aef993f95057520ea446aa6fde72a44f5fc7b4
+  - path: .markdownlint-cli2.yaml
+    sha256: 6d4a5ded7b7295999dc458249b91033905d5c344737136cf24057d8860766285
+  - path: lychee.toml
+    sha256: 41b147bfb6754ed93f2fcce589d5284c98d836ecc8c9b49c0241c9dfdf86e3c3
+  - path: Makefile
+    sha256: 33fea97f9cba8f6167dbefcde85cd60a1f63ef042789edcd1509aaf4b8820368
+  - path: SECURITY.md
+    sha256: 72715a83f54078c895f97ee68fcea1cc3696c45c1e751208e8f5c6540177b87d
+  - path: CONTRIBUTING.md
+    sha256: c0a927b44258314e45e371804ad8c0163629af7f6693d467db69aa6d05ce8f32
+  - path: CLAUDE.md
+    sha256: 25bf48c5d04beef2ea8966ad2d268a6c951a3ac4255e4f0f03425f96a6a5bed2
+  - path: .vscode/extensions.json
+    sha256: 72c2ba9ba1903393b386e23caaf5ce946f92049b5e5caa0af6dbc7484146f89e
+    strategy: merge-json
+  - path: .github/workflows/ci.yml
+    sha256: fa947779aef713ef6a1b3eae364bc3266aec5ccd18ac629e4264747343981c16
+  - path: .github/workflows/security.yml
+    sha256: 3988d194789b172f7022984c6684cefce1253dab7927f226212d4ddecdb3d1bc
+  - path: .github/dependabot.yml
+    sha256: 403f70b1e177fd1518be7f60cf4b77b8f5de1c0a1c022a528edec962879c2b50
+  - path: .github/PULL_REQUEST_TEMPLATE.md
+    sha256: 2480af83a65f98da22ffc43c034935bb517e7f02466cdce32e3994ef24a29c50
+  - path: .github/ISSUE_TEMPLATE/bug_report.md
+    sha256: 226e90e2101485cb76911d2348d198620e984c7c6dc8b6ca5c04d2c06281e08f
+  - path: .github/ISSUE_TEMPLATE/feature_request.md
+    sha256: 29a633be85b67a444a3eb8ed89aa853863daeaf6f10887929cf600441a149735

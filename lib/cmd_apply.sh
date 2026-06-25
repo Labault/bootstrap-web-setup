@@ -18,16 +18,14 @@ cmd_apply() {
     case "$1" in
       -h|--help)
         cat >&2 <<EOF
-Usage: bootstrap apply [--target <dir>] [--profile <name>] [--no-overwrite]
-                       [--skip-bin-check] [--dry-run]
+Usage: bootstrap apply [--target <dir>] [--profile <name>] [--no-overwrite] [--skip-bin-check] [--dry-run]
 
-Deposit the (detected or given) profile's config into <dir> (default: current
-directory).
+Deposit the (detected or given) profile's config into <dir> (default: current directory).
 
-  --no-overwrite     Never overwrite an existing, differing file (skip it
-                     instead of backing up + replacing).
-  --skip-bin-check   Don't block on missing required binaries (CI / deferred
-                     install).
+  --target <dir>     Target project directory (default: current directory).
+  --profile <name>   Force a profile instead of auto-detecting.
+  --no-overwrite     Never overwrite an existing, differing file (skip it instead of replacing).
+  --skip-bin-check   Don't block on missing required binaries (CI / deferred install).
   --dry-run          Preview without writing anything.
 EOF
         return 0 ;;
