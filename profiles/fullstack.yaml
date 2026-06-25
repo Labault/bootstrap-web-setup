@@ -1,0 +1,22 @@
+# Profile: fullstack
+# Symfony + JS/TS front. Inherits symfony (and therefore minimal) and adds the
+# front tooling. Husky lives here only — never on a pure-PHP project (§11.1).
+
+extends: symfony
+
+requires_bin:
+  - node
+  - eslint
+  - prettier
+
+files:
+  - src: templates/fullstack/eslint.config.js
+    dest: eslint.config.js
+  - src: templates/fullstack/.prettierrc
+    dest: .prettierrc
+  - src: templates/fullstack/.prettierignore
+    dest: .prettierignore
+  - src: templates/fullstack/.husky/pre-commit
+    dest: .husky/pre-commit
+  - src: templates/fullstack/.husky/commit-msg
+    dest: .husky/commit-msg

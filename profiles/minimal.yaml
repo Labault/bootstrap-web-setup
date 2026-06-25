@@ -1,0 +1,60 @@
+# Profile: minimal
+# Any web repo, language-agnostic. The base layer every project gets.
+# Read by bin/bootstrap via lib/manifest.sh (simple, line-oriented YAML).
+
+# requires_bin: binaries mac-setup must have installed for the deposited config
+# to be live. Hooks run in `local` mode, so these must exist on the machine.
+requires_bin:
+  - git
+  - pre-commit
+  - gitleaks
+  - shellcheck
+  - actionlint
+  - markdownlint-cli2
+  - lychee
+  - editorconfig-checker
+  - commitlint
+
+# files: src (relative to repo root) -> dest (relative to target project).
+# strategy: replace (default) | merge-gitignore | merge-json
+files:
+  - src: templates/common/.editorconfig
+    dest: .editorconfig
+  - src: templates/common/.gitignore
+    dest: .gitignore
+    strategy: merge-gitignore
+  - src: templates/common/.pre-commit-config.yaml
+    dest: .pre-commit-config.yaml
+  - src: templates/common/commitlint.config.cjs
+    dest: commitlint.config.cjs
+  - src: templates/common/.gitleaks.toml
+    dest: .gitleaks.toml
+  - src: templates/common/.shellcheckrc
+    dest: .shellcheckrc
+  - src: templates/common/.markdownlint-cli2.yaml
+    dest: .markdownlint-cli2.yaml
+  - src: templates/common/lychee.toml
+    dest: lychee.toml
+  - src: templates/common/Makefile
+    dest: Makefile
+  - src: templates/common/SECURITY.md
+    dest: SECURITY.md
+  - src: templates/common/CONTRIBUTING.md
+    dest: CONTRIBUTING.md
+  - src: templates/common/CLAUDE.md
+    dest: CLAUDE.md
+  - src: templates/common/.vscode/extensions.json
+    dest: .vscode/extensions.json
+    strategy: merge-json
+  - src: templates/common/.github/workflows/ci.yml
+    dest: .github/workflows/ci.yml
+  - src: templates/common/.github/workflows/security.yml
+    dest: .github/workflows/security.yml
+  - src: templates/common/.github/dependabot.yml
+    dest: .github/dependabot.yml
+  - src: templates/common/.github/PULL_REQUEST_TEMPLATE.md
+    dest: .github/PULL_REQUEST_TEMPLATE.md
+  - src: templates/common/.github/ISSUE_TEMPLATE/bug_report.md
+    dest: .github/ISSUE_TEMPLATE/bug_report.md
+  - src: templates/common/.github/ISSUE_TEMPLATE/feature_request.md
+    dest: .github/ISSUE_TEMPLATE/feature_request.md

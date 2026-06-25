@@ -1,0 +1,22 @@
+# Profile: symfony
+# PHP/Symfony project. Inherits everything from minimal and adds PHP tooling.
+
+extends: minimal
+
+requires_bin:
+  - php
+  - composer
+  - phpstan
+  - php-cs-fixer
+  - rector
+  - hadolint
+
+files:
+  - src: templates/symfony/phpstan.dist.neon
+    dest: phpstan.dist.neon
+  - src: templates/symfony/.php-cs-fixer.dist.php
+    dest: .php-cs-fixer.dist.php
+  - src: templates/symfony/rector.php
+    dest: rector.php
+  - src: templates/symfony/.hadolint.yaml
+    dest: .hadolint.yaml
