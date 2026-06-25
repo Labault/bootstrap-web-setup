@@ -4,10 +4,19 @@
 
 extends: symfony
 
+# Machine-global binaries only. eslint/prettier/commitlint live in the project's
+# node_modules/.bin (installed via npm), so they are suggestions, not hard
+# requirements — see suggest_npm below.
 requires_bin:
   - node
+
+# suggest_npm: dev packages bootstrap suggests at the end of `apply`. It never
+# edits package.json (§5.3/§10); it only prints the command to run.
+suggest_npm:
   - eslint
   - prettier
+  - "@commitlint/cli"
+  - "@commitlint/config-conventional"
 
 files:
   - src: templates/fullstack/eslint.config.js

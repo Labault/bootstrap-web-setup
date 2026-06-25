@@ -2,8 +2,10 @@
 # Any web repo, language-agnostic. The base layer every project gets.
 # Read by bin/bootstrap via lib/manifest.sh (simple, line-oriented YAML).
 
-# requires_bin: binaries mac-setup must have installed for the deposited config
-# to be live. Hooks run in `local` mode, so these must exist on the machine.
+# requires_bin: MACHINE-global binaries mac-setup must have installed for the
+# deposited config to be live. Only tools that must exist on PATH go here — NOT
+# project-local dev tools (those live in vendor/bin or node_modules/.bin and are
+# surfaced as suggestions instead; see suggest_composer / suggest_npm).
 requires_bin:
   - git
   - pre-commit
@@ -13,7 +15,6 @@ requires_bin:
   - markdownlint-cli2
   - lychee
   - editorconfig-checker
-  - commitlint
 
 # files: src (relative to repo root) -> dest (relative to target project).
 # strategy: replace (default) | merge-gitignore | merge-json
