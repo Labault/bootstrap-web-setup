@@ -7,23 +7,28 @@
 source "$BOOTSTRAP_ROOT/lib/manifest.sh"
 # shellcheck source=lib/detect.sh
 source "$BOOTSTRAP_ROOT/lib/detect.sh"
+# shellcheck source=lib/bincheck.sh
+source "$BOOTSTRAP_ROOT/lib/bincheck.sh"
 # shellcheck source=lib/apply.sh
 source "$BOOTSTRAP_ROOT/lib/apply.sh"
 
 cmd_apply() {
-  local target="." override=""
+  local target="." override="" skip_bin_check=0
   while [[ $# -gt 0 ]]; do
     case "$1" in
       -h|--help)
         cat >&2 <<EOF
-Usage: bootstrap apply [--target <dir>] [--profile <name>] [--no-overwrite] [--dry-run]
+Usage: bootstrap apply [--target <dir>] [--profile <name>] [--no-overwrite]
+                       [--skip-bin-check] [--dry-run]
 
 Deposit the (detected or given) profile's config into <dir> (default: current
 directory).
 
-  --no-overwrite   Never overwrite an existing, differing file (skip it instead
-                   of backing up + replacing).
-  --dry-run        Preview without writing anything.
+  --no-overwrite     Never overwrite an existing, differing file (skip it
+                     instead of backing up + replacing).
+  --skip-bin-check   Don't block on missing required binaries (CI / deferred
+                     install).
+  --dry-run          Preview without writing anything.
 EOF
         return 0 ;;
       --target) target="${2:?--target needs a value}"; shift ;;
@@ -31,6 +36,7 @@ EOF
       --profile) override="${2:?--profile needs a value}"; shift ;;
       --profile=*) override="${1#*=}" ;;
       --no-overwrite) NO_OVERWRITE=1 ;;
+      --skip-bin-check) skip_bin_check=1 ;;
       *) die "Unknown option for 'apply': $1" ;;
     esac
     shift
@@ -48,5 +54,24 @@ EOF
     log_info "apply profile ${C_BOLD}${profile}${C_RESET} -> ${target}"
   fi
 
+  # Step 0 — blocking binary guard (§9.2). Skipped with --skip-bin-check.
+  if [[ "$skip_bin_check" == 1 ]]; then
+    log_warn "skipping required-binary check (--skip-bin-check)"
+  else
+    local -a missing=()
+    local bin
+    while IFS= read -r bin; do [[ -n "$bin" ]] && missing+=("$bin"); done \
+      < <(missing_binaries "$profile")
+    if [[ ${#missing[@]} -gt 0 ]]; then
+      log_error "Missing ${#missing[@]} required binary/binaries for profile '${profile}':"
+      for bin in "${missing[@]}"; do
+        printf '    %s — %s\n' "$bin" "$(install_hint "$bin")" >&2
+      done
+      die "Install them (see above) or re-run with --skip-bin-check."
+    fi
+  fi
+
   run_apply "$profile" "$target"
+  install_hooks "$target"
+  print_suggestions "$target" "$profile"
 }

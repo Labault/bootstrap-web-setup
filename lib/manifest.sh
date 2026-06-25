@@ -29,15 +29,23 @@ manifest_extends() {
   ' "$1"
 }
 
-# manifest_requires_bin <file> -> one binary per line (this profile only)
-manifest_requires_bin() {
-  awk '
-    /^[^[:space:]#]/ { inblk = ($0 ~ /^requires_bin:/) }
+# manifest_seq <file> <key> -> one item per line for the sequence under <key>
+# (this profile only). Strips inline comments and surrounding quotes.
+manifest_seq() {
+  awk -v key="$2" '
+    /^[^[:space:]#]/ { inblk = ($0 ~ ("^" key ":")) }
     inblk && /^[[:space:]]+-[[:space:]]/ {
       v = $0; sub(/^[[:space:]]*-[[:space:]]*/, "", v); sub(/[[:space:]]*#.*/, "", v)
-      gsub(/^[[:space:]]+|[[:space:]]+$/, "", v); if (v != "") print v
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", v)
+      gsub(/^"|"$/, "", v)
+      if (v != "") print v
     }
   ' "$1"
+}
+
+# manifest_requires_bin <file> -> one binary per line (this profile only)
+manifest_requires_bin() {
+  manifest_seq "$1" requires_bin
 }
 
 # manifest_files <file> -> "src<TAB>dest<TAB>strategy" per line (this profile only)
@@ -71,21 +79,26 @@ resolve_chain() {
   printf '%s\n' "$profile"
 }
 
-# resolve_requires_bin <profile> -> deduped binaries across the whole chain,
-# in first-seen order (parent before child).
-resolve_requires_bin() {
-  local p bin
+# resolve_seq <profile> <key> -> deduped items for <key> across the whole
+# inheritance chain, in first-seen order (parent before child).
+resolve_seq() {
+  local profile="$1" key="$2" p item
   local -a seen=()
   while IFS= read -r p; do
-    while IFS= read -r bin; do
-      [[ -z "$bin" ]] && continue
+    while IFS= read -r item; do
+      [[ -z "$item" ]] && continue
       local already=0 s
-      for s in ${seen[@]+"${seen[@]}"}; do [[ "$s" == "$bin" ]] && already=1 && break; done
+      for s in ${seen[@]+"${seen[@]}"}; do [[ "$s" == "$item" ]] && already=1 && break; done
       [[ "$already" == 1 ]] && continue
-      seen+=("$bin")
-      printf '%s\n' "$bin"
-    done < <(manifest_requires_bin "$(manifest_path "$p")")
-  done < <(resolve_chain "$1")
+      seen+=("$item")
+      printf '%s\n' "$item"
+    done < <(manifest_seq "$(manifest_path "$p")" "$key")
+  done < <(resolve_chain "$profile")
+}
+
+# resolve_requires_bin <profile> -> deduped binaries across the whole chain.
+resolve_requires_bin() {
+  resolve_seq "$1" requires_bin
 }
 
 # resolve_files <profile> -> "src<TAB>dest<TAB>strategy" across the whole chain.

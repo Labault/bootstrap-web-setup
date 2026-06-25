@@ -6,6 +6,14 @@
 #
 set -euo pipefail
 
+# We use associative arrays and other bash 4+ features. macOS ships bash 3.2 as
+# /bin/bash, so fail loudly rather than break mysteriously under the wrong shell.
+if (( BASH_VERSINFO[0] < 4 )); then
+  printf 'bootstrap: bash 4+ required (found %s). Install a modern bash (brew install bash).\n' \
+    "${BASH_VERSION}" >&2
+  exit 1
+fi
+
 # --- Resolve our own location (repo root), following symlinks ----------------
 _src="${BASH_SOURCE[0]}"
 while [[ -h "$_src" ]]; do

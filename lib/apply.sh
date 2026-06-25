@@ -205,3 +205,70 @@ run_apply() {
     log_ok "wrote ${STATE_FILE_NAME} (${#MANAGED_FILES[@]} files tracked)"
   fi
 }
+
+# install_hooks <target>
+# Activates pre-commit hooks (§9.7) after deposit. Skipped (with a reason) when
+# the target is not a git repo, pre-commit is absent, or no config was deposited.
+# bootstrap installs hooks but never installs the pre-commit binary itself.
+install_hooks() {
+  local target="$1"
+  local cfg="$target/.pre-commit-config.yaml"
+
+  if [[ ! -f "$cfg" ]]; then
+    log_info "hooks: skipped — no .pre-commit-config.yaml deposited yet"
+    return 0
+  fi
+  if ! git -C "$target" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    log_warn "hooks: skipped — ${target} is not a git repository (run 'git init' then re-apply)"
+    return 0
+  fi
+  if ! has_bin pre-commit; then
+    log_warn "hooks: skipped — pre-commit not installed (brew install pre-commit)"
+    return 0
+  fi
+
+  if is_dry_run; then
+    log_dry "would run: pre-commit install && pre-commit install --hook-type commit-msg"
+    return 0
+  fi
+
+  if ( cd "$target" && pre-commit install >/dev/null && pre-commit install --hook-type commit-msg >/dev/null ); then
+    log_ok "hooks: pre-commit installed (pre-commit + commit-msg)"
+  else
+    log_warn "hooks: pre-commit install failed — run it manually in ${target}"
+  fi
+}
+
+# package_in_json <json-file> <package> -> 0 if the package name appears in the file
+package_in_json() {
+  [[ -f "$1" ]] && grep -qF "\"$2\"" "$1"
+}
+
+# print_suggestions <target> <profile>
+# Prints the composer/npm dev packages the profile recommends but that are not
+# already declared. bootstrap never edits the manifests (§5.3/§10) — it only
+# prints the command to run.
+print_suggestions() {
+  local target="$1" profile="$2"
+  local pkg
+  local -a composer_missing=() npm_missing=()
+
+  while IFS= read -r pkg; do
+    [[ -z "$pkg" ]] && continue
+    package_in_json "$target/composer.json" "$pkg" || composer_missing+=("$pkg")
+  done < <(resolve_seq "$profile" suggest_composer)
+
+  while IFS= read -r pkg; do
+    [[ -z "$pkg" ]] && continue
+    package_in_json "$target/package.json" "$pkg" || npm_missing+=("$pkg")
+  done < <(resolve_seq "$profile" suggest_npm)
+
+  if [[ ${#composer_missing[@]} -gt 0 ]]; then
+    log_info "Suggested PHP dev deps (bootstrap won't touch composer.json):"
+    printf '    composer require --dev %s\n' "${composer_missing[*]}" >&2
+  fi
+  if [[ ${#npm_missing[@]} -gt 0 ]]; then
+    log_info "Suggested JS dev deps (bootstrap won't touch package.json):"
+    printf '    npm install -D %s\n' "${npm_missing[*]}" >&2
+  fi
+}
