@@ -72,6 +72,7 @@ EOF
   fi
 
   run_apply "$profile" "$target"
+  setup_phpstan_baseline "$target"
   install_hooks "$target"
   print_suggestions "$target" "$profile"
 }

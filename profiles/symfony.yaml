@@ -19,6 +19,7 @@ suggest_composer:
   - rector/rector
 
 files:
+  # PHP tooling configs
   - src: templates/symfony/phpstan.dist.neon
     dest: phpstan.dist.neon
   - src: templates/symfony/.php-cs-fixer.dist.php
@@ -27,3 +28,13 @@ files:
     dest: rector.php
   - src: templates/symfony/.hadolint.yaml
     dest: .hadolint.yaml
+  # PHP CI (added alongside the shared ci.yml, not replacing it)
+  - src: templates/symfony/php.yml
+    dest: .github/workflows/php.yml
+  # Overrides of common files that need PHP-aware content (child wins by dest)
+  - src: templates/symfony/.pre-commit-config.yaml
+    dest: .pre-commit-config.yaml
+  - src: templates/symfony/Makefile
+    dest: Makefile
+  - src: templates/symfony/dependabot.yml
+    dest: .github/dependabot.yml

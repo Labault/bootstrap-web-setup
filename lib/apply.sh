@@ -272,3 +272,59 @@ print_suggestions() {
     printf '    npm install -D %s\n' "${npm_missing[*]}" >&2
   fi
 }
+
+# setup_phpstan_baseline <target>
+# Triggers only when a phpstan.dist.neon was deposited. Ensures the baseline the
+# config includes exists (empty, never clobbering a real one), and on an existing
+# codebase regenerates it so level 9 doesn't break a legacy project (§11.7).
+# bootstrap runs phpstan if present but never installs it.
+setup_phpstan_baseline() {
+  local target="$1"
+  [[ -f "$target/phpstan.dist.neon" ]] || return 0
+
+  local baseline="$target/phpstan-baseline.neon"
+  if [[ ! -f "$baseline" ]]; then
+    if is_dry_run; then
+      log_dry "would create an empty phpstan-baseline.neon"
+    else
+      printf 'parameters:\n\tignoreErrors: []\n' > "$baseline"
+      log_ok "create phpstan-baseline.neon (empty)"
+    fi
+  fi
+
+  # Existing vs vierge: composer.json is the signal of an existing PHP project
+  # (it also drives profile auto-detection). Without it, the dir is treated as
+  # fresh and the empty baseline is the right state. This avoids mistaking our
+  # own deposited .php-cs-fixer.dist.php / rector.php configs for project code.
+  if [[ ! -f "$target/composer.json" ]]; then
+    log_info "phpstan baseline: no composer.json (fresh project) — keeping the empty baseline"
+    return 0
+  fi
+
+  local phpstan=""
+  if [[ -x "$target/vendor/bin/phpstan" ]]; then
+    phpstan="$target/vendor/bin/phpstan"
+  elif has_bin phpstan; then
+    phpstan="phpstan"
+  fi
+
+  if [[ -z "$phpstan" ]]; then
+    log_warn "phpstan baseline: phpstan not found — generate it later with:"
+    printf '    vendor/bin/phpstan analyse --generate-baseline phpstan-baseline.neon\n' >&2
+    return 0
+  fi
+
+  if is_dry_run; then
+    log_dry "would generate the phpstan baseline for existing code"
+    return 0
+  fi
+
+  log_info "phpstan baseline: generating for existing code…"
+  if ( cd "$target" && "$phpstan" analyse --configuration phpstan.dist.neon \
+         --generate-baseline phpstan-baseline.neon --no-progress >/dev/null 2>&1 ); then
+    log_ok "phpstan baseline: generated"
+  else
+    log_warn "phpstan baseline: generation failed (likely no 'composer install' yet); empty baseline kept. Run later:"
+    printf '    composer install && vendor/bin/phpstan analyse --generate-baseline phpstan-baseline.neon\n' >&2
+  fi
+}

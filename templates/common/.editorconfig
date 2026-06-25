@@ -20,3 +20,7 @@ trim_trailing_whitespace = false
 
 [Makefile]
 indent_style = tab
+
+# NEON (PHPStan) is tab-indented — match the tool's own --generate-baseline output.
+[*.neon]
+indent_style = tab
