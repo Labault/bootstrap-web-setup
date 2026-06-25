@@ -20,15 +20,7 @@ export BOOTSTRAP_ROOT
 # shellcheck source=lib/common.sh
 source "$BOOTSTRAP_ROOT/lib/common.sh"
 
-bootstrap_version() {
-  if [[ -f "$BOOTSTRAP_ROOT/VERSION" ]]; then
-    local v
-    v="$(tr -d '[:space:]' < "$BOOTSTRAP_ROOT/VERSION")"
-    printf '%s\n' "$v"
-  else
-    echo "unknown"
-  fi
-}
+# bootstrap_version() lives in lib/common.sh (shared with apply's state writer).
 
 usage() {
   cat >&2 <<EOF
@@ -64,7 +56,7 @@ while [[ $# -gt 0 ]]; do
       if [[ -z "$COMMAND" ]]; then usage; exit 0; fi
       ARGS+=("$1") ;;
     -V|--version)
-      bootstrap_version; exit 0 ;;
+      printf '%s\n' "$(bootstrap_version)"; exit 0 ;;
     --)
       shift
       while [[ $# -gt 0 ]]; do ARGS+=("$1"); shift; done

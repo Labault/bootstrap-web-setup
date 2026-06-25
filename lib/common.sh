@@ -54,3 +54,24 @@ tildify() {
 require_cmd() {
   command -v "$1" >/dev/null 2>&1 || die "Required command not found: $1"
 }
+
+# --- Misc helpers ------------------------------------------------------------
+# bootstrap_version -> the template/CLI version from the repo's VERSION file.
+bootstrap_version() {
+  if [[ -f "$BOOTSTRAP_ROOT/VERSION" ]]; then
+    tr -d '[:space:]' < "$BOOTSTRAP_ROOT/VERSION"
+  else
+    printf 'unknown'
+  fi
+}
+
+# file_sha256 <file> -> hex sha256 of the file (portable: shasum or sha256sum).
+file_sha256() {
+  if command -v shasum >/dev/null 2>&1; then
+    shasum -a 256 "$1" | awk '{print $1}'
+  elif command -v sha256sum >/dev/null 2>&1; then
+    sha256sum "$1" | awk '{print $1}'
+  else
+    printf 'sha256-unavailable'
+  fi
+}

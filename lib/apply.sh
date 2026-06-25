@@ -13,6 +13,8 @@
 
 # shellcheck source=lib/merge.sh
 source "$BOOTSTRAP_ROOT/lib/merge.sh"
+# shellcheck source=lib/state.sh
+source "$BOOTSTRAP_ROOT/lib/state.sh"
 
 # Where backups go (§9.5). One subfolder per apply run, created lazily on first
 # backup so runs that overwrite nothing leave no empty directories behind.
@@ -168,6 +170,8 @@ run_apply() {
 
   local src dest strat srcpath destpath status
   local n_created=0 n_identical=0 n_replaced=0 n_merged=0 n_noover=0 n_nosrc=0
+  # Files bootstrap now manages in the project (for .bootstrap.yaml).
+  MANAGED_FILES=()
 
   while IFS=$'\t' read -r src dest strat; do
     [[ -z "$dest" ]] && continue
@@ -182,9 +186,22 @@ run_apply() {
       skipped-nooverwrite) n_noover=$((n_noover + 1)) ;;
       skipped-nosrc)       n_nosrc=$((n_nosrc + 1)) ;;
     esac
+    # A file is "managed" once it exists and came from us: created, replaced,
+    # merged or already-identical. Skipped (no source / --no-overwrite) are not.
+    case "$status" in
+      created|identical|replaced|merged) MANAGED_FILES+=("${dest}"$'\t'"${strat}") ;;
+    esac
   done < <(resolve_files "$profile")
 
   printf '\n' >&2
   local verb="Applied"; is_dry_run && verb="Dry-run"
   log_info "${verb}: ${n_created} created, ${n_identical} unchanged, ${n_replaced} replaced, ${n_merged} merged, ${n_noover} skipped (--no-overwrite), ${n_nosrc} not-yet-authored."
+
+  # State file: written on a real apply only; previewed in dry-run.
+  if is_dry_run; then
+    log_dry "would write ${STATE_FILE_NAME} (profile, version, ${#MANAGED_FILES[@]} files + hashes)"
+  else
+    write_bootstrap_state "$TARGET_DIR" "$profile"
+    log_ok "wrote ${STATE_FILE_NAME} (${#MANAGED_FILES[@]} files tracked)"
+  fi
 }
