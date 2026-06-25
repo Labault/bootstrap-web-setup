@@ -48,23 +48,29 @@ render_gitignore() {
 # render_extensions_json <dest> <src>
 # Prints a merged .vscode/extensions.json: union (deduped) of the existing and
 # template `recommendations` (and `unwantedRecommendations`), other keys kept.
+# Both the absent and the existing case go through the SAME merge filter (with an
+# empty object standing in for an absent file) so the output is identical on a
+# fresh write and on rerun — i.e. idempotent from the second apply onward.
+# $cur/$tpl below are jq variables, not shell — single quotes are intentional.
+# shellcheck disable=SC2016
+EXTENSIONS_JQ_FILTER='
+  (.[0] // {}) as $cur | (.[1] // {}) as $tpl |
+  ($cur * $tpl)
+  | .recommendations =
+      (((($cur.recommendations // []) + ($tpl.recommendations // [])) | unique))
+  | if (($cur.unwantedRecommendations // []) + ($tpl.unwantedRecommendations // [])) | length > 0
+    then .unwantedRecommendations =
+      ((($cur.unwantedRecommendations // []) + ($tpl.unwantedRecommendations // [])) | unique)
+    else . end
+'
 render_extensions_json() {
   local dest="$1" src="$2"
   require_cmd jq
-  if [[ ! -s "$dest" ]]; then
-    jq . "$src"
-    return 0
+  if [[ -s "$dest" ]]; then
+    jq -s "$EXTENSIONS_JQ_FILTER" "$dest" "$src"
+  else
+    jq -s "$EXTENSIONS_JQ_FILTER" <(printf '{}\n') "$src"
   fi
-  jq -s '
-    (.[0] // {}) as $cur | (.[1] // {}) as $tpl |
-    ($cur * $tpl)
-    | .recommendations =
-        (((($cur.recommendations // []) + ($tpl.recommendations // [])) | unique))
-    | if (($cur.unwantedRecommendations // []) + ($tpl.unwantedRecommendations // [])) | length > 0
-      then .unwantedRecommendations =
-        ((($cur.unwantedRecommendations // []) + ($tpl.unwantedRecommendations // [])) | unique)
-      else . end
-  ' "$dest" "$src"
 }
 
 # canonical_json <file-or-"-">  -> stable, sorted-key JSON for comparison.

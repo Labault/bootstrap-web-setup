@@ -33,7 +33,11 @@ write_bootstrap_state() {
       hash="$(file_sha256 "$target/$rel")"
       printf '  - path: %s\n' "$rel"
       printf '    sha256: %s\n' "$hash"
-      [[ "$strat" != "replace" ]] && printf '    strategy: %s\n' "$strat"
+      # Use a full `if` (not `[[ … ]] && …`): as the loop's last statement, a
+      # false test would make the function return 1 and trip `set -e`.
+      if [[ "$strat" != "replace" ]]; then
+        printf '    strategy: %s\n' "$strat"
+      fi
     done
   } > "$statefile"
 }

@@ -10,7 +10,9 @@ trim_trailing_whitespace = true
 indent_style = space
 indent_size = 4
 
-[*.{yml,yaml,json,md}]
+# Web / config files follow the 2-space community norm; PHP keeps the 4-space
+# default above (PSR-12).
+[*.{js,jsx,ts,tsx,mjs,cjs,json,jsonc,yml,yaml,toml,css,scss,less,html,vue,md}]
 indent_size = 2
 
 [*.md]
