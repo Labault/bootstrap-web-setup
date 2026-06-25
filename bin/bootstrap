@@ -96,7 +96,7 @@ dispatch() {
   local cmd="$1"; shift
   local module="$BOOTSTRAP_ROOT/lib/cmd_${cmd}.sh"
   case "$cmd" in
-    apply|doctor|update|list)
+    apply|doctor|update|list|detect)
       if [[ -f "$module" ]]; then
         # shellcheck source=/dev/null
         source "$module"
