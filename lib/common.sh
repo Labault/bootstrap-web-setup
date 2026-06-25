@@ -35,6 +35,21 @@ DRY_RUN="${DRY_RUN:-0}"
 # True when running in dry-run mode.
 is_dry_run() { [[ "$DRY_RUN" == "1" ]]; }
 
+# --- Path helpers ------------------------------------------------------------
+# tildify <path> -> path with a leading $HOME collapsed to ~ (display only).
+# Done with string ops, not ${p/#$HOME/~}, because the replacement '~' would
+# itself be tilde-expanded back to $HOME and the collapse would be a no-op.
+tildify() {
+  local p="$1"
+  if [[ "$p" == "$HOME"/* ]]; then
+    # Intentional literal '~' for display; we do NOT want it expanded.
+    # shellcheck disable=SC2088
+    printf '~/%s\n' "${p#"$HOME"/}"
+  else
+    printf '%s\n' "$p"
+  fi
+}
+
 # --- Dependency guard --------------------------------------------------------
 require_cmd() {
   command -v "$1" >/dev/null 2>&1 || die "Required command not found: $1"

@@ -16,16 +16,21 @@ cmd_apply() {
     case "$1" in
       -h|--help)
         cat >&2 <<EOF
-Usage: bootstrap apply [--target <dir>] [--profile <name>] [--dry-run]
+Usage: bootstrap apply [--target <dir>] [--profile <name>] [--no-overwrite] [--dry-run]
 
 Deposit the (detected or given) profile's config into <dir> (default: current
-directory). Use --dry-run to preview without writing anything.
+directory).
+
+  --no-overwrite   Never overwrite an existing, differing file (skip it instead
+                   of backing up + replacing).
+  --dry-run        Preview without writing anything.
 EOF
         return 0 ;;
       --target) target="${2:?--target needs a value}"; shift ;;
       --target=*) target="${1#*=}" ;;
       --profile) override="${2:?--profile needs a value}"; shift ;;
       --profile=*) override="${1#*=}" ;;
+      --no-overwrite) NO_OVERWRITE=1 ;;
       *) die "Unknown option for 'apply': $1" ;;
     esac
     shift
