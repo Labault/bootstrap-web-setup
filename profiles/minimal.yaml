@@ -2,6 +2,16 @@
 # Any web repo, language-agnostic. The base layer every project gets.
 # Read by bin/bootstrap via lib/manifest.sh (simple, line-oriented YAML).
 
+# suggest_npm: dev packages bootstrap suggests (never installs) for commit-msg
+# linting. commitlint is a project npm dep invoked via `npx` (mirrors mac-setup),
+# not a machine binary — so it lives here, not in requires_bin. Inherited by all
+# profiles.
+suggest_npm:
+  - "@commitlint/cli"
+  - "@commitlint/config-conventional"
+  - "@gitmoji/gitmoji-regex"
+  - commitlint-config-gitmoji
+
 # requires_bin: MACHINE-global binaries mac-setup must have installed for the
 # deposited config to be live. Only tools that must exist on PATH go here — NOT
 # project-local dev tools (those live in vendor/bin or node_modules/.bin and are

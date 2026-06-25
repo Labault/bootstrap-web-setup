@@ -70,7 +70,7 @@ repos:
       # --- commit message ---
       - id: commitlint
         name: commitlint
-        entry: commitlint --edit
+        entry: npx --no -- commitlint --edit
         language: system
         stages: [commit-msg]
         pass_filenames: false

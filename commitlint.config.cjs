@@ -1,35 +1,16 @@
-// Managed by bootstrap. Conventional Commits + Gitmoji.
-// Header shape: "<emoji> <type>(<scope?>): <subject>" — the leading emoji is optional.
-// Requires commitlint on your PATH (mac-setup or the project's node_modules).
+// Managed by bootstrap. Conventional Commits + Gitmoji — mirrors mac-setup.
+// Needs these dev deps in the project (bootstrap suggests them, never installs):
+//   @commitlint/cli @commitlint/config-conventional @gitmoji/gitmoji-regex commitlint-config-gitmoji
+const { gitmojiCodeRegex, gitmojiUnicodeRegex } = require('@gitmoji/gitmoji-regex');
+
 module.exports = {
-  extends: ['@commitlint/config-conventional'],
+  extends: ['@commitlint/config-conventional', 'gitmoji'],
   parserPreset: {
     parserOpts: {
-      // Capture an optional leading emoji (unicode or :shortcode:) before the type.
-      headerPattern:
-        /^(?:(\p{Extended_Pictographic}|:[\w+-]+:)\s+)?(\w+)(?:\(([^)]+)\))?(!)?: (.+)$/u,
-      headerCorrespondence: ['emoji', 'type', 'scope', 'breaking', 'subject'],
+      headerPattern: new RegExp(
+        `^\\s*(?:${gitmojiCodeRegex.source}|${gitmojiUnicodeRegex.source})\\s(?<type>\\w*)(?:\\((?<scope>.*)\\))?!?:\\s(?<subject>.+)$`,
+      ),
+      headerCorrespondence: ['type', 'scope', 'subject'],
     },
-  },
-  rules: {
-    'type-empty': [2, 'never'],
-    'subject-empty': [2, 'never'],
-    'type-enum': [
-      2,
-      'always',
-      [
-        'feat',
-        'fix',
-        'docs',
-        'style',
-        'refactor',
-        'perf',
-        'test',
-        'build',
-        'ci',
-        'chore',
-        'revert',
-      ],
-    ],
   },
 };

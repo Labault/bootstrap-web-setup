@@ -10,16 +10,15 @@ extends: symfony
 requires_bin:
   - node
 
-# suggest_npm: dev packages bootstrap suggests at the end of `apply`. It never
-# edits package.json (§5.3/§10); it only prints the command to run.
+# suggest_npm: front dev deps added on top of the commitlint deps inherited from
+# minimal. bootstrap never edits package.json (§5.3/§10); it only prints the
+# command to run.
 suggest_npm:
   - eslint
   - "@eslint/js"
   - prettier
   - husky
   - lint-staged
-  - "@commitlint/cli"
-  - "@commitlint/config-conventional"
 
 files:
   - src: templates/fullstack/eslint.config.js
