@@ -46,6 +46,11 @@ EOF
 
   local profile; profile="$(resolve_profile "$target" "$override")"
 
+  # bootstrap's own runtime dependency. Checked here at the top level (where die
+  # actually exits) BEFORE writing anything, so a missing jq can never corrupt a
+  # half-deposited project from inside a $() subshell during a merge.
+  require_cmd jq
+
   if is_dry_run; then
     log_info "apply (dry-run) profile ${C_BOLD}${profile}${C_RESET} -> ${target}"
   else

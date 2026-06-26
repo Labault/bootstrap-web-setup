@@ -71,6 +71,8 @@ EOF
   local drift_found=0
   local state="$target/$STATE_FILE_NAME"
   if [[ -f "$state" ]]; then
+    # Drift comparison renders merge files, which needs jq. Fail clearly up front.
+    require_cmd jq
     local rec_profile rec_version cur_version
     rec_profile="$(state_profile "$state")"
     rec_version="$(state_version "$state")"

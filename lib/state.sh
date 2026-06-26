@@ -28,13 +28,19 @@ write_bootstrap_state() {
     printf 'bootstrap_commit: %s\n' "$commit"
     printf 'applied_at: %s\n' "$applied_at"
     printf 'files:\n'
-    local entry rel strat hash
+    local entry rel strat src hash tpl
     for entry in ${MANAGED_FILES[@]+"${MANAGED_FILES[@]}"}; do
-      rel="${entry%%$'\t'*}"
-      strat="${entry#*$'\t'}"
+      IFS=$'\t' read -r rel strat src <<< "$entry"
       hash="$(file_sha256 "$target/$rel")"
+      # tpl_sha256 = hash of the template source at deposit time. Lets `doctor`
+      # tell "template changed" (behind) from "local edits preserved" (customized).
+      tpl=""
+      [[ -n "$src" && -f "$BOOTSTRAP_ROOT/$src" ]] && tpl="$(file_sha256 "$BOOTSTRAP_ROOT/$src")"
       printf '  - path: %s\n' "$rel"
       printf '    sha256: %s\n' "$hash"
+      if [[ -n "$tpl" ]]; then
+        printf '    tpl_sha256: %s\n' "$tpl"
+      fi
       # Use a full `if` (not `[[ … ]] && …`): as the loop's last statement, a
       # false test would make the function return 1 and trip `set -e`.
       if [[ "$strat" != "replace" ]]; then

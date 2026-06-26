@@ -42,6 +42,11 @@ EOF
   [[ -d "$target" ]] || die "Target is not a directory: $target"
   target="$(cd "$target" && pwd)"
 
+  # bootstrap's own runtime deps, checked up front (die exits properly here):
+  # git for the 3-way merge (git merge-file / git show), jq for merge rendering.
+  require_cmd git
+  require_cmd jq
+
   local state="$target/$STATE_FILE_NAME"
   [[ -f "$state" ]] || die "No ${STATE_FILE_NAME} in ${target} — nothing to reconcile (run 'bootstrap apply' first)."
 

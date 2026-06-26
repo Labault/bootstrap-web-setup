@@ -113,6 +113,16 @@ bootstrap reconcile --dry-run   # preview merges / conflicts
 bootstrap reconcile             # merge; resolve any conflicts, then commit
 ```
 
+## Tests
+
+A [bats](https://github.com/bats-core/bats-core) suite covers apply, merges,
+guards, drift and reconcile:
+
+```sh
+brew install bats-core    # if needed
+bats tests/
+```
+
 ## License
 
 MIT — see [LICENSE](LICENSE).

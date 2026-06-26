@@ -20,18 +20,20 @@ state_version()    { state_scalar "$1" bootstrap_version; }
 state_commit()     { state_scalar "$1" bootstrap_commit; }
 state_applied_at() { state_scalar "$1" applied_at; }
 
-# state_files <file> -> "path<TAB>sha256<TAB>strategy" per line.
-# strategy defaults to "replace" when the entry omits it.
+# state_files <file> -> "path<TAB>sha256<TAB>tpl_sha256<TAB>strategy" per line.
+# tpl_sha256 is empty for older states that didn't record it; strategy defaults
+# to "replace".
 state_files() {
   awk '
     function clean(x) { sub(/[[:space:]]*#.*/, "", x); gsub(/^[[:space:]]+|[[:space:]]+$/, "", x); return x }
     /^[^[:space:]#]/ { inblk = ($0 ~ /^files:/) }
     inblk && /^[[:space:]]*-[[:space:]]*path:/ {
-      if (have) print path "\t" sha "\t" strat
-      v = $0; sub(/.*path:[[:space:]]*/, "", v); path = clean(v); sha = ""; strat = "replace"; have = 1
+      if (have) print path "\t" sha "\t" tpl "\t" strat
+      v = $0; sub(/.*path:[[:space:]]*/, "", v); path = clean(v); sha = ""; tpl = ""; strat = "replace"; have = 1
     }
-    inblk && /^[[:space:]]*sha256:/   { v = $0; sub(/.*sha256:[[:space:]]*/, "", v);   sha   = clean(v) }
-    inblk && /^[[:space:]]*strategy:/ { v = $0; sub(/.*strategy:[[:space:]]*/, "", v); strat = clean(v) }
-    END { if (have) print path "\t" sha "\t" strat }
+    inblk && /^[[:space:]]*sha256:/     { v = $0; sub(/.*sha256:[[:space:]]*/, "", v);     sha = clean(v) }
+    inblk && /^[[:space:]]*tpl_sha256:/ { v = $0; sub(/.*tpl_sha256:[[:space:]]*/, "", v); tpl = clean(v) }
+    inblk && /^[[:space:]]*strategy:/   { v = $0; sub(/.*strategy:[[:space:]]*/, "", v);   strat = clean(v) }
+    END { if (have) print path "\t" sha "\t" tpl "\t" strat }
   ' "$1"
 }

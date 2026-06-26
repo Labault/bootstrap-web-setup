@@ -24,12 +24,33 @@ three_way_merge() {
     return
   fi
 
+  # Fast-forward: the local file is unchanged from the base (no local edits), so
+  # just take the new template — no merge needed, nothing to lose.
+  if [[ "$(file_sha256 "$dpath")" == "$(file_sha256 "$tmpO")" ]]; then
+    rm -f "$tmpO"
+    if is_dry_run; then
+      log_dry "update ${path} (template changed; no local edits)"
+    else
+      backup_file "$dpath" >/dev/null; cp "$srcpath" "$dpath"
+      log_ok "update ${path} (fast-forward, backed up)"
+    fi
+    printf 'updated\n'; return
+  fi
+
   local tmpM; tmpM="$(mktemp)"
   local rc=0
   git merge-file -p \
     -L "your version (${path})" -L "base" -L "bootstrap template" \
     "$dpath" "$tmpO" "$srcpath" > "$tmpM" 2>/dev/null || rc=$?
   rm -f "$tmpO"
+
+  # No-op: the merge reproduces the current file (e.g. re-running after a clean
+  # reconcile). Don't back up or rewrite — report it as in sync.
+  if [[ "$rc" -eq 0 && "$(file_sha256 "$tmpM")" == "$(file_sha256 "$dpath")" ]]; then
+    rm -f "$tmpM"
+    printf 'insync\n'
+    return
+  fi
 
   if is_dry_run; then
     rm -f "$tmpM"
@@ -69,9 +90,9 @@ _reconcile_no_base() {
   printf 'replaced-nobase\n'
 }
 
-# reconcile_file <path> <src> <strategy> <R> <commit> -> status token
+# reconcile_file <path> <src> <strategy> <commit> -> status token
 reconcile_file() {
-  local path="$1" src="$2" strategy="$3" R="$4" commit="$5"
+  local path="$1" src="$2" strategy="$3" commit="$4"
   local dpath="$TARGET_DIR/$path" srcpath="$BOOTSTRAP_ROOT/$src"
 
   # Merge-strategy files already have a non-destructive additive merge — reuse it.
@@ -89,19 +110,13 @@ reconcile_file() {
     printf 'recreated\n'; return
   fi
 
-  local D P
-  D="$(file_sha256 "$dpath")"; P="$(file_sha256 "$srcpath")"
-  if [[ "$D" == "$P" ]]; then printf 'insync\n'; return; fi
-
-  if [[ "$D" == "$R" ]]; then
-    # Template changed but the file was untouched locally -> fast-forward.
-    if is_dry_run; then log_dry "update ${path} (template changed; no local edits)"; else
-      backup_file "$dpath" >/dev/null; cp "$srcpath" "$dpath"; log_ok "update ${path} (fast-forward, backed up)"
-    fi
-    printf 'updated\n'; return
+  # Already identical to the current template -> nothing to do.
+  if [[ "$(file_sha256 "$dpath")" == "$(file_sha256 "$srcpath")" ]]; then
+    printf 'insync\n'; return
   fi
 
-  # Locally modified AND template changed -> real 3-way merge.
+  # Otherwise 3-way merge. It fast-forwards when the file equals the base (no
+  # local edits) and preserves baked-in edits when the template moved.
   three_way_merge "$path" "$src" "$commit"
 }
 
@@ -123,15 +138,15 @@ reconcile_run() {
   done < <(resolve_files "$profile")
 
   local n_insync=0 n_updated=0 n_merged=0 n_conflict=0 n_recreated=0 n_nobase=0 n_new=0 n_orphan=0
-  local path R status
-  while IFS=$'\t' read -r path R _; do
+  local path status
+  while IFS=$'\t' read -r path _; do
     [[ -z "$path" ]] && continue
     tracked["$path"]=1
     if [[ -z "${cur_src[$path]+x}" ]]; then
       log_info "orphaned ${path} — no longer in profile, left as-is"
       n_orphan=$((n_orphan + 1)); continue
     fi
-    status="$(reconcile_file "$path" "${cur_src[$path]}" "${cur_strat[$path]}" "$R" "$commit")"
+    status="$(reconcile_file "$path" "${cur_src[$path]}" "${cur_strat[$path]}" "$commit")"
     case "$status" in
       insync|identical) n_insync=$((n_insync + 1)) ;;
       updated) n_updated=$((n_updated + 1)) ;;
@@ -152,9 +167,26 @@ reconcile_run() {
   printf '\n' >&2
   local verb="Reconciled"; is_dry_run && verb="Dry-run"
   log_info "${verb}: ${n_merged} merged, ${n_updated} fast-forwarded, ${n_recreated} recreated, ${n_new} added, ${n_conflict} CONFLICTS, ${n_nobase} replaced (no base), ${n_insync} in sync, ${n_orphan} orphaned."
+
+  # Refresh .bootstrap.yaml so the recorded hashes + commit match the reconciled
+  # result — otherwise a later `doctor` keeps flagging merged files as drifted.
+  # Skip while conflicts remain (the files still carry markers): the user resolves
+  # them, then re-runs to record a clean state.
   if [[ "$n_conflict" -gt 0 ]]; then
-    log_warn "Resolve the ${n_conflict} conflicted file(s) (search for <<<<<<<), then commit."
+    log_warn "Resolve the ${n_conflict} conflicted file(s) (search for <<<<<<<), then re-run reconcile to refresh ${STATE_FILE_NAME}."
     return 1
+  fi
+
+  # Managed set = current-profile files now present on disk (orphans dropped).
+  MANAGED_FILES=()
+  for dest in "${!cur_src[@]}"; do
+    [[ -e "$target/$dest" ]] && MANAGED_FILES+=("${dest}"$'\t'"${cur_strat[$dest]}"$'\t'"${cur_src[$dest]}")
+  done
+  if is_dry_run; then
+    log_dry "would refresh ${STATE_FILE_NAME} (${#MANAGED_FILES[@]} files, current version + commit)"
+  else
+    write_bootstrap_state "$target" "$profile"
+    log_ok "refreshed ${STATE_FILE_NAME} (${#MANAGED_FILES[@]} files tracked)"
   fi
   return 0
 }

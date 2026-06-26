@@ -36,8 +36,8 @@ detect_drift() {
   local n_ok=0 n_out=0 n_mod=0 n_miss=0 n_new=0 n_orphan=0
 
   # 1) Walk the tracked files recorded in .bootstrap.yaml.
-  local path rec_hash csrc cstrat dpath D P
-  while IFS=$'\t' read -r path rec_hash _; do
+  local path rec_hash tpl_rec csrc cstrat dpath D P Tcur
+  while IFS=$'\t' read -r path rec_hash tpl_rec _; do
     [[ -z "$path" ]] && continue
     tracked["$path"]=1
     dpath="$target/$path"
@@ -58,12 +58,20 @@ detect_drift() {
     if [[ -n "$P" && "$D" == "$P" ]]; then
       printf '  %s✓%s %s\n' "$C_GREEN" "$C_RESET" "$path" >&2
       n_ok=$((n_ok + 1))
-    elif [[ "$D" == "$rec_hash" ]]; then
-      printf '  %s~%s %s %s(template updated — re-apply to update)%s\n' "$C_YELLOW" "$C_RESET" "$path" "$C_DIM" "$C_RESET" >&2
-      n_out=$((n_out + 1))
-    else
-      printf '  %s!%s %s %s(modified locally — re-apply backs up then overwrites)%s\n' "$C_YELLOW" "$C_RESET" "$path" "$C_DIM" "$C_RESET" >&2
+    elif [[ "$D" != "$rec_hash" ]]; then
+      printf '  %s!%s %s %s(modified locally — reconcile to merge, or re-apply to overwrite)%s\n' "$C_YELLOW" "$C_RESET" "$path" "$C_DIM" "$C_RESET" >&2
       n_mod=$((n_mod + 1))
+    else
+      # File untouched since the last apply/reconcile (D == recorded). Did the
+      # TEMPLATE move, or are these recorded local edits that are still current?
+      Tcur=""; [[ -f "$csrc" ]] && Tcur="$(file_sha256 "$csrc")"
+      if [[ -n "$tpl_rec" && -n "$Tcur" && "$tpl_rec" == "$Tcur" ]]; then
+        printf '  %s✓%s %s %s(local edits kept; up to date)%s\n' "$C_GREEN" "$C_RESET" "$path" "$C_DIM" "$C_RESET" >&2
+        n_ok=$((n_ok + 1))
+      else
+        printf '  %s~%s %s %s(template updated — reconcile/re-apply to update)%s\n' "$C_YELLOW" "$C_RESET" "$path" "$C_DIM" "$C_RESET" >&2
+        n_out=$((n_out + 1))
+      fi
     fi
   done < <(state_files "$state")
 

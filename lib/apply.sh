@@ -188,8 +188,9 @@ run_apply() {
     esac
     # A file is "managed" once it exists and came from us: created, replaced,
     # merged or already-identical. Skipped (no source / --no-overwrite) are not.
+    # Record the template src too, so the state can store the template's own hash.
     case "$status" in
-      created|identical|replaced|merged) MANAGED_FILES+=("${dest}"$'\t'"${strat}") ;;
+      created|identical|replaced|merged) MANAGED_FILES+=("${dest}"$'\t'"${strat}"$'\t'"${src}") ;;
     esac
   done < <(resolve_files "$profile")
 
