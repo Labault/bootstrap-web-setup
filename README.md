@@ -32,10 +32,11 @@ bootstrap --help
 ## Usage
 
 ```sh
-bootstrap doctor                 # check the required binaries for the detected profile
+bootstrap doctor                 # check required binaries + report config drift
 bootstrap apply                  # deposit the (auto-detected) profile into the current dir
 bootstrap apply --profile symfony
 bootstrap apply --dry-run        # preview, write nothing
+bootstrap reconcile              # 3-way merge the project with the current templates
 bootstrap list                   # list profiles and what they deposit
 bootstrap update                 # update bootstrap itself (never touches projects)
 ```
@@ -91,8 +92,26 @@ bootstrap doctor              # reports drift, exit 0 (informational)
 bootstrap doctor --strict     # exit non-zero if drift — for CI
 ```
 
-To reconcile, re-run `bootstrap apply` (a backup is taken first). There is no
-automatic merge; review the backups afterwards.
+## Reconcile (3-way merge)
+
+`bootstrap reconcile` brings a project up to date with the current templates
+while **keeping local edits**, via a real 3-way merge. The merge base is the
+template at the `bootstrap_commit` recorded in `.bootstrap.yaml` (fetched with
+`git show`), so no per-project snapshots are stored. Per file it:
+
+- **fast-forwards** when the template changed and the file wasn't edited locally;
+- **merges cleanly** when local edits and template updates don't overlap;
+- writes **conflict markers** (`<<<<<<<`) to resolve by hand when they do;
+- recreates missing files and adds new ones from the profile.
+
+Files are backed up before writing. `--dry-run` previews; the command exits
+non-zero when there are conflicts. When no merge base is available (older state
+without `bootstrap_commit`), it falls back to backup + replace.
+
+```sh
+bootstrap reconcile --dry-run   # preview merges / conflicts
+bootstrap reconcile             # merge; resolve any conflicts, then commit
+```
 
 ## License
 
