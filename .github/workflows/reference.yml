@@ -40,8 +40,8 @@ jobs:
       - name: Normalize the tree so the dry-run gates are green
         working-directory: ref
         run: |
-          make cs-fix
           make rector-fix
+          make cs-fix
 
       - name: Snapshot a clean PHPStan baseline
         working-directory: ref
