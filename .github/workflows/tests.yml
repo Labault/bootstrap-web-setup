@@ -28,3 +28,18 @@ jobs:
 
       - name: Run the test suite
         run: bats tests/
+
+  validation:
+    name: acceptance
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # reconcile cases need the recorded commit (git show)
+
+      - name: Ensure jq is available
+        run: jq --version
+
+      - name: Run the acceptance suite
+        run: bash validation/run-all.sh

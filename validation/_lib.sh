@@ -5,7 +5,9 @@
 set -uo pipefail
 
 
-REPO="${BOOTSTRAP_REPO:-/Users/labault/Documents/Projects/bootstrap-web-setup}"
+# Derive the repo from this file's own location (validation/_lib.sh -> repo root)
+# so the harness is portable (CI, anywhere). Override with BOOTSTRAP_REPO if set.
+REPO="${BOOTSTRAP_REPO:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 # shellcheck disable=SC2034  # consumed by case run.sh scripts
 BS="$REPO/bin/bootstrap"
 
