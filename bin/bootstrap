@@ -39,7 +39,8 @@ ${C_BOLD}USAGE${C_RESET}
 
 ${C_BOLD}COMMANDS${C_RESET}
   apply      Deposit the profile's config into the target project
-  doctor     Check that the binaries required by the profile are present
+  doctor     Check required binaries and report config drift
+  reconcile  3-way merge a project with the current templates (keeps local edits)
   update     Update bootstrap itself (never touches projects)
   list       List available profiles and their contents
 
@@ -96,7 +97,7 @@ dispatch() {
   local cmd="$1"; shift
   local module="$BOOTSTRAP_ROOT/lib/cmd_${cmd}.sh"
   case "$cmd" in
-    apply|doctor|update|list|detect)
+    apply|doctor|update|list|detect|reconcile)
       if [[ -f "$module" ]]; then
         # shellcheck source=/dev/null
         source "$module"
