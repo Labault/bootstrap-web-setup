@@ -28,8 +28,7 @@ Check that every binary required by the (detected or given) profile is installed
 and report configuration drift against the current templates when the project has
 a .bootstrap.yaml. Drift is informational by default.
 
-  --skip-bin-check   Report missing binaries but don't exit non-zero for them
-                     (e.g. checking drift on a machine without the lint tools).
+  --skip-bin-check   Report missing binaries but don't exit non-zero for them.
   --strict           Exit non-zero if drift is detected (useful in CI).
 
 Exit code: 1 if a required binary is missing (unless --skip-bin-check), or with
