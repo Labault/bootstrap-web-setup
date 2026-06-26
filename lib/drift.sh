@@ -23,13 +23,15 @@ detect_drift() {
   local target="$1" profile="$2"
   local state="$target/$STATE_FILE_NAME"
 
-  # Current profile's files: dest -> src / strategy.
+  # Current profile's files: dest -> src / strategy, plus a stable order.
   local -A cur_src=() cur_strat=()
+  local -a cur_order=()
   local src dest strat
   while IFS=$'\t' read -r src dest strat; do
     [[ -z "$dest" ]] && continue
     cur_src["$dest"]="$src"
     cur_strat["$dest"]="$strat"
+    cur_order+=("$dest")
   done < <(resolve_files "$profile")
 
   local -A tracked=()
@@ -75,8 +77,8 @@ detect_drift() {
     fi
   done < <(state_files "$state")
 
-  # 2) Files the current profile adds that the project never received.
-  for dest in "${!cur_src[@]}"; do
+  # 2) Files the current profile adds that the project never received (stable order).
+  for dest in "${cur_order[@]}"; do
     [[ -n "${tracked[$dest]+x}" ]] && continue
     printf '  %s+%s %s %s(new — re-apply would add)%s\n' "$C_BLUE" "$C_RESET" "$dest" "$C_DIM" "$C_RESET" >&2
     n_new=$((n_new + 1))
@@ -89,7 +91,9 @@ detect_drift() {
     return 0
   fi
   log_warn "Drift: ${n_out} behind, ${n_mod} modified locally, ${n_miss} missing, ${n_new} new, ${n_orphan} orphaned (${n_ok} in sync)."
-  log_info "bootstrap does not merge. To reconcile (a backup is taken first):"
+  log_info "To update while keeping local edits (3-way merge, backs up first):"
+  printf '    bootstrap reconcile\n' >&2
+  log_info "Or to overwrite with the templates (backs up first):"
   printf '    bootstrap apply --profile %s\n' "$profile" >&2
   return 1
 }

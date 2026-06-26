@@ -6,8 +6,9 @@
 # awk parser can read back. STATE_FILE_NAME is defined in lib/common.sh.
 
 # write_bootstrap_state <target> <profile>
-# Consumes the MANAGED_FILES array (entries: "<relpath>\t<strategy>") populated
-# by run_apply, hashes each deposited file and writes the state file.
+# Consumes the MANAGED_FILES array (entries: "<relpath>\t<strategy>\t<src>")
+# populated by run_apply/reconcile_run, hashes each deposited file and its
+# template source, and writes the state file atomically.
 write_bootstrap_state() {
   local target="$1" profile="$2"
   local statefile="$target/$STATE_FILE_NAME"
@@ -18,7 +19,9 @@ write_bootstrap_state() {
   # template (O) via `git show <commit>:...` for a 3-way merge (Phase 3).
   commit="$(git -C "$BOOTSTRAP_ROOT" rev-parse HEAD 2>/dev/null || printf 'unknown')"
 
-  local tmp; tmp="$(mktemp)"
+  # Write to a temp IN THE TARGET DIR so the final mv is same-filesystem (atomic):
+  # no reader ever sees a half-written state file.
+  local tmp; tmp="$(mktemp "$target/.bootstrap.yaml.XXXXXX")" || die "cannot write state in ${target}"
   {
     printf '# Managed by bootstrap — do not edit by hand.\n'
     # Literal backticks in a comment; nothing to expand.

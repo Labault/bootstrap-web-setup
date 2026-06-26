@@ -15,10 +15,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install bats and jq
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y bats jq
+      - name: Install bats (pinned)
+        uses: bats-core/bats-action@3.0.1
+        with:
+          support-install: false
+          assert-install: false
+          detik-install: false
+          file-install: false
+
+      - name: Ensure jq is available
+        run: jq --version
 
       - name: Run the test suite
         run: bats tests/

@@ -78,6 +78,12 @@ EOF
     rec_version="$(state_version "$state")"
     cur_version="$(bootstrap_version)"
     printf '\n' >&2
+    # A state file with no readable profile is corrupt/hand-broken — say so plainly
+    # rather than report every file as "new".
+    if [[ -z "$rec_profile" ]] || ! profile_exists "$rec_profile"; then
+      log_warn "Drift check: ${STATE_FILE_NAME} is unreadable or has an unknown profile — re-run 'bootstrap apply' to rewrite it."
+      return 1
+    fi
     log_info "Drift check (recorded profile ${C_BOLD}${rec_profile}${C_RESET}, applied $(state_applied_at "$state"))"
     if [[ "$rec_version" != "$cur_version" ]]; then
       log_warn "version: recorded ${rec_version} vs current ${cur_version} — templates may have changed"

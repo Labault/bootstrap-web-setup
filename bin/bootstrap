@@ -43,6 +43,7 @@ ${C_BOLD}COMMANDS${C_RESET}
   reconcile  3-way merge a project with the current templates (keeps local edits)
   update     Update bootstrap itself (never touches projects)
   list       List available profiles and their contents
+  detect     Print the profile that would be used for a directory
 
 ${C_BOLD}GLOBAL OPTIONS${C_RESET}
   --dry-run        Show what would change without writing anything
@@ -98,14 +99,10 @@ dispatch() {
   local module="$BOOTSTRAP_ROOT/lib/cmd_${cmd}.sh"
   case "$cmd" in
     apply|doctor|update|list|detect|reconcile)
-      if [[ -f "$module" ]]; then
-        # shellcheck source=/dev/null
-        source "$module"
-        "cmd_${cmd}" "$@"
-      else
-        log_warn "Command '${cmd}' is not implemented yet (stub)."
-        exit 0
-      fi
+      [[ -f "$module" ]] || die "Internal error: missing module ${module}"
+      # shellcheck source=/dev/null
+      source "$module"
+      "cmd_${cmd}" "$@"
       ;;
     *)
       log_error "Unknown command: ${cmd}"

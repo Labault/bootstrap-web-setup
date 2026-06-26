@@ -9,11 +9,6 @@
 install_hint() {
   case "$1" in
     markdownlint-cli2) printf 'npm install -g markdownlint-cli2\n' ;;
-    commitlint)        printf 'npm install -g @commitlint/cli @commitlint/config-conventional\n' ;;
-    eslint)            printf 'npm install -g eslint\n' ;;
-    prettier)          printf 'npm install -g prettier\n' ;;
-    phpstan)           printf 'composer global require phpstan/phpstan\n' ;;
-    rector)            printf 'composer global require rector/rector\n' ;;
     *)                 printf 'brew install %s\n' "$1" ;;
   esac
 }
