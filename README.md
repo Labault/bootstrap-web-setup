@@ -4,23 +4,111 @@
 [![Tests](https://github.com/Labault/bootstrap-web-setup/actions/workflows/tests.yml/badge.svg)](https://github.com/Labault/bootstrap-web-setup/actions/workflows/tests.yml)
 [![Security](https://github.com/Labault/bootstrap-web-setup/actions/workflows/security.yml/badge.svg)](https://github.com/Labault/bootstrap-web-setup/actions/workflows/security.yml)
 [![Reference](https://github.com/Labault/bootstrap-web-setup/actions/workflows/reference.yml/badge.svg)](https://github.com/Labault/bootstrap-web-setup/actions/workflows/reference.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-A Bash CLI — companion to **mac-setup** — that drops a standardized
-quality/CI/security configuration layer into any web project (Symfony,
-optionally with a JS/TS front), new or existing.
+Drop a standardized quality / CI / security configuration layer into any web
+project with **one command**, then keep it in sync through a small CLI called
+`bootstrap`.
 
-**Guiding principle (non-negotiable):** bootstrap deposits **config files only**.
-It never installs binaries — those come from your machine setup (mac-setup). A
-config without its tool is a dead file, so `bootstrap doctor` checks the required
-binaries are present before anything is written.
+> **New here? Read this file once, top to bottom.** It explains what bootstrap
+> deposits, how to install it, and which commands you can run afterward.
 
-## Requirements
+## Who this is for
 
-- bash 4+ (`brew install bash` — macOS ships 3.2)
-- git, and the tools each profile needs (see `bootstrap doctor`)
-- `jq` (used for JSON merges)
+Web developers — primarily PHP/Symfony, optionally with a JS/TS front — who want
+the **same quality baseline in every project** (pre-commit hooks, static
+analysis, CI workflows, secret scanning, Dependabot…) without copy-pasting config
+files from one repo to the next and letting them drift apart.
 
-## Install
+It is the **project-level companion** to
+[mac-dev-setup](https://github.com/Labault/mac-dev-setup): mac-setup tools your
+**machine** (installs the binaries), bootstrap tools your **project** (deposits
+the config those binaries read).
+
+## How it works at a glance
+
+`install.sh` sets up a small `bootstrap` CLI. Its core principle is
+**non-negotiable: bootstrap writes config files only — it never installs
+binaries.** The tools that read those files come from your machine.
+
+- `bootstrap apply` deposits a profile's config into your project and records a
+  `.bootstrap.yaml` (profile, version, files + hashes).
+- `bootstrap doctor` checks required binaries and reports configuration drift.
+- `bootstrap reconcile` 3-way-merges template updates while keeping your local edits.
+- Anything overwritten is backed up first; every mutating command has `--dry-run`.
+
+## Quick start (30 seconds)
+
+```sh
+git clone https://github.com/Labault/bootstrap-web-setup.git
+cd bootstrap-web-setup && ./install.sh
+
+cd /path/to/your/project
+bootstrap apply            # auto-detects the profile; add --profile to force one
+```
+
+This is the fastest path. Keep reading for profiles, deposited files, backups,
+and the full command reference.
+
+## Table of contents
+
+- [Who this is for](#who-this-is-for)
+- [How it works at a glance](#how-it-works-at-a-glance)
+- [Quick start (30 seconds)](#quick-start-30-seconds)
+- [What's included](#whats-included)
+- [Installation](#installation)
+- [Make it yours](#make-it-yours)
+- [The `bootstrap` CLI — command reference](#the-bootstrap-cli--command-reference)
+- [Going further](#going-further)
+- [License](#license)
+
+---
+
+## What's included
+
+### Profiles
+
+The profile decides **which files are deposited** and **which binaries are
+required**. Profiles inherit from each other.
+
+| Profile | For | Adds on top of its parent |
+| --- | --- | --- |
+| `minimal` | Any web repo (language-agnostic) | pre-commit, EditorConfig, commitlint, gitleaks, shellcheck, markdownlint, actionlint, lychee, base CI/security workflows, Dependabot, transverse files |
+| `symfony` | PHP/Symfony | PHPStan, PHP-CS-Fixer, Rector, hadolint, PHP CI, PHP `make` targets |
+| `fullstack` | Symfony + JS/TS front | ESLint, Prettier, Husky + lint-staged, front CI |
+
+### Linting & formatting
+
+EditorConfig, a local-mode `.pre-commit-config.yaml` (editorconfig-checker,
+gitleaks, shellcheck, markdownlint, actionlint, commitlint), and — per profile —
+PHP-CS-Fixer (`@Symfony`), PHPStan (level 9 + auto baseline), Rector, ESLint and
+Prettier.
+
+### CI & security
+
+GitHub Actions workflows (`ci.yml` lint + links, `security.yml` gitleaks +
+dependency review, plus `php.yml` / front CI on the relevant profiles), a
+`.gitleaks.toml` secret-scanning config, and a `.github/dependabot.yml`.
+
+### Docs, hooks & transverse files
+
+`Makefile` (`make qa / lint / fix / hooks`), `SECURITY.md`, `CONTRIBUTING.md`,
+`CLAUDE.md`, pull-request and issue templates, a merged `.gitignore` and
+`.vscode/extensions.json`, and the `.bootstrap.yaml` state file.
+
+See the per-profile pages in [`docs/profiles/`](docs/profiles/) for the exact
+file lists.
+
+## Installation
+
+### Prerequisites
+
+- **bash 4+** (`brew install bash` — macOS ships 3.2)
+- **git** and **jq** (used by `apply` / `reconcile`)
+- The tools each profile needs on your machine — run `bootstrap doctor` to see
+  which are missing (they come from mac-setup, not from bootstrap)
+
+### Step 1 — Install the CLI
 
 ```sh
 git clone https://github.com/Labault/bootstrap-web-setup.git
@@ -28,106 +116,157 @@ cd bootstrap-web-setup
 ./install.sh            # symlinks `bootstrap` into ~/.local/bin (override with BOOTSTRAP_BIN_DIR)
 ```
 
-Make sure the target directory is on your `PATH`. Then:
+Make sure the target directory is on your `PATH`, then check it works:
 
 ```sh
+bootstrap --version
 bootstrap --help
 ```
 
-## Usage
+### Step 2 — Apply a profile to a project
 
 ```sh
-bootstrap doctor                 # check required binaries + report config drift
-bootstrap apply                  # deposit the (auto-detected) profile into the current dir
-bootstrap apply --profile symfony
-bootstrap apply --dry-run        # preview, write nothing
-bootstrap reconcile              # 3-way merge the project with the current templates
-bootstrap list                   # list profiles and what they deposit
-bootstrap update                 # update bootstrap itself (never touches projects)
+cd /path/to/your/project
+bootstrap doctor          # check the required binaries first
+bootstrap apply --dry-run # preview, write nothing
+bootstrap apply           # deposit the config + write .bootstrap.yaml + install hooks
 ```
 
-Every mutating command supports `--dry-run`. `apply` also takes `--target <dir>`,
-`--no-overwrite` and `--skip-bin-check`.
-
-## Profiles
-
-| Profile     | For                          | Adds on top of its parent |
-| ----------- | ---------------------------- | ------------------------- |
-| `minimal`   | Any web repo (language-agnostic) | pre-commit, editorconfig, commitlint, gitleaks, shellcheck, markdownlint, actionlint, lychee, base CI/security workflows, Dependabot, transverse files |
-| `symfony`   | PHP/Symfony                  | PHPStan, PHP-CS-Fixer, Rector, hadolint, PHP CI, PHP make targets |
-| `fullstack` | Symfony + JS/TS front        | ESLint, Prettier, Husky + lint-staged, front CI |
+### Choosing a profile
 
 Auto-detection: `composer.json` → `symfony`; `+ package.json` → `fullstack`;
-otherwise `minimal`. Override with `--profile`.
-
-See the per-profile pages in [docs/profiles/](docs/profiles/).
-
-## How it behaves
-
-- **New vs existing projects:** absent files are written; identical files are a
-  no-op (idempotent); `.gitignore` and `.vscode/extensions.json` are merged;
-  other existing files are backed up then replaced (or skipped with
-  `--no-overwrite`).
-- **Backups:** anything overwritten is copied to
-  `~/Documents/Backups/bootstrap/<project>/<timestamp>/` first.
-- **State:** each `apply` writes `.bootstrap.yaml` (profile, version, files +
-  hashes) — the trace that powers drift detection.
-- **Hooks:** `pre-commit` is installed after deposit (Husky on `fullstack`).
-- **Manifests:** bootstrap never edits `composer.json` / `package.json`; it only
-  suggests the `composer require --dev` / `npm install -D` lines to run.
-
-## Drift detection
-
-Once a project has a `.bootstrap.yaml`, `bootstrap doctor` also reports how its
-config has drifted from the current templates — it **signals only, it never
-merges**. For each tracked file it compares the hash recorded at apply time, the
-file on disk, and what `apply` would produce now:
-
-| Status | Meaning |
-| ------ | ------- |
-| in sync | matches the current template |
-| behind | template updated since apply; re-apply to update |
-| modified locally | edited after apply; re-apply backs up then overwrites |
-| missing | deleted; re-apply would recreate |
-| new | added to the profile but never received |
-| orphaned | tracked but no longer in the profile |
+otherwise `minimal`. Override anytime with `--profile`:
 
 ```sh
-bootstrap doctor              # reports drift, exit 0 (informational)
-bootstrap doctor --strict     # exit non-zero if drift — for CI
+bootstrap apply --profile symfony
 ```
 
-## Reconcile (3-way merge)
+### Files bootstrap deposits
 
-`bootstrap reconcile` brings a project up to date with the current templates
-while **keeping local edits**, via a real 3-way merge. The merge base is the
-template at the `bootstrap_commit` recorded in `.bootstrap.yaml` (fetched with
-`git show`), so no per-project snapshots are stored. Per file it:
+On an existing project, absent files are written, identical files are a no-op,
+`.gitignore` and `.vscode/extensions.json` are **merged**, and other existing
+files are **backed up then replaced** (or skipped with `--no-overwrite`). Each
+`apply` records a `.bootstrap.yaml` — the trace that powers drift detection and
+reconcile.
 
-- **fast-forwards** when the template changed and the file wasn't edited locally;
-- **merges cleanly** when local edits and template updates don't overlap;
-- writes **conflict markers** (`<<<<<<<`) to resolve by hand when they do;
-- recreates missing files and adds new ones from the profile.
+### Backups & rollback
 
-Files are backed up before writing. `--dry-run` previews; the command exits
-non-zero when there are conflicts. When no merge base is available (older state
-without `bootstrap_commit`), it falls back to backup + replace.
+Anything overwritten is copied first to
+`~/Documents/Backups/bootstrap/<project>/<timestamp>/`, so a rollback is always a
+manual copy away. bootstrap also **never edits** `composer.json` / `package.json`
+— it only prints the `composer require --dev` / `npm install -D` lines to run.
+
+## Make it yours
+
+bootstrap is a fork-friendly, data-driven tool: the profiles live in
+[`profiles/`](profiles/) (declarative YAML manifests) and the files they deposit
+live in [`templates/`](templates/). To adjust the baseline, edit a template or a
+manifest and re-`apply`. The repo eats its own dog food — it self-applies the
+`minimal` profile and its CI runs the very pipeline it ships.
+
+## The `bootstrap` CLI — command reference
+
+Every command supports `--help`:
+
+```sh
+bootstrap <command> --help
+```
+
+### All commands
+
+| Command | What it does |
+| --- | --- |
+| `bootstrap apply` | Deposit the profile's config into the target project |
+| `bootstrap doctor` | Check required binaries and report config drift |
+| `bootstrap reconcile` | 3-way-merge a project with the current templates (keeps local edits) |
+| `bootstrap update` | Update bootstrap itself (never touches projects) |
+| `bootstrap list` | List available profiles and their contents |
+| `bootstrap detect` | Print the profile that would be used for a directory |
+
+---
+
+### `bootstrap apply`
+
+Deposit the (detected or given) profile's config into a project.
+
+```sh
+bootstrap apply                       # auto-detected profile, current directory
+bootstrap apply --profile symfony
+bootstrap apply --dry-run             # preview, change nothing
+bootstrap apply --no-overwrite        # never overwrite an existing, differing file
+bootstrap apply --skip-bin-check      # don't block on missing binaries (CI / deferred install)
+```
+
+---
+
+### `bootstrap doctor`
+
+Check that the binaries required by the profile are installed and, once a project
+has a `.bootstrap.yaml`, report how its config has drifted from the current
+templates. Drift is informational by default.
+
+```sh
+bootstrap doctor                # binaries + drift report
+bootstrap doctor --strict       # exit non-zero if drift is detected (for CI)
+bootstrap doctor --skip-bin-check
+```
+
+---
+
+### `bootstrap reconcile`
+
+Bring a project up to date with the current templates **while keeping local
+edits**, via a real 3-way merge (the base is the template at the commit recorded
+in `.bootstrap.yaml`). Files are backed up first; conflicts are written with
+markers to resolve by hand.
 
 ```sh
 bootstrap reconcile --dry-run   # preview merges / conflicts
 bootstrap reconcile             # merge; resolve any conflicts, then commit
 ```
 
-## Tests
+---
 
-A [bats](https://github.com/bats-core/bats-core) suite covers apply, merges,
-guards, drift and reconcile:
+### `bootstrap update`
+
+Update bootstrap itself (`git pull --ff-only` in its own checkout). **It never
+touches your projects.**
 
 ```sh
-brew install bats-core    # if needed
-bats tests/
+bootstrap update --dry-run      # report whether an update is available
+bootstrap update
 ```
+
+---
+
+### `bootstrap list`
+
+List the available profiles, their inheritance, required binaries, and the files
+they deposit.
+
+```sh
+bootstrap list
+```
+
+## Going further
+
+- Per-profile file lists: [`docs/profiles/`](docs/profiles/) —
+  [minimal](docs/profiles/minimal.md) ·
+  [symfony](docs/profiles/symfony.md) ·
+  [fullstack](docs/profiles/fullstack.md)
+- The full design spec (all locked decisions):
+  [`docs/cahier-des-charges-bootstrap.md`](docs/cahier-des-charges-bootstrap.md)
+- **Drift detection & reconcile** — see the `doctor` and `reconcile` commands
+  above; this is the one-shot-evolutive lifecycle (apply records state → doctor
+  signals drift → reconcile merges).
+- **Tests** — a [bats](https://github.com/bats-core/bats-core) unit suite
+  (`bats tests/`) and a black-box [acceptance harness](validation/README.md)
+  (`cd validation && ./run-all.sh`), both run in CI.
+- **Proof on real PHP** — the `Reference` workflow applies the `symfony` profile
+  to [`examples/symfony-reference/`](examples/symfony-reference/) and runs the
+  deposited quality gates to prove the pipeline stays green.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+bootstrap-web-setup is released under the MIT License. See [`LICENSE`](LICENSE)
+for details.
