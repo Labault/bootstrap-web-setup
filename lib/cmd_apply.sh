@@ -1,7 +1,8 @@
 # shellcheck shell=bash
 # `bootstrap apply` — deposit the profile's config into the target project.
-# Step 4 scope: absent files + --dry-run. Binary guard, collisions, .bootstrap.yaml
-# and hook install come in later steps.
+# Resolves the profile, runs the blocking binary guard, deposits the files
+# (collisions handled by the engine), writes .bootstrap.yaml, generates the
+# PHPStan baseline, installs hooks, and prints dependency suggestions.
 
 # shellcheck source=lib/manifest.sh
 source "$BOOTSTRAP_ROOT/lib/manifest.sh"
@@ -58,7 +59,8 @@ EOF
     log_info "apply profile ${C_BOLD}${profile}${C_RESET} -> ${target}"
   fi
 
-  # Step 0 — blocking binary guard (§9.2). Skipped with --skip-bin-check.
+  # Blocking binary guard (§9.2): refuse to deposit dead config. --skip-bin-check
+  # bypasses it (CI / deferred install).
   if [[ "$skip_bin_check" == 1 ]]; then
     log_warn "skipping required-binary check (--skip-bin-check)"
   else
