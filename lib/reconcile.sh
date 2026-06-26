@@ -127,14 +127,15 @@ reconcile_run() {
   # shellcheck disable=SC2034
   TARGET_DIR="$target"
   # shellcheck disable=SC2034
-  BACKUP_RUN_DIR="$BACKUP_BASE/$(basename "$target")/$(date +%Y%m%dT%H%M%S)"
+  BACKUP_RUN_DIR="$BACKUP_BASE/$(basename "$target")/$(date +%Y%m%dT%H%M%S)-$$"
   local state="$target/$STATE_FILE_NAME"
 
   local -A cur_src=() cur_strat=() tracked=()
+  local -a cur_order=()   # deterministic resolve_files order, for stable state output
   local src dest strat
   while IFS=$'\t' read -r src dest strat; do
     [[ -z "$dest" ]] && continue
-    cur_src["$dest"]="$src"; cur_strat["$dest"]="$strat"
+    cur_src["$dest"]="$src"; cur_strat["$dest"]="$strat"; cur_order+=("$dest")
   done < <(resolve_files "$profile")
 
   local n_insync=0 n_updated=0 n_merged=0 n_conflict=0 n_recreated=0 n_nobase=0 n_new=0 n_orphan=0
@@ -158,7 +159,7 @@ reconcile_run() {
   done < <(state_files "$state")
 
   # Files the current profile adds that the project never received -> deposit them.
-  for dest in "${!cur_src[@]}"; do
+  for dest in "${cur_order[@]}"; do
     [[ -n "${tracked[$dest]+x}" ]] && continue
     deposit_file "$BOOTSTRAP_ROOT/${cur_src[$dest]}" "$target/$dest" "${cur_strat[$dest]}" >/dev/null
     n_new=$((n_new + 1))
@@ -177,9 +178,10 @@ reconcile_run() {
     return 1
   fi
 
-  # Managed set = current-profile files now present on disk (orphans dropped).
+  # Managed set = current-profile files now present on disk (orphans dropped), in
+  # the deterministic resolve_files order so the state matches apply's ordering.
   MANAGED_FILES=()
-  for dest in "${!cur_src[@]}"; do
+  for dest in "${cur_order[@]}"; do
     [[ -e "$target/$dest" ]] && MANAGED_FILES+=("${dest}"$'\t'"${cur_strat[$dest]}"$'\t'"${cur_src[$dest]}")
   done
   if is_dry_run; then

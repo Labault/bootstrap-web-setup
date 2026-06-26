@@ -40,6 +40,9 @@ resolve_profile() {
   else
     profile="$(detect_profile "$target")"
   fi
+  # Validate the whole inheritance chain here (top level), so an unknown parent or
+  # a cycle dies instead of being swallowed later inside a process substitution.
+  resolve_chain "$profile" >/dev/null
   printf '%s\n' "$profile"
 }
 

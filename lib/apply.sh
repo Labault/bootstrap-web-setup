@@ -166,7 +166,8 @@ deposit_merge() {
 run_apply() {
   local profile="$1"
   TARGET_DIR="$2"
-  BACKUP_RUN_DIR="$BACKUP_BASE/$(basename "$TARGET_DIR")/$(date +%Y%m%dT%H%M%S)"
+  # Include the PID so two runs in the same second don't share a backup dir.
+  BACKUP_RUN_DIR="$BACKUP_BASE/$(basename "$TARGET_DIR")/$(date +%Y%m%dT%H%M%S)-$$"
 
   local src dest strat srcpath destpath status
   local n_created=0 n_identical=0 n_replaced=0 n_merged=0 n_noover=0 n_nosrc=0

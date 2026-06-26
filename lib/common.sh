@@ -69,6 +69,16 @@ bootstrap_version() {
   fi
 }
 
+# warn_if_bootstrap_dirty -> warns when the bootstrap checkout has uncommitted
+# changes. The deposited templates come from the working tree, but the recorded
+# bootstrap_commit is HEAD, so a dirty tree means a later `reconcile` would use a
+# wrong merge base. No-op when bootstrap isn't a git checkout.
+warn_if_bootstrap_dirty() {
+  git -C "$BOOTSTRAP_ROOT" rev-parse --is-inside-work-tree >/dev/null 2>&1 || return 0
+  [[ -z "$(git -C "$BOOTSTRAP_ROOT" status --porcelain 2>/dev/null)" ]] && return 0
+  log_warn "bootstrap checkout has uncommitted changes — deposited templates won't match the recorded commit, so a later 'reconcile' may use a wrong base. Commit template changes first."
+}
+
 # file_sha256 <file> -> hex sha256 of the file (portable: shasum or sha256sum).
 file_sha256() {
   if command -v shasum >/dev/null 2>&1; then

@@ -18,6 +18,7 @@ write_bootstrap_state() {
   # template (O) via `git show <commit>:...` for a 3-way merge (Phase 3).
   commit="$(git -C "$BOOTSTRAP_ROOT" rev-parse HEAD 2>/dev/null || printf 'unknown')"
 
+  local tmp; tmp="$(mktemp)"
   {
     printf '# Managed by bootstrap — do not edit by hand.\n'
     # Literal backticks in a comment; nothing to expand.
@@ -47,5 +48,18 @@ write_bootstrap_state() {
         printf '    strategy: %s\n' "$strat"
       fi
     done
-  } > "$statefile"
+  } > "$tmp"
+
+  # Idempotence: if only applied_at would change (everything else identical), keep
+  # the existing file so re-applying an unchanged project produces no git diff.
+  local new_body cur_body
+  new_body="$(grep -v '^applied_at:' "$tmp")"
+  if [[ -f "$statefile" ]]; then
+    cur_body="$(grep -v '^applied_at:' "$statefile")"
+    if [[ "$cur_body" == "$new_body" ]]; then
+      rm -f "$tmp"
+      return 0
+    fi
+  fi
+  mv "$tmp" "$statefile"
 }
