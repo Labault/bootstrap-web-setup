@@ -1,0 +1,58 @@
+name: Reference
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  symfony-pipeline:
+    name: deposited pipeline (symfony reference)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout bootstrap
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          coverage: none
+          tools: composer
+
+      - name: Ensure jq is available
+        run: jq --version
+
+      - name: Scaffold the reference project
+        run: |
+          cp -R examples/symfony-reference ref
+          git -C ref init -q
+
+      - name: Apply the symfony profile (deposits the pipeline + configs)
+        run: bash bin/bootstrap apply --profile symfony --target ref --skip-bin-check
+
+      - name: Install dev dependencies
+        working-directory: ref
+        run: composer install --no-interaction --no-progress
+
+      - name: Normalize the tree so the dry-run gates are green
+        working-directory: ref
+        run: |
+          make cs-fix
+          make rector-fix
+
+      - name: Snapshot a clean PHPStan baseline
+        working-directory: ref
+        run: |
+          vendor/bin/phpstan analyse --configuration phpstan.dist.neon \
+            --generate-baseline phpstan-baseline.neon --no-progress || true
+
+      - name: Run the deposited quality gates (must all pass)
+        working-directory: ref
+        run: |
+          make cs
+          make stan
+          make rector
+          make test

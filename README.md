@@ -1,5 +1,10 @@
 # bootstrap-web-setup
 
+[![CI](https://github.com/Labault/bootstrap-web-setup/actions/workflows/ci.yml/badge.svg)](https://github.com/Labault/bootstrap-web-setup/actions/workflows/ci.yml)
+[![Tests](https://github.com/Labault/bootstrap-web-setup/actions/workflows/tests.yml/badge.svg)](https://github.com/Labault/bootstrap-web-setup/actions/workflows/tests.yml)
+[![Security](https://github.com/Labault/bootstrap-web-setup/actions/workflows/security.yml/badge.svg)](https://github.com/Labault/bootstrap-web-setup/actions/workflows/security.yml)
+[![Reference](https://github.com/Labault/bootstrap-web-setup/actions/workflows/reference.yml/badge.svg)](https://github.com/Labault/bootstrap-web-setup/actions/workflows/reference.yml)
+
 A Bash CLI — companion to **mac-setup** — that drops a standardized
 quality/CI/security configuration layer into any web project (Symfony,
 optionally with a JS/TS front), new or existing.
