@@ -2,8 +2,8 @@
 # Written by `bootstrap apply`; read by `bootstrap doctor` (Phase 2).
 profile: minimal
 bootstrap_version: 0.4.0
-bootstrap_commit: cbb1a68eb7a4e55772392553c5da441a33ed178b
-applied_at: 2026-06-26T19:43:07Z
+bootstrap_commit: 3c6b6512d93083fdbb0a00441e2412841e70c0e1
+applied_at: 2026-06-26T20:03:45Z
 files:
   - path: .editorconfig
     sha256: 20f6393a197fb7cf8d5d369fef4e0d2211ad26b5dee3eaac86a880c7d390d139
