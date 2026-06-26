@@ -17,26 +17,30 @@ source "$BOOTSTRAP_ROOT/lib/state_read.sh"
 source "$BOOTSTRAP_ROOT/lib/drift.sh"
 
 cmd_doctor() {
-  local target="." override="" strict=0
+  local target="." override="" strict=0 skip_bin_check=0
   while [[ $# -gt 0 ]]; do
     case "$1" in
       -h|--help)
         cat >&2 <<EOF
-Usage: bootstrap doctor [--target <dir>] [--profile <name>] [--strict]
+Usage: bootstrap doctor [--target <dir>] [--profile <name>] [--skip-bin-check] [--strict]
 
 Check that every binary required by the (detected or given) profile is installed,
 and report configuration drift against the current templates when the project has
 a .bootstrap.yaml. Drift is informational by default.
 
-  --strict   Exit non-zero if drift is detected (useful in CI).
+  --skip-bin-check   Report missing binaries but don't exit non-zero for them
+                     (e.g. checking drift on a machine without the lint tools).
+  --strict           Exit non-zero if drift is detected (useful in CI).
 
-Exit code: 1 if a required binary is missing (or, with --strict, if drift exists).
+Exit code: 1 if a required binary is missing (unless --skip-bin-check), or with
+--strict if drift exists.
 EOF
         return 0 ;;
       --target) target="${2:?--target needs a value}"; shift ;;
       --target=*) target="${1#*=}" ;;
       --profile) override="${2:?--profile needs a value}"; shift ;;
       --profile=*) override="${1#*=}" ;;
+      --skip-bin-check) skip_bin_check=1 ;;
       --strict) strict=1 ;;
       *) die "Unknown option for 'doctor': $1" ;;
     esac
@@ -63,6 +67,8 @@ EOF
 
   if [[ "$missing" -eq 0 ]]; then
     log_ok "All ${total} required binaries are present."
+  elif [[ "$skip_bin_check" -eq 1 ]]; then
+    log_warn "${missing}/${total} required binaries are missing (not blocking: --skip-bin-check)."
   else
     log_error "${missing}/${total} required binaries are missing (see install commands above)."
   fi
@@ -98,7 +104,7 @@ EOF
   fi
 
   # --- Exit code ---------------------------------------------------------------
-  [[ "$missing" -gt 0 ]] && return 1
+  [[ "$missing" -gt 0 && "$skip_bin_check" -ne 1 ]] && return 1
   [[ "$strict" -eq 1 && "$drift_found" -eq 1 ]] && return 1
   return 0
 }

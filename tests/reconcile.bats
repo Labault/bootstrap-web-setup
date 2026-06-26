@@ -48,7 +48,7 @@ load test_helper
   printf 'disable=SC2034\n' >> "$WORK/templates/common/.shellcheckrc"
   sed -i.bak '1s/.*/# my header/' "$PROJ/.shellcheckrc"; rm -f "$PROJ/.shellcheckrc.bak"
   "$WBS" reconcile --target "$PROJ" >/dev/null
-  run "$WBS" doctor --target "$PROJ"
+  run "$WBS" doctor --target "$PROJ" --skip-bin-check
   [ "$status" -eq 0 ]
   [[ "$output" == *"No drift"* ]]
   [[ "$output" == *"local edits kept"* ]]

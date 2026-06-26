@@ -57,6 +57,6 @@ load test_helper
 @test "corrupt .bootstrap.yaml is reported as unreadable" {
   apply_minimal "$BS" "$PROJ" >/dev/null
   printf 'garbage not yaml @#$\n' > "$PROJ/.bootstrap.yaml"
-  run "$BS" doctor --target "$PROJ"
+  run "$BS" doctor --target "$PROJ" --skip-bin-check
   [[ "$output" == *"unreadable"* ]]
 }
