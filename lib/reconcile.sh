@@ -6,8 +6,9 @@
 # user to resolve. Depends on: common.sh, manifest.sh, merge.sh, apply.sh
 # (backup_file, deposit_merge, deposit_file), state_read.sh.
 
-# three_way_merge <path> <src> <commit> -> status token (merged | conflict | replaced-nobase)
+# three_way_merge <path> <src> <commit>
 # A = local (on disk), O = base (template@commit), B = new template.
+# Sets DEPOSIT_RESULT: updated | merged | conflict | insync | replaced-nobase.
 three_way_merge() {
   local path="$1" src="$2" commit="$3"
   local dpath="$TARGET_DIR/$path" srcpath="$BOOTSTRAP_ROOT/$src"
@@ -31,10 +32,11 @@ three_way_merge() {
     if is_dry_run; then
       log_dry "update ${path} (template changed; no local edits)"
     else
-      backup_file "$dpath" >/dev/null; cp "$srcpath" "$dpath"
+      backup_file "$dpath"
+      cp "$srcpath" "$dpath" || die "cannot write ${path}"
       log_ok "update ${path} (fast-forward, backed up)"
     fi
-    printf 'updated\n'; return
+    DEPOSIT_RESULT='updated'; return
   fi
 
   local tmpM; tmpM="$(mktemp)"
@@ -48,30 +50,29 @@ three_way_merge() {
   # reconcile). Don't back up or rewrite — report it as in sync.
   if [[ "$rc" -eq 0 && "$(file_sha256 "$tmpM")" == "$(file_sha256 "$dpath")" ]]; then
     rm -f "$tmpM"
-    printf 'insync\n'
-    return
+    DEPOSIT_RESULT='insync'; return
   fi
 
   if is_dry_run; then
     rm -f "$tmpM"
     if [[ "$rc" -eq 0 ]]; then
       log_dry "merge ${path} — would merge cleanly (local edits + template update)"
-      printf 'merged\n'
+      DEPOSIT_RESULT='merged'
     else
       log_dry "merge ${path} — would merge WITH CONFLICTS (${rc}) to resolve by hand"
-      printf 'conflict\n'
+      DEPOSIT_RESULT='conflict'
     fi
     return
   fi
 
-  backup_file "$dpath" >/dev/null
-  mv "$tmpM" "$dpath"
+  backup_file "$dpath"
+  mv "$tmpM" "$dpath" || die "cannot write merged ${path}"
   if [[ "$rc" -eq 0 ]]; then
     log_ok "merge ${path} — merged cleanly (backed up first)"
-    printf 'merged\n'
+    DEPOSIT_RESULT='merged'
   else
     log_warn "merge ${path} — ${rc} conflict(s) written with markers; resolve by hand (backed up first)"
-    printf 'conflict\n'
+    DEPOSIT_RESULT='conflict'
   fi
 }
 
@@ -81,16 +82,17 @@ _reconcile_no_base() {
   local dpath="$TARGET_DIR/$path"
   if is_dry_run; then
     log_dry "replace ${path} — no merge base available; would back up + replace"
-    printf 'replaced-nobase\n'
-    return
+    DEPOSIT_RESULT='replaced-nobase'; return
   fi
-  backup_file "$dpath" >/dev/null
-  cp "$srcpath" "$dpath"
+  backup_file "$dpath"
+  cp "$srcpath" "$dpath" || die "cannot write ${path}"
   log_warn "replace ${path} — no merge base (commit unknown); backed up + replaced"
-  printf 'replaced-nobase\n'
+  DEPOSIT_RESULT='replaced-nobase'
 }
 
-# reconcile_file <path> <src> <strategy> <commit> -> status token
+# reconcile_file <path> <src> <strategy> <commit>
+# Sets DEPOSIT_RESULT (see deposit_merge / three_way_merge, plus
+# skip-nosrc | recreated | insync). Called directly (not in $()).
 reconcile_file() {
   local path="$1" src="$2" strategy="$3" commit="$4"
   local dpath="$TARGET_DIR/$path" srcpath="$BOOTSTRAP_ROOT/$src"
@@ -101,18 +103,22 @@ reconcile_file() {
     merge-json)      deposit_merge "$srcpath" "$dpath" "$strategy" render_extensions_json canonical_json ; return ;;
   esac
 
-  if [[ ! -f "$srcpath" ]]; then printf 'skip-nosrc\n'; return; fi
+  if [[ ! -f "$srcpath" ]]; then DEPOSIT_RESULT='skip-nosrc'; return; fi
+
+  if [[ -d "$dpath" ]]; then die "cannot reconcile ${path}: a directory exists there."; fi
 
   if [[ ! -e "$dpath" ]]; then
     if is_dry_run; then log_dry "recreate ${path} (missing)"; else
-      mkdir -p "$(dirname "$dpath")"; cp "$srcpath" "$dpath"; log_ok "recreate ${path}"
+      mkdir -p "$(dirname "$dpath")" || die "cannot create parent dir for ${path}"
+      cp "$srcpath" "$dpath" || die "cannot write ${path}"
+      log_ok "recreate ${path}"
     fi
-    printf 'recreated\n'; return
+    DEPOSIT_RESULT='recreated'; return
   fi
 
   # Already identical to the current template -> nothing to do.
   if [[ "$(file_sha256 "$dpath")" == "$(file_sha256 "$srcpath")" ]]; then
-    printf 'insync\n'; return
+    DEPOSIT_RESULT='insync'; return
   fi
 
   # Otherwise 3-way merge. It fast-forwards when the file equals the base (no
@@ -147,7 +153,9 @@ reconcile_run() {
       log_info "orphaned ${path} — no longer in profile, left as-is"
       n_orphan=$((n_orphan + 1)); continue
     fi
-    status="$(reconcile_file "$path" "${cur_src[$path]}" "${cur_strat[$path]}" "$commit")"
+    DEPOSIT_RESULT=''
+    reconcile_file "$path" "${cur_src[$path]}" "${cur_strat[$path]}" "$commit"
+    status="$DEPOSIT_RESULT"
     case "$status" in
       insync|identical) n_insync=$((n_insync + 1)) ;;
       updated) n_updated=$((n_updated + 1)) ;;
@@ -161,7 +169,8 @@ reconcile_run() {
   # Files the current profile adds that the project never received -> deposit them.
   for dest in "${cur_order[@]}"; do
     [[ -n "${tracked[$dest]+x}" ]] && continue
-    deposit_file "$BOOTSTRAP_ROOT/${cur_src[$dest]}" "$target/$dest" "${cur_strat[$dest]}" >/dev/null
+    DEPOSIT_RESULT=''
+    deposit_file "$BOOTSTRAP_ROOT/${cur_src[$dest]}" "$target/$dest" "${cur_strat[$dest]}"
     n_new=$((n_new + 1))
   done
 

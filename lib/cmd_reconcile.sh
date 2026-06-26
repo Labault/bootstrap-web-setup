@@ -46,6 +46,7 @@ EOF
   # git for the 3-way merge (git merge-file / git show), jq for merge rendering.
   require_cmd git
   require_cmd jq
+  warn_if_bootstrap_dirty
 
   local state="$target/$STATE_FILE_NAME"
   [[ -f "$state" ]] || die "No ${STATE_FILE_NAME} in ${target} — nothing to reconcile (run 'bootstrap apply' first)."

@@ -1,15 +1,20 @@
 # shellcheck shell=bash
-# File-deposit engine, shared by `apply`.
+# File-deposit engine, shared by `apply` and `reconcile`.
 #
-# Step 4 added the absent-file case + --dry-run.
-# Step 5 adds idempotence and collision handling for `replace` files:
-#   - destination identical to template  -> no-op (idempotence)
-#   - destination differs                -> backup then replace
-#                                           (or skip if --no-overwrite)
-# Merge-strategy files (.gitignore, extensions.json) that already exist and
-# differ are deferred to step 6; until then they report `merge-pending`.
+# Behaviour per file:
+#   - absent destination          -> write it
+#   - destination == template      -> no-op (idempotent)
+#   - destination differs (replace)-> back up then overwrite (or skip if
+#                                     --no-overwrite)
+#   - .gitignore / extensions.json -> additive merge (idempotent)
 #
-# Depends on lib/common.sh (logging, is_dry_run) and lib/merge.sh (renderers).
+# IMPORTANT (robustness): the deposit functions report their outcome via the
+# global DEPOSIT_RESULT and are called DIRECTLY (never as `$(deposit_file …)`),
+# because `set -e` is not effective inside a command substitution — a failing
+# cp/mkdir would otherwise be swallowed and apply would falsely report success.
+# Every filesystem write is also explicitly `|| die`d for a clear message.
+#
+# Depends on lib/common.sh (logging, is_dry_run, die) and lib/merge.sh (renderers).
 
 # shellcheck source=lib/merge.sh
 source "$BOOTSTRAP_ROOT/lib/merge.sh"
@@ -20,28 +25,25 @@ source "$BOOTSTRAP_ROOT/lib/state.sh"
 # backup so runs that overwrite nothing leave no empty directories behind.
 BACKUP_BASE="${BACKUP_BASE:-$HOME/Documents/Backups/bootstrap}"
 NO_OVERWRITE="${NO_OVERWRITE:-0}"
+# Outcome of the last deposit_*/reconcile_* call (set by them, read by callers).
+DEPOSIT_RESULT=""
 
 # backup_file <destpath>
 # Copies an existing destination into the run's backup dir, preserving its path
-# relative to the target project. Echoes the backup path on stdout.
+# relative to the target project. Aborts (die) if the backup can't be made, so we
+# never overwrite a file we failed to back up.
 backup_file() {
   local dest="$1"
   local rel="${dest#"$TARGET_DIR"/}"
   local bpath="$BACKUP_RUN_DIR/$rel"
-  mkdir -p "$(dirname "$bpath")"
-  cp -p "$dest" "$bpath"
-  printf '%s\n' "$bpath"
+  mkdir -p "$(dirname "$bpath")" || die "cannot create backup dir for ${rel}"
+  cp -p "$dest" "$bpath" || die "cannot back up ${rel} (is it a directory, or unreadable?)"
 }
 
 # deposit_file <srcpath> <destpath> <strategy>
-# Deposits one file and prints a single status token to stdout for tallying.
-# Status tokens:
-#   created            — written (or, in dry-run, would be written)
-#   identical          — already matches the template (no-op)
-#   replaced           — backed up then overwritten (or would be, in dry-run)
-#   skipped-nooverwrite— differs but --no-overwrite is set
-#   merge-pending      — merge-strategy file differs (handled in step 6)
-#   skipped-nosrc      — template source not yet authored (dev-time only)
+# Deposits one file. Sets DEPOSIT_RESULT to one of:
+#   created | identical | replaced | skipped-nooverwrite | skipped-nosrc
+# Called directly (not in $()) so write failures abort via set -e / die.
 deposit_file() {
   local src="$1" dest="$2" strategy="${3:-replace}"
   local rel="${dest#"$TARGET_DIR"/}"
@@ -50,8 +52,13 @@ deposit_file() {
 
   if [[ ! -f "$src" ]]; then
     log_warn "skip ${rel} — template source not found (${src#"$BOOTSTRAP_ROOT"/})"
-    printf 'skipped-nosrc\n'
-    return 0
+    DEPOSIT_RESULT='skipped-nosrc'; return 0
+  fi
+
+  # A destination that exists as a directory can't be a config file we manage —
+  # refuse rather than fail half-way (cp onto a dir) and report a false success.
+  if [[ -d "$dest" ]]; then
+    die "cannot deposit ${rel}: a directory exists there. Remove it and re-run."
   fi
 
   # Merge strategies have their own renderer-driven path (idempotent, additive).
@@ -66,45 +73,40 @@ deposit_file() {
     if is_dry_run; then
       log_dry "create ${label}"
     else
-      mkdir -p "$(dirname "$dest")"
-      cp "$src" "$dest"
+      mkdir -p "$(dirname "$dest")" || die "cannot create parent dir for ${rel}"
+      cp "$src" "$dest" || die "cannot write ${rel} (permission denied? read-only target?)"
       log_ok "create ${label}"
     fi
-    printf 'created\n'
-    return 0
+    DEPOSIT_RESULT='created'; return 0
   fi
 
   # Present and byte-identical: nothing to do.
   if cmp -s "$src" "$dest"; then
     log_info "ok ${rel} — already up to date"
-    printf 'identical\n'
-    return 0
+    DEPOSIT_RESULT='identical'; return 0
   fi
 
   if [[ "$NO_OVERWRITE" == "1" ]]; then
     log_warn "skip ${rel} — differs but --no-overwrite is set"
-    printf 'skipped-nooverwrite\n'
-    return 0
+    DEPOSIT_RESULT='skipped-nooverwrite'; return 0
   fi
 
   local bpath="$BACKUP_RUN_DIR/$rel"
   if is_dry_run; then
     log_dry "replace ${rel} — would back up to $(tildify "$bpath") then overwrite"
-    printf 'replaced\n'
-    return 0
+    DEPOSIT_RESULT='replaced'; return 0
   fi
 
-  backup_file "$dest" >/dev/null
-  cp "$src" "$dest"
+  backup_file "$dest"
+  cp "$src" "$dest" || die "cannot write ${rel} (permission denied? read-only target?)"
   log_ok "replace ${rel} — backed up to $(tildify "$bpath")"
-  printf 'replaced\n'
+  DEPOSIT_RESULT='replaced'
 }
 
 # deposit_merge <src> <dest> <strategy> <render_fn> <canon_fn>
 # Drives a merge-strategy file. <render_fn> prints the full desired content;
-# <canon_fn> (may be empty) canonicalizes a file for change detection (used for
-# JSON, where formatting differences must not count as a change).
-# Status tokens: created | identical | merged | skipped-nooverwrite.
+# <canon_fn> (may be empty) canonicalizes a file for change detection.
+# Sets DEPOSIT_RESULT: created | identical | merged | skipped-nooverwrite.
 deposit_merge() {
   local src="$1" dest="$2" strategy="$3" render_fn="$4" canon_fn="$5"
   local rel="${dest#"$TARGET_DIR"/}"
@@ -112,18 +114,23 @@ deposit_merge() {
   local bpath="$BACKUP_RUN_DIR/$rel"
 
   local new; new="$("$render_fn" "$dest" "$src")"
+  # A render that yields nothing from a non-empty file means the renderer failed
+  # (e.g. invalid existing JSON). Abort rather than write an empty file or claim
+  # success while doing nothing.
+  if [[ -s "$dest" && -z "$new" ]]; then
+    die "cannot merge ${rel}: rendering failed (is the existing file valid?)."
+  fi
 
   # Fresh file: just write the rendered content (no backup needed).
   if [[ ! -e "$dest" ]]; then
     if is_dry_run; then
       log_dry "create ${label}"
     else
-      mkdir -p "$(dirname "$dest")"
-      printf '%s\n' "$new" > "$dest"
+      mkdir -p "$(dirname "$dest")" || die "cannot create parent dir for ${rel}"
+      printf '%s\n' "$new" > "$dest" || die "cannot write ${rel}"
       log_ok "create ${label}"
     fi
-    printf 'created\n'
-    return 0
+    DEPOSIT_RESULT='created'; return 0
   fi
 
   # Existing file: has the merged result actually changed anything?
@@ -137,26 +144,23 @@ deposit_merge() {
   fi
   if [[ "$same" == 1 ]]; then
     log_info "ok ${rel} — already up to date [${strategy}]"
-    printf 'identical\n'
-    return 0
+    DEPOSIT_RESULT='identical'; return 0
   fi
 
   if [[ "$NO_OVERWRITE" == "1" ]]; then
     log_warn "skip ${rel} — would merge but --no-overwrite is set"
-    printf 'skipped-nooverwrite\n'
-    return 0
+    DEPOSIT_RESULT='skipped-nooverwrite'; return 0
   fi
 
   if is_dry_run; then
     log_dry "merge ${label} — would back up to $(tildify "$bpath") then update"
-    printf 'merged\n'
-    return 0
+    DEPOSIT_RESULT='merged'; return 0
   fi
 
-  backup_file "$dest" >/dev/null
-  printf '%s\n' "$new" > "$dest"
+  backup_file "$dest"
+  printf '%s\n' "$new" > "$dest" || die "cannot write ${rel}"
   log_ok "merge ${label} — backed up to $(tildify "$bpath")"
-  printf 'merged\n'
+  DEPOSIT_RESULT='merged'
 }
 
 # run_apply <profile> <target-dir>
@@ -178,7 +182,11 @@ run_apply() {
     [[ -z "$dest" ]] && continue
     srcpath="$BOOTSTRAP_ROOT/$src"
     destpath="$TARGET_DIR/$dest"
-    status="$(deposit_file "$srcpath" "$destpath" "$strat")"
+    # Called directly (not in $()) so a failed write aborts instead of being
+    # swallowed; the outcome comes back in DEPOSIT_RESULT.
+    DEPOSIT_RESULT=''
+    deposit_file "$srcpath" "$destpath" "$strat"
+    status="$DEPOSIT_RESULT"
     case "$status" in
       created)             n_created=$((n_created + 1)) ;;
       identical)           n_identical=$((n_identical + 1)) ;;

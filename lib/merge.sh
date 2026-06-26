@@ -24,7 +24,10 @@ render_gitignore() {
     return 0
   fi
 
-  if grep -qxF "$GITIGNORE_BEGIN" "$dest"; then
+  # Replace the block in place ONLY when BOTH markers are present. A lone begin
+  # marker (corrupted/hand-edited block) must NOT cause us to delete everything
+  # after it — fall through to the append path, which preserves all user content.
+  if grep -qxF "$GITIGNORE_BEGIN" "$dest" && grep -qxF "$GITIGNORE_END" "$dest"; then
     # Replace the existing block in place. The section is fed through a file and
     # read with getline rather than passed via -v: BSD awk (macOS default)
     # rejects newlines in -v assignments.
@@ -67,6 +70,7 @@ render_extensions_json() {
   local dest="$1" src="$2"
   require_cmd jq
   if [[ -s "$dest" ]]; then
+    jq empty "$dest" 2>/dev/null || die "invalid JSON in ${dest#"$TARGET_DIR"/} — fix it (or remove it) and re-run."
     jq -s "$EXTENSIONS_JQ_FILTER" "$dest" "$src"
   else
     jq -s "$EXTENSIONS_JQ_FILTER" <(printf '{}\n') "$src"
