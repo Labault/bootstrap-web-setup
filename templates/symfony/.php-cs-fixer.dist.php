@@ -1,6 +1,11 @@
 <?php
 
 // Managed by bootstrap. PHP-CS-Fixer with the @Symfony ruleset (§11.7).
+//
+// PHP-CS-Fixer owns code style here, including `declare(strict_types=1);`
+// placement. We enforce strict types right after `<?php` (no blank line in
+// between) so it agrees with Rector's declare handling — otherwise the cs and
+// rector dry-run gates fight over that one line.
 
 $finder = (new PhpCsFixer\Finder())
     ->in(__DIR__)
@@ -12,5 +17,7 @@ return (new PhpCsFixer\Config())
     ->setRules([
         '@Symfony' => true,
         '@Symfony:risky' => true,
+        'declare_strict_types' => true,
+        'blank_line_after_opening_tag' => false,
     ])
     ->setFinder($finder);
