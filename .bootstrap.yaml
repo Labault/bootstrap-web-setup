@@ -1,9 +1,9 @@
 # Managed by bootstrap — do not edit by hand.
 # Written by `bootstrap apply`; read by `bootstrap doctor` (Phase 2).
 profile: minimal
-bootstrap_version: 0.3.1
-bootstrap_commit: 0626f6b43c33b597e4cd7fb18a92a0ac36e9a8eb
-applied_at: 2026-06-26T18:43:38Z
+bootstrap_version: 0.3.2
+bootstrap_commit: 7e6103fe9eaf8b79e346cbdc442ad6227803f767
+applied_at: 2026-06-26T19:07:30Z
 files:
   - path: .editorconfig
     sha256: 20f6393a197fb7cf8d5d369fef4e0d2211ad26b5dee3eaac86a880c7d390d139
