@@ -84,6 +84,9 @@ EOF
     fi
     # Drift is compared against the profile that was actually applied.
     detect_drift "$target" "${rec_profile:-$profile}" || drift_found=1
+  else
+    printf '\n' >&2
+    log_info "Drift check skipped — no ${STATE_FILE_NAME} (project not set up by bootstrap yet)."
   fi
 
   # --- Exit code ---------------------------------------------------------------

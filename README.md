@@ -65,10 +65,34 @@ See the per-profile pages in [docs/profiles/](docs/profiles/).
 - **Backups:** anything overwritten is copied to
   `~/Documents/Backups/bootstrap/<project>/<timestamp>/` first.
 - **State:** each `apply` writes `.bootstrap.yaml` (profile, version, files +
-  hashes) — the trace that will enable drift detection later.
+  hashes) — the trace that powers drift detection.
 - **Hooks:** `pre-commit` is installed after deposit (Husky on `fullstack`).
 - **Manifests:** bootstrap never edits `composer.json` / `package.json`; it only
   suggests the `composer require --dev` / `npm install -D` lines to run.
+
+## Drift detection
+
+Once a project has a `.bootstrap.yaml`, `bootstrap doctor` also reports how its
+config has drifted from the current templates — it **signals only, it never
+merges**. For each tracked file it compares the hash recorded at apply time, the
+file on disk, and what `apply` would produce now:
+
+| Status | Meaning |
+| ------ | ------- |
+| in sync | matches the current template |
+| behind | template updated since apply; re-apply to update |
+| modified locally | edited after apply; re-apply backs up then overwrites |
+| missing | deleted; re-apply would recreate |
+| new | added to the profile but never received |
+| orphaned | tracked but no longer in the profile |
+
+```sh
+bootstrap doctor              # reports drift, exit 0 (informational)
+bootstrap doctor --strict     # exit non-zero if drift — for CI
+```
+
+To reconcile, re-run `bootstrap apply` (a backup is taken first). There is no
+automatic merge; review the backups afterwards.
 
 ## License
 
