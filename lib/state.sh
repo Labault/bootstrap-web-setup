@@ -11,9 +11,12 @@
 write_bootstrap_state() {
   local target="$1" profile="$2"
   local statefile="$target/$STATE_FILE_NAME"
-  local version applied_at
+  local version applied_at commit
   version="$(bootstrap_version)"
   applied_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  # The bootstrap repo commit at apply time — lets `reconcile` retrieve the base
+  # template (O) via `git show <commit>:...` for a 3-way merge (Phase 3).
+  commit="$(git -C "$BOOTSTRAP_ROOT" rev-parse HEAD 2>/dev/null || printf 'unknown')"
 
   {
     printf '# Managed by bootstrap — do not edit by hand.\n'
@@ -22,6 +25,7 @@ write_bootstrap_state() {
     printf '# Written by `bootstrap apply`; read by `bootstrap doctor` (Phase 2).\n'
     printf 'profile: %s\n' "$profile"
     printf 'bootstrap_version: %s\n' "$version"
+    printf 'bootstrap_commit: %s\n' "$commit"
     printf 'applied_at: %s\n' "$applied_at"
     printf 'files:\n'
     local entry rel strat hash
