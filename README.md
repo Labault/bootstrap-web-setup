@@ -21,9 +21,11 @@ analysis, CI workflows, secret scanning, Dependabot…) without copy-pasting con
 files from one repo to the next and letting them drift apart.
 
 It is the **project-level companion** to
-[mac-dev-setup](https://github.com/Labault/mac-dev-setup): mac-setup tools your
-**machine** (installs the binaries), bootstrap tools your **project** (deposits
-the config those binaries read).
+[mac-dev-setup](https://github.com/Labault/mac-dev-setup), and its logical
+continuation one level down: mac-setup tools your **machine** (installs the
+binaries), bootstrap tools your **project** (deposits the config those binaries
+read). Same author, same conventions — the two are maintained together and
+evolve in lock-step.
 
 ## How it works at a glance
 
