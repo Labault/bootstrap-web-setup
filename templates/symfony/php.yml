@@ -37,7 +37,7 @@ jobs:
         run: vendor/bin/phpstan analyse --no-progress
 
       - name: Rector (dry-run)
-        run: vendor/bin/rector process --dry-run --no-progress
+        run: vendor/bin/rector process --dry-run --no-progress-bar
 
       - name: Tests
         run: |

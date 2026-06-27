@@ -48,7 +48,10 @@ repos:
       # --- PHP ---
       - id: php-cs-fixer
         name: php-cs-fixer
-        entry: php-cs-fixer fix
+        # pre-commit passes the staged files as args; --path-mode=intersection
+        # makes cs-fixer honour its own Finder (it fixes staged ∩ Finder, not the
+        # raw arg list). --config pins the rules instead of CWD-dependent autodiscovery.
+        entry: php-cs-fixer fix --path-mode=intersection --config=.php-cs-fixer.dist.php
         language: system
         types: [php]
         require_serial: true
@@ -62,7 +65,8 @@ repos:
 
       - id: rector
         name: rector (dry-run)
-        entry: rector process --dry-run --no-progress
+        # Rector's flag is --no-progress-bar (not phpstan's --no-progress).
+        entry: rector process --dry-run --no-progress-bar
         language: system
         types: [php]
         pass_filenames: false
