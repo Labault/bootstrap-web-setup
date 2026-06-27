@@ -1,0 +1,39 @@
+{
+  // Managed by bootstrap (fullstack profile). Strict TypeScript config.
+  // Type-checks a Symfony front (assets/) at the highest level. Bundling is your
+  // bundler's job (Vite / Webpack Encore), so this config does NOT emit — it is
+  // used by `tsc --noEmit` in CI and by type-aware ESLint. tsconfig is JSONC, so
+  // these comments are intentional. Adjust `include`/`lib` for your project.
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+
+    // --- strictness: maxed out ---
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+
+    // --- module hygiene ---
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+
+    // type-check only; the bundler emits the runtime JS.
+    "noEmit": true
+  },
+  "include": ["assets/**/*.ts", "assets/**/*.tsx"],
+  "exclude": ["node_modules", "vendor", "public", "var", "dist", "build"]
+}

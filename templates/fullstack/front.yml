@@ -28,6 +28,14 @@ jobs:
             npm install
           fi
 
+      - name: TypeScript (type-check)
+        run: |
+          if git ls-files '*.ts' '*.tsx' | grep -q .; then
+            npx tsc --noEmit
+          else
+            echo "No TypeScript sources found — skipping type-check."
+          fi
+
       - name: ESLint
         run: npx eslint .
 

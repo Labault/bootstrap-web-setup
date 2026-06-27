@@ -16,6 +16,9 @@ requires_bin:
 suggest_npm:
   - eslint
   - "@eslint/js"
+  - typescript
+  - typescript-eslint
+  - globals
   - prettier
   - husky
   - lint-staged
@@ -23,6 +26,8 @@ suggest_npm:
 files:
   - src: templates/fullstack/eslint.config.js
     dest: eslint.config.js
+  - src: templates/fullstack/tsconfig.json
+    dest: tsconfig.json
   - src: templates/fullstack/.prettierrc
     dest: .prettierrc
   - src: templates/fullstack/.prettierignore
