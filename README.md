@@ -39,6 +39,8 @@ binaries.** The tools that read those files come from your machine.
 - `bootstrap reconcile` 3-way-merges template updates while keeping your local edits.
 - Anything overwritten is backed up first; every mutating command has `--dry-run`.
 
+![bootstrap-web-setup system overview: install.sh sets up the bootstrap CLI, which exposes apply, doctor, reconcile and update; bootstrap apply deposits config files into your project, writes a .bootstrap.yaml state file, installs git hooks, and backs up replaced files — it writes config only, the binaries come from mac-setup](docs/assets/images/system-overview.svg)
+
 ## Quick start (30 seconds)
 
 ```sh
