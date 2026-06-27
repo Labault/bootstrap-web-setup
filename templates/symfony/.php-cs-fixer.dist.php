@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // Managed by bootstrap. PHP-CS-Fixer with the @Symfony ruleset (§11.7).
 //
 // PHP-CS-Fixer owns code style here, including `declare(strict_types=1);`
