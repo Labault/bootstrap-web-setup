@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 320" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif" role="img" aria-labelledby="title desc">
+  <title id="title">bootstrap lifecycle: apply, doctor, reconcile</title>
+  <desc id="desc">The one-shot evolutive lifecycle. apply deposits the config and records a .bootstrap.yaml state file. Over time, doctor compares that state against the current templates and signals drift. reconcile 3-way-merges template updates while keeping local edits, bringing the project back in sync. Backups are taken before any write and every step has a dry-run.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#6b7280"/>
+    </marker>
+  </defs>
+  <rect width="860" height="320" fill="#ffffff"/>
+
+  <!-- apply -->
+  <rect x="40" y="60" width="220" height="96" rx="10" fill="#e9f6ec" stroke="#3fa45e" stroke-width="1.5"/>
+  <text x="150" y="92" text-anchor="middle" font-size="16" font-weight="700" fill="#1f2937">apply</text>
+  <text x="150" y="116" text-anchor="middle" font-size="12.5" fill="#374151">deposit config files</text>
+  <text x="150" y="136" text-anchor="middle" font-size="12.5" fill="#374151">record .bootstrap.yaml</text>
+
+  <!-- doctor -->
+  <rect x="320" y="60" width="220" height="96" rx="10" fill="#e6f0ff" stroke="#3b74d6" stroke-width="1.5"/>
+  <text x="430" y="92" text-anchor="middle" font-size="16" font-weight="700" fill="#1f2937">doctor</text>
+  <text x="430" y="116" text-anchor="middle" font-size="12.5" fill="#374151">compare state vs templates</text>
+  <text x="430" y="136" text-anchor="middle" font-size="12.5" fill="#374151">→ signal drift</text>
+
+  <!-- reconcile -->
+  <rect x="600" y="60" width="220" height="96" rx="10" fill="#fff3e6" stroke="#e08a3c" stroke-width="1.5"/>
+  <text x="710" y="92" text-anchor="middle" font-size="16" font-weight="700" fill="#1f2937">reconcile</text>
+  <text x="710" y="116" text-anchor="middle" font-size="12.5" fill="#374151">3-way merge</text>
+  <text x="710" y="136" text-anchor="middle" font-size="12.5" fill="#374151">keep local edits</text>
+
+  <!-- arrows between -->
+  <line x1="260" y1="108" x2="320" y2="108" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="540" y1="108" x2="600" y2="108" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="290" y="100" text-anchor="middle" font-size="10.5" fill="#9aa1ab">over time</text>
+  <text x="570" y="100" text-anchor="middle" font-size="10.5" fill="#9aa1ab">drift?</text>
+
+  <!-- loop back to in sync -->
+  <path d="M710 156 L710 220 L150 220 L150 158" fill="none" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrow)"/>
+  <text x="430" y="214" text-anchor="middle" font-size="12" fill="#4b5563">back in sync — re-run doctor / reconcile as the templates evolve</text>
+
+  <!-- note -->
+  <text x="430" y="270" text-anchor="middle" font-size="12" fill="#6b7280">A backup is taken before any write · every step has a --dry-run</text>
+</svg>

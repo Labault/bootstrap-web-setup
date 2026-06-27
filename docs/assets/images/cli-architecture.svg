@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 470" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif" role="img" aria-labelledby="title desc">
+  <title id="title">bootstrap CLI architecture</title>
+  <desc id="desc">bin/bootstrap is the dispatcher: it parses global flags, guards bash 4+, sources lib/common.sh and dispatches to one lib/cmd_NAME.sh module per command (apply, doctor, reconcile, update, list). Those modules drive the engine libraries (manifest, detect, merge, apply, state, state_read, drift, reconcile, bincheck), which read the declarative profile manifests in profiles/ and the files to deposit in templates/.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#6b7280"/>
+    </marker>
+  </defs>
+  <rect width="880" height="470" fill="#ffffff"/>
+
+  <!-- bin/bootstrap -->
+  <rect x="280" y="22" width="320" height="60" rx="10" fill="#fff3e6" stroke="#e08a3c" stroke-width="1.5"/>
+  <text x="440" y="48" text-anchor="middle" font-size="16" font-weight="700" fill="#1f2937">bin/bootstrap</text>
+  <text x="440" y="69" text-anchor="middle" font-size="11.5" fill="#4b5563">dispatcher · global flags · bash 4+ guard</text>
+
+  <line x1="440" y1="82" x2="440" y2="104" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- lib/common.sh -->
+  <rect x="300" y="104" width="280" height="46" rx="10" fill="#e6f0ff" stroke="#3b74d6" stroke-width="1.5"/>
+  <text x="440" y="132" text-anchor="middle" font-size="13.5" font-weight="700" fill="#1f2937">lib/common.sh — logging · dry-run · die</text>
+
+  <!-- branch lines to command modules -->
+  <line x1="440" y1="150" x2="99" y2="196" stroke="#6b7280" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <line x1="440" y1="150" x2="270" y2="196" stroke="#6b7280" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <line x1="440" y1="150" x2="441" y2="196" stroke="#6b7280" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <line x1="440" y1="150" x2="612" y2="196" stroke="#6b7280" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <line x1="440" y1="150" x2="783" y2="196" stroke="#6b7280" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- command modules -->
+  <rect x="24" y="198" width="150" height="42" rx="9" fill="#e9f6ec" stroke="#3fa45e" stroke-width="1.5"/>
+  <text x="99" y="224" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2937">cmd_apply</text>
+  <rect x="195" y="198" width="150" height="42" rx="9" fill="#e9f6ec" stroke="#3fa45e" stroke-width="1.5"/>
+  <text x="270" y="224" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2937">cmd_doctor</text>
+  <rect x="366" y="198" width="150" height="42" rx="9" fill="#e9f6ec" stroke="#3fa45e" stroke-width="1.5"/>
+  <text x="441" y="224" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2937">cmd_reconcile</text>
+  <rect x="537" y="198" width="150" height="42" rx="9" fill="#e9f6ec" stroke="#3fa45e" stroke-width="1.5"/>
+  <text x="612" y="224" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2937">cmd_update</text>
+  <rect x="708" y="198" width="150" height="42" rx="9" fill="#e9f6ec" stroke="#3fa45e" stroke-width="1.5"/>
+  <text x="783" y="224" text-anchor="middle" font-size="13" font-weight="600" fill="#1f2937">cmd_list</text>
+
+  <line x1="441" y1="240" x2="441" y2="286" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- engine -->
+  <rect x="24" y="288" width="560" height="150" rx="10" fill="#f4f5f7" stroke="#8a8f98" stroke-width="1.5"/>
+  <text x="46" y="316" font-size="14" font-weight="700" fill="#1f2937">engine — lib/</text>
+  <text x="46" y="346" font-size="13" fill="#374151">manifest · detect · merge · apply · state · state_read</text>
+  <text x="46" y="372" font-size="13" fill="#374151">drift · reconcile · bincheck</text>
+  <text x="46" y="412" font-size="11.5" fill="#6b7280">writes config files · backs up · records .bootstrap.yaml</text>
+
+  <!-- data sources -->
+  <rect x="612" y="296" width="244" height="56" rx="9" fill="#eef2f7" stroke="#8a8f98" stroke-width="1.5"/>
+  <text x="630" y="320" font-size="13" font-weight="700" fill="#1f2937">profiles/*.yaml</text>
+  <text x="630" y="340" font-size="11" fill="#6b7280">manifests: extends · requires_bin · files</text>
+
+  <rect x="612" y="372" width="244" height="56" rx="9" fill="#eef2f7" stroke="#8a8f98" stroke-width="1.5"/>
+  <text x="630" y="396" font-size="13" font-weight="700" fill="#1f2937">templates/</text>
+  <text x="630" y="416" font-size="11" fill="#6b7280">the files it deposits, by profile</text>
+
+  <line x1="612" y1="324" x2="584" y2="340" stroke="#6b7280" stroke-width="1.3" marker-end="url(#arrow)"/>
+  <line x1="612" y1="400" x2="584" y2="372" stroke="#6b7280" stroke-width="1.3" marker-end="url(#arrow)"/>
+</svg>

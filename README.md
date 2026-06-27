@@ -81,6 +81,8 @@ required**. Profiles inherit from each other.
 | `symfony` | PHP/Symfony | PHPStan, PHP-CS-Fixer, Rector, hadolint, PHP CI, PHP `make` targets |
 | `fullstack` | Symfony + JS/TS front | ESLint, Prettier, Husky + lint-staged, front CI |
 
+![bootstrap profile inheritance: minimal is the language-agnostic base; symfony extends minimal and adds the PHP tooling; fullstack extends symfony and adds the JS/TS front tooling. Detection picks symfony when a composer.json is present, fullstack when a package.json is also present, otherwise minimal; override with the profile flag](docs/assets/images/profile-inheritance.svg)
+
 ### Linting & formatting
 
 EditorConfig, a local-mode `.pre-commit-config.yaml` (editorconfig-checker,
@@ -254,10 +256,16 @@ bootstrap list
 
 ## Going further
 
+bootstrap is **one-shot but evolutive**: `apply` records what it deposited, so it
+can later detect drift and merge template updates without forgetting your edits.
+
+![bootstrap lifecycle: apply deposits the config and records .bootstrap.yaml; over time doctor compares that state against the current templates and signals drift; reconcile 3-way-merges template updates while keeping local edits, bringing the project back in sync. A backup is taken before any write and every step has a dry-run](docs/assets/images/lifecycle.svg)
+
 - Per-profile file lists: [`docs/profiles/`](docs/profiles/) —
   [minimal](docs/profiles/minimal.md) ·
   [symfony](docs/profiles/symfony.md) ·
   [fullstack](docs/profiles/fullstack.md)
+- How the CLI is built: [`docs/architecture.md`](docs/architecture.md)
 - The full design spec (all locked decisions):
   [`docs/cahier-des-charges-bootstrap.md`](docs/cahier-des-charges-bootstrap.md)
 - **Drift detection & reconcile** — see the `doctor` and `reconcile` commands
