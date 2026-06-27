@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 730 430" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" role="img" aria-labelledby="title desc">
+  <title id="title">bootstrap doctor reporting drift</title>
+  <desc id="desc">Terminal output of `bootstrap doctor`. All 8 required binaries are present. The drift check finds two files modified locally (.shellcheckrc and Makefile) while 17 stay in sync, and suggests running bootstrap reconcile to merge the updates while keeping local edits.</desc>
+  <rect width="730" height="430" rx="12" fill="#1e2127"/>
+  <rect width="730" height="36" rx="12" fill="#2b2f37"/>
+  <rect y="22" width="730" height="14" fill="#2b2f37"/>
+  <circle cx="22" cy="18" r="6" fill="#ff5f57"/>
+  <circle cx="44" cy="18" r="6" fill="#febc2e"/>
+  <circle cx="66" cy="18" r="6" fill="#28c840"/>
+  <text x="365" y="23" text-anchor="middle" font-size="12" fill="#8a909c">bootstrap doctor</text>
+
+  <text font-size="13" xml:space="preserve">
+    <tspan x="22" y="66" fill="#7ee787">$ </tspan><tspan fill="#eaecef">bootstrap doctor</tspan>
+    <tspan x="22" y="90" fill="#6cb6ff">• </tspan><tspan fill="#b9bec7">Checking binaries for profile minimal</tspan>
+    <tspan x="22" y="110" fill="#7ee787">  ✓ </tspan><tspan fill="#b9bec7">git  </tspan><tspan fill="#7ee787">✓ </tspan><tspan fill="#b9bec7">pre-commit  </tspan><tspan fill="#7ee787">✓ </tspan><tspan fill="#b9bec7">gitleaks  </tspan><tspan fill="#7ee787">✓ </tspan><tspan fill="#b9bec7">shellcheck  </tspan><tspan fill="#6b7280">+4</tspan>
+    <tspan x="22" y="130" fill="#7ee787">✓ </tspan><tspan fill="#b9bec7">All 8 required binaries are present.</tspan>
+    <tspan x="22" y="160" fill="#6cb6ff">• </tspan><tspan fill="#b9bec7">Drift check (recorded profile minimal)</tspan>
+    <tspan x="22" y="180" fill="#6b7280">  version: 0.4.1 </tspan><tspan fill="#7ee787">(up to date)</tspan>
+    <tspan x="22" y="200" fill="#7ee787">  ✓ </tspan><tspan fill="#b9bec7">.editorconfig</tspan>
+    <tspan x="22" y="220" fill="#e3b341">  ! </tspan><tspan fill="#eaecef">.shellcheckrc </tspan><tspan fill="#8a909c">(modified locally)</tspan>
+    <tspan x="22" y="240" fill="#7ee787">  ✓ </tspan><tspan fill="#b9bec7">.pre-commit-config.yaml</tspan>
+    <tspan x="22" y="260" fill="#e3b341">  ! </tspan><tspan fill="#eaecef">Makefile </tspan><tspan fill="#8a909c">(modified locally)</tspan>
+    <tspan x="22" y="280" fill="#6b7280">  ✓ … 15 more in sync</tspan>
+    <tspan x="22" y="310" fill="#e3b341">! Drift: </tspan><tspan fill="#eaecef">2 modified locally</tspan><tspan fill="#b9bec7">, 0 behind, 0 missing, 0 new (17 in sync).</tspan>
+    <tspan x="22" y="330" fill="#6cb6ff">• </tspan><tspan fill="#b9bec7">To update while keeping local edits (3-way merge, backs up first):</tspan>
+    <tspan x="22" y="350" fill="#7ee787">    bootstrap reconcile</tspan>
+    <tspan x="22" y="390" fill="#7ee787">$ </tspan><tspan fill="#8a909c">▍</tspan>
+  </text>
+</svg>

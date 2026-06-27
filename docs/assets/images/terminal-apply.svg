@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 730 470" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" role="img" aria-labelledby="title desc">
+  <title id="title">bootstrap apply --dry-run</title>
+  <desc id="desc">Terminal output of `bootstrap apply --profile minimal --dry-run`. It previews the files it would create (some with a merge strategy, like .gitignore and .vscode/extensions.json), prints a summary of 19 files created, notes it would write .bootstrap.yaml, and suggests JS dev dependencies without touching package.json.</desc>
+  <rect width="730" height="470" rx="12" fill="#1e2127"/>
+  <rect width="730" height="36" rx="12" fill="#2b2f37"/>
+  <rect y="22" width="730" height="14" fill="#2b2f37"/>
+  <circle cx="22" cy="18" r="6" fill="#ff5f57"/>
+  <circle cx="44" cy="18" r="6" fill="#febc2e"/>
+  <circle cx="66" cy="18" r="6" fill="#28c840"/>
+  <text x="365" y="23" text-anchor="middle" font-size="12" fill="#8a909c">bootstrap apply --dry-run</text>
+
+  <text font-size="13" xml:space="preserve">
+    <tspan x="22" y="66" fill="#7ee787">$ </tspan><tspan fill="#eaecef">bootstrap apply --profile minimal --dry-run</tspan>
+    <tspan x="22" y="90" fill="#6cb6ff">• </tspan><tspan fill="#b9bec7">apply (dry-run) profile minimal -&gt; .</tspan>
+    <tspan x="22" y="113" fill="#6b7280">[dry-run] </tspan><tspan fill="#7ee787">create </tspan><tspan fill="#d7dae0">.editorconfig</tspan>
+    <tspan x="22" y="133" fill="#6b7280">[dry-run] </tspan><tspan fill="#7ee787">create </tspan><tspan fill="#d7dae0">.gitignore </tspan><tspan fill="#e3b341">[merge-gitignore]</tspan>
+    <tspan x="22" y="153" fill="#6b7280">[dry-run] </tspan><tspan fill="#7ee787">create </tspan><tspan fill="#d7dae0">.pre-commit-config.yaml</tspan>
+    <tspan x="22" y="173" fill="#6b7280">[dry-run] </tspan><tspan fill="#7ee787">create </tspan><tspan fill="#d7dae0">.gitleaks.toml</tspan>
+    <tspan x="22" y="193" fill="#6b7280">[dry-run] </tspan><tspan fill="#7ee787">create </tspan><tspan fill="#d7dae0">Makefile</tspan>
+    <tspan x="22" y="213" fill="#6b7280">[dry-run] </tspan><tspan fill="#7ee787">create </tspan><tspan fill="#d7dae0">.vscode/extensions.json </tspan><tspan fill="#e3b341">[merge-json]</tspan>
+    <tspan x="22" y="233" fill="#6b7280">[dry-run] </tspan><tspan fill="#7ee787">create </tspan><tspan fill="#d7dae0">.github/workflows/ci.yml</tspan>
+    <tspan x="22" y="253" fill="#6b7280">              … +10 more files</tspan>
+    <tspan x="22" y="283" fill="#eaecef">• Dry-run: </tspan><tspan fill="#7ee787">19 created</tspan><tspan fill="#b9bec7">, 0 unchanged, 0 replaced, 0 merged, 0 skipped.</tspan>
+    <tspan x="22" y="303" fill="#6b7280">[dry-run] </tspan><tspan fill="#b9bec7">would write .bootstrap.yaml (profile, version, 19 files + hashes)</tspan>
+    <tspan x="22" y="323" fill="#6cb6ff">• </tspan><tspan fill="#b9bec7">hooks: skipped — no .pre-commit-config.yaml deposited yet</tspan>
+    <tspan x="22" y="353" fill="#6cb6ff">• </tspan><tspan fill="#b9bec7">Suggested JS dev deps (bootstrap won't touch package.json):</tspan>
+    <tspan x="22" y="373" fill="#e3b341">    npm install -D @commitlint/cli @commitlint/config-conventional …</tspan>
+    <tspan x="22" y="413" fill="#7ee787">$ </tspan><tspan fill="#8a909c">▍</tspan>
+  </text>
+</svg>

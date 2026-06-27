@@ -54,6 +54,8 @@ bootstrap apply            # auto-detects the profile; add --profile to force on
 This is the fastest path. Keep reading for profiles, deposited files, backups,
 and the full command reference.
 
+![Terminal: bootstrap apply --dry-run on a minimal profile previews the files it would create — some with a merge strategy like .gitignore and .vscode/extensions.json — then prints a summary of 19 files created, notes it would write .bootstrap.yaml, and suggests JS dev dependencies without touching package.json](docs/assets/images/terminal-apply.svg)
+
 ## Table of contents
 
 - [Who this is for](#who-this-is-for)
@@ -260,6 +262,8 @@ bootstrap is **one-shot but evolutive**: `apply` records what it deposited, so i
 can later detect drift and merge template updates without forgetting your edits.
 
 ![bootstrap lifecycle: apply deposits the config and records .bootstrap.yaml; over time doctor compares that state against the current templates and signals drift; reconcile 3-way-merges template updates while keeping local edits, bringing the project back in sync. A backup is taken before any write and every step has a dry-run](docs/assets/images/lifecycle.svg)
+
+![Terminal: bootstrap doctor confirms all 8 required binaries are present, then reports drift — two files modified locally (.shellcheckrc and Makefile) with 17 in sync — and suggests running bootstrap reconcile to merge updates while keeping local edits](docs/assets/images/terminal-doctor.svg)
 
 - Per-profile file lists: [`docs/profiles/`](docs/profiles/) —
   [minimal](docs/profiles/minimal.md) ·
