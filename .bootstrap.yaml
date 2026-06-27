@@ -1,13 +1,13 @@
 # Managed by bootstrap — do not edit by hand.
 # Written by `bootstrap apply`; read by `bootstrap doctor` (Phase 2).
 profile: minimal
-bootstrap_version: 0.4.1
-bootstrap_commit: 4a1ec096e372f136e489ef2ba55089207da08ec5
-applied_at: 2026-06-27T07:44:35Z
+bootstrap_version: 0.5.0
+bootstrap_commit: faf7bb3a509011b72410f154f89ef1b69b427d2e
+applied_at: 2026-06-27T08:00:53Z
 files:
   - path: .editorconfig
-    sha256: 20f6393a197fb7cf8d5d369fef4e0d2211ad26b5dee3eaac86a880c7d390d139
-    tpl_sha256: 20f6393a197fb7cf8d5d369fef4e0d2211ad26b5dee3eaac86a880c7d390d139
+    sha256: 6be20cd03738e22254d1e2f192865a9d501853807db1a2a658a613164d6edef2
+    tpl_sha256: 6be20cd03738e22254d1e2f192865a9d501853807db1a2a658a613164d6edef2
   - path: .gitignore
     sha256: 5e3eaa5d507a3a7d98fd5d10390b801fc69689bc3d99154483b96bf3243dd903
     tpl_sha256: de9a19b1255dbe2d4a5649cb6b1d76b579b0daac84226ce00d8034d2b60474e9
@@ -25,14 +25,14 @@ files:
     sha256: b7c65104c3500c9ab212e2dac3aef993f95057520ea446aa6fde72a44f5fc7b4
     tpl_sha256: b7c65104c3500c9ab212e2dac3aef993f95057520ea446aa6fde72a44f5fc7b4
   - path: .markdownlint-cli2.yaml
-    sha256: 6d4a5ded7b7295999dc458249b91033905d5c344737136cf24057d8860766285
-    tpl_sha256: 6d4a5ded7b7295999dc458249b91033905d5c344737136cf24057d8860766285
+    sha256: 3c9b56ebc8cf440fc847c8e40114b67ef8fa9d839c5d7d37e1b886edfefd59de
+    tpl_sha256: 3c9b56ebc8cf440fc847c8e40114b67ef8fa9d839c5d7d37e1b886edfefd59de
   - path: lychee.toml
     sha256: 41b147bfb6754ed93f2fcce589d5284c98d836ecc8c9b49c0241c9dfdf86e3c3
     tpl_sha256: 41b147bfb6754ed93f2fcce589d5284c98d836ecc8c9b49c0241c9dfdf86e3c3
   - path: Makefile
-    sha256: 33fea97f9cba8f6167dbefcde85cd60a1f63ef042789edcd1509aaf4b8820368
-    tpl_sha256: 33fea97f9cba8f6167dbefcde85cd60a1f63ef042789edcd1509aaf4b8820368
+    sha256: f13aa6ec4b926b5f51428b4e584571486371b7bb6753bf8d1b3eea064296b1e8
+    tpl_sha256: f13aa6ec4b926b5f51428b4e584571486371b7bb6753bf8d1b3eea064296b1e8
   - path: SECURITY.md
     sha256: 72715a83f54078c895f97ee68fcea1cc3696c45c1e751208e8f5c6540177b87d
     tpl_sha256: 72715a83f54078c895f97ee68fcea1cc3696c45c1e751208e8f5c6540177b87d

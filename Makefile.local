@@ -1,0 +1,13 @@
+# Repo-only maintenance targets for bootstrap-web-setup itself.
+# Loaded by the main Makefile via `-include Makefile.local`; never deposited.
+
+# Release bump for `make release` (patch | minor | major | explicit X.Y.Z).
+BUMP ?= patch
+
+.PHONY: release release-preview
+
+release: ## Cut a release: bump VERSION, roll CHANGELOG, tag, push, GitHub release (BUMP=patch|minor|major|X.Y.Z)
+	@scripts/release.sh $(BUMP)
+
+release-preview: ## Preview the next release — changes nothing (BUMP=patch|minor|major|X.Y.Z)
+	@scripts/release.sh $(BUMP) --dry-run

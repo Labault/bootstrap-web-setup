@@ -22,7 +22,7 @@ indent_size = 4
 trim_trailing_whitespace = false
 indent_size = unset
 
-[Makefile]
+[{Makefile,Makefile.*,*.mk}]
 indent_style = tab
 
 # NEON (PHPStan) is tab-indented — match the tool's own --generate-baseline output.

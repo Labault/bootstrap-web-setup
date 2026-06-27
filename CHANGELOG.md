@@ -7,7 +7,19 @@ lives in the [`VERSION`](VERSION) file and is what `bootstrap --version` prints.
 
 ## [Unreleased]
 
-- Nothing yet.
+### Added
+
+- `make release` / `make release-preview` — a release workflow (`scripts/release.sh`)
+  that bumps `VERSION`, rolls the changelog's `[Unreleased]` into a dated section,
+  commits, tags `vX.Y.Z`, pushes, and creates the GitHub release. Repo-local
+  targets live in an optional, unmanaged `Makefile.local`, loaded by the deposited
+  Makefile via a new `-include Makefile.local` extension point.
+
+### Changed
+
+- markdownlint config gains `MD024: siblings_only` so a changelog can repeat
+  `### Added` / `### Changed` once per version; EditorConfig's tab rule now covers
+  `Makefile.*` and `*.mk`.
 
 ## [0.5.0] - 2026-06-27
 
