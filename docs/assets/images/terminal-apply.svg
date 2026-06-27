@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 730 470" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 730 400" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" role="img" aria-labelledby="title desc">
   <title id="title">bootstrap apply --dry-run</title>
-  <desc id="desc">Terminal output of `bootstrap apply --profile minimal --dry-run`. It previews the files it would create (some with a merge strategy, like .gitignore and .vscode/extensions.json), prints a summary of 19 files created, notes it would write .bootstrap.yaml, and suggests JS dev dependencies without touching package.json.</desc>
-  <rect width="730" height="470" rx="12" fill="#1e2127"/>
+  <desc id="desc">Terminal output of `bootstrap apply --profile minimal --dry-run`. It previews the files it would create (some with a merge strategy, like .gitignore and .vscode/extensions.json), prints a summary of 19 files created, and notes it would write the .bootstrap.yaml state file.</desc>
+  <rect width="730" height="400" rx="12" fill="#1e2127"/>
   <rect width="730" height="36" rx="12" fill="#2b2f37"/>
   <rect y="22" width="730" height="14" fill="#2b2f37"/>
   <circle cx="22" cy="18" r="6" fill="#ff5f57"/>
@@ -23,8 +23,6 @@
     <tspan x="22" y="283" fill="#eaecef">• Dry-run: </tspan><tspan fill="#7ee787">19 created</tspan><tspan fill="#b9bec7">, 0 unchanged, 0 replaced, 0 merged, 0 skipped.</tspan>
     <tspan x="22" y="303" fill="#6b7280">[dry-run] </tspan><tspan fill="#b9bec7">would write .bootstrap.yaml (profile, version, 19 files + hashes)</tspan>
     <tspan x="22" y="323" fill="#6cb6ff">• </tspan><tspan fill="#b9bec7">hooks: skipped — no .pre-commit-config.yaml deposited yet</tspan>
-    <tspan x="22" y="353" fill="#6cb6ff">• </tspan><tspan fill="#b9bec7">Suggested JS dev deps (bootstrap won't touch package.json):</tspan>
-    <tspan x="22" y="373" fill="#e3b341">    npm install -D @commitlint/cli @commitlint/config-conventional …</tspan>
-    <tspan x="22" y="413" fill="#7ee787">$ </tspan><tspan fill="#8a909c">▍</tspan>
+    <tspan x="22" y="363" fill="#7ee787">$ </tspan><tspan fill="#8a909c">▍</tspan>
   </text>
 </svg>

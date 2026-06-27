@@ -37,9 +37,8 @@ repos:
         language: system
         files: ^\.github/workflows/.*\.(ya?ml)$
 
-      - id: commitlint
-        name: commitlint
-        entry: npx --no -- commitlint --edit
-        language: system
+      - id: commit-msg-lint
+        name: commit-msg-lint
+        entry: scripts/lint-commit-msg.sh
+        language: script
         stages: [commit-msg]
-        pass_filenames: false

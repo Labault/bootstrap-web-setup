@@ -26,7 +26,7 @@ Examples:
 - `📝 docs: document the deploy procedure`
 
 Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`,
-`build`, `ci`, `chore`, `revert`. `commitlint` enforces this on commit.
+`build`, `ci`, `chore`, `revert`. A `commit-msg` hook (`scripts/lint-commit-msg.sh`) enforces this on commit.
 
 ## Pull requests
 

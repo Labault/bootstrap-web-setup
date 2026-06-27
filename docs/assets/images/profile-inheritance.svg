@@ -1,13 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 480" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif" role="img" aria-labelledby="title desc">
   <title id="title">bootstrap profile inheritance</title>
-  <desc id="desc">Profiles inherit from each other. minimal is the language-agnostic base (pre-commit, EditorConfig, commitlint, gitleaks, shellcheck, markdownlint, actionlint, lychee, CI and security workflows, Dependabot, docs and templates). symfony extends minimal and adds PHPStan level 9, PHP-CS-Fixer, Rector, hadolint, a PHP CI workflow and make targets. fullstack extends symfony and adds ESLint, Prettier, Husky with lint-staged, and a front CI workflow. Detection: composer.json picks symfony, an extra package.json picks fullstack, otherwise minimal; override with the profile flag.</desc>
+  <desc id="desc">Profiles inherit from each other. minimal is the language-agnostic base (pre-commit, EditorConfig, commit-msg lint, gitleaks, shellcheck, markdownlint, actionlint, lychee, CI and security workflows, Dependabot, docs and templates). symfony extends minimal and adds PHPStan level 9, PHP-CS-Fixer, Rector, hadolint, a PHP CI workflow and make targets. fullstack extends symfony and adds ESLint, Prettier, Husky with lint-staged, and a front CI workflow. Detection: composer.json picks symfony, an extra package.json picks fullstack, otherwise minimal; override with the profile flag.</desc>
   <rect width="900" height="480" fill="#ffffff"/>
 
   <!-- minimal (outer) -->
   <rect x="30" y="30" width="540" height="420" rx="12" fill="#eef2f7" stroke="#8a8f98" stroke-width="1.5"/>
   <text x="50" y="58" font-size="16" font-weight="700" fill="#1f2937">minimal</text>
   <text x="118" y="58" font-size="12" fill="#6b7280">— any web repo (language-agnostic)</text>
-  <text x="50" y="86" font-size="12.5" fill="#374151">pre-commit · EditorConfig · commitlint · gitleaks</text>
+  <text x="50" y="86" font-size="12.5" fill="#374151">pre-commit · EditorConfig · commit-msg lint · gitleaks</text>
   <text x="50" y="108" font-size="12.5" fill="#374151">shellcheck · markdownlint · actionlint · lychee</text>
   <text x="50" y="130" font-size="12.5" fill="#374151">CI + security workflows · Dependabot · docs &amp; templates</text>
 

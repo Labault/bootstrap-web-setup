@@ -54,7 +54,7 @@ bootstrap apply            # auto-detects the profile; add --profile to force on
 This is the fastest path. Keep reading for profiles, deposited files, backups,
 and the full command reference.
 
-![Terminal: bootstrap apply --dry-run on a minimal profile previews the files it would create — some with a merge strategy like .gitignore and .vscode/extensions.json — then prints a summary of 19 files created, notes it would write .bootstrap.yaml, and suggests JS dev dependencies without touching package.json](docs/assets/images/terminal-apply.svg)
+![Terminal: bootstrap apply --dry-run on a minimal profile previews the files it would create — some with a merge strategy like .gitignore and .vscode/extensions.json — then prints a summary of 19 files created and notes it would write the .bootstrap.yaml state file](docs/assets/images/terminal-apply.svg)
 
 ## Table of contents
 
@@ -79,7 +79,7 @@ required**. Profiles inherit from each other.
 
 | Profile | For | Adds on top of its parent |
 | --- | --- | --- |
-| `minimal` | Any web repo (language-agnostic) | pre-commit, EditorConfig, commitlint, gitleaks, shellcheck, markdownlint, actionlint, lychee, base CI/security workflows, Dependabot, transverse files |
+| `minimal` | Any web repo (language-agnostic) | pre-commit, EditorConfig, commit-msg lint, gitleaks, shellcheck, markdownlint, actionlint, lychee, base CI/security workflows, Dependabot, transverse files |
 | `symfony` | PHP/Symfony | PHPStan, PHP-CS-Fixer, Rector, hadolint, PHP CI, PHP `make` targets |
 | `fullstack` | Symfony + JS/TS front | ESLint, Prettier, Husky + lint-staged, front CI |
 
@@ -88,7 +88,7 @@ required**. Profiles inherit from each other.
 ### Linting & formatting
 
 EditorConfig, a local-mode `.pre-commit-config.yaml` (editorconfig-checker,
-gitleaks, shellcheck, markdownlint, actionlint, commitlint), and — per profile —
+gitleaks, shellcheck, markdownlint, actionlint, commit-msg lint), and — per profile —
 PHP-CS-Fixer (`@Symfony`), PHPStan (level 9 + auto baseline), Rector, ESLint and
 Prettier.
 

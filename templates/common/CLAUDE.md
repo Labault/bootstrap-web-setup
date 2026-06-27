@@ -21,7 +21,7 @@ Quality and tooling go through `make` (tools come from the machine, not the repo
 ## Conventions
 
 - **Commits:** Conventional Commits + optional leading Gitmoji
-  (e.g. `✨ feat(scope): subject`). Enforced by `commitlint`.
+  (e.g. `✨ feat(scope): subject`). Enforced by a `commit-msg` hook (`scripts/lint-commit-msg.sh`).
 - **Quality gates:** CI runs lint, link check and security (gitleaks +
   dependency review). Keep it green.
 - Secrets are never committed; `gitleaks` runs locally and in CI.

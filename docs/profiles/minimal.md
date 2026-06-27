@@ -1,4 +1,4 @@
-# Profile: `minimal`
+| `scripts/lint-commit-msg.sh` | Commit-msg linter: gitmoji + Conventional Commits |actionlint, commit-msg lint |# Profile: `minimal`
 
 The base layer for **any web repo**, language-agnostic. `symfony` and
 `fullstack` inherit everything here.
@@ -16,8 +16,8 @@ Checked by `bootstrap doctor` (must be on your machine via mac-setup):
 | ---- | ---- |
 | `.editorconfig` | Indentation / EOL / charset across editors (2-space default, 4 for PHP) |
 | `.gitignore` | Base ignores in a tagged `# >>> bootstrap` block (merged) |
-| `.pre-commit-config.yaml` | Local-mode hooks: editorconfig, gitleaks, shellcheck, markdownlint, actionlint, commitlint |
-| `commitlint.config.cjs` | Conventional Commits + optional Gitmoji |
+| `.pre-commit-config.yaml` | Local-mode hooks: editorconfig, gitleaks, shellcheck, markdownlint, actionlint, commit-msg lint |
+| `scripts/lint-commit-msg.sh` | Self-contained commit-msg linter: gitmoji + Conventional Commits |
 | `.gitleaks.toml` | Secret-scanning config (extends the default ruleset) |
 | `.shellcheckrc` | Shell lint config |
 | `.markdownlint-cli2.yaml` | Markdown lint config |
@@ -40,4 +40,4 @@ remote repos.
 
 - The CI workflow runs the linters via marketplace actions (no local binaries
   needed on the runner); the same checks run locally through pre-commit.
-- `commitlint` must be available on your `PATH` for the commit-msg hook.
+- The `commit-msg` hook is a self-contained shell script — no extra binary needed.

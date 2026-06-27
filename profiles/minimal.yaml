@@ -2,15 +2,10 @@
 # Any web repo, language-agnostic. The base layer every project gets.
 # Read by bin/bootstrap via lib/manifest.sh (simple, line-oriented YAML).
 
-# suggest_npm: dev packages bootstrap suggests (never installs) for commit-msg
-# linting. commitlint is a project npm dep invoked via `npx` (mirrors mac-setup),
-# not a machine binary — so it lives here, not in requires_bin. Inherited by all
-# profiles.
-suggest_npm:
-  - "@commitlint/cli"
-  - "@commitlint/config-conventional"
-  - "@gitmoji/gitmoji-regex"
-  - commitlint-config-gitmoji
+# Commit-message linting (gitmoji + Conventional Commits) is a deposited,
+# self-contained shell script (scripts/lint-commit-msg.sh) run as a commit-msg
+# hook — self-contained, no npm dependency (mirrors mac-setup). minimal therefore
+# suggests no npm packages.
 
 # requires_bin: MACHINE-global binaries mac-setup must have installed for the
 # deposited config to be live. Only tools that must exist on PATH go here — NOT
@@ -36,8 +31,8 @@ files:
     strategy: merge-gitignore
   - src: templates/common/.pre-commit-config.yaml
     dest: .pre-commit-config.yaml
-  - src: templates/common/commitlint.config.cjs
-    dest: commitlint.config.cjs
+  - src: templates/common/scripts/lint-commit-msg.sh
+    dest: scripts/lint-commit-msg.sh
   - src: templates/common/.gitleaks.toml
     dest: .gitleaks.toml
   - src: templates/common/.shellcheckrc

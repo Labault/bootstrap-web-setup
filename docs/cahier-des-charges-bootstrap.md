@@ -106,7 +106,7 @@ Pour chaque outil : le fichier déposé, son rôle, et le profil minimal qui le 
 | 1 | **pre-commit** | `.pre-commit-config.yaml` | Orchestrateur : lance tous les hooks ci-dessous avant chaque commit | `minimal` |
 | 2 | **EditorConfig** | `.editorconfig` | Indentation / fins de ligne / charset homogènes, tous éditeurs | `minimal` |
 | 3 | **editorconfig-checker** | (hook pre-commit) | Vérifie que le repo respecte `.editorconfig` | `minimal` |
-| 4 | **commitlint** | `commitlint.config.cjs` | Valide le format des messages (Conventional Commits + Gitmoji) | `minimal` |
+| 4 | **commit-msg lint** | `scripts/lint-commit-msg.sh` | Valide le format des messages (gitmoji + Conventional Commits), script shell autonome | `minimal` |
 | 5 | **gitleaks** | `.gitleaks.toml` + workflow | Scan des secrets commités, en local et en CI | `minimal` |
 | 6 | **shellcheck** | `.shellcheckrc` | Lint des scripts shell | `minimal` |
 | 7 | **markdownlint-cli2** | `.markdownlint-cli2.yaml` | Formatage Markdown cohérent | `minimal` |
@@ -149,7 +149,7 @@ Le profil décide **quels fichiers sont déposés** et **quels binaires sont req
 
 | Profil | Pour quoi | Contenu |
 | --- | --- | --- |
-| `minimal` | N'importe quel repo web, agnostique langage | pre-commit, editorconfig, commitlint, gitleaks, shellcheck, markdownlint, actionlint, lychee, workflows de base, fichiers transverses |
+| `minimal` | N'importe quel repo web, agnostique langage | pre-commit, editorconfig, commit-msg lint, gitleaks, shellcheck, markdownlint, actionlint, lychee, workflows de base, fichiers transverses |
 | `symfony` | Projet PHP/Symfony | `minimal` + PHPStan, PHP-CS-Fixer, Rector, hadolint, cibles `make` PHP, étapes CI PHP |
 | `fullstack` | Symfony + front JS/TS | `symfony` + ESLint, Prettier, Husky + lint-staged, étapes CI front |
 
@@ -197,7 +197,7 @@ bootstrap/
 │   │   ├── .editorconfig
 │   │   ├── .gitignore
 │   │   ├── .pre-commit-config.yaml
-│   │   ├── commitlint.config.cjs
+│   │   ├── scripts/lint-commit-msg.sh
 │   │   ├── .gitleaks.toml
 │   │   ├── .shellcheckrc
 │   │   ├── .markdownlint-cli2.yaml
@@ -244,7 +244,7 @@ mon-projet/
 ├── .shellcheckrc
 ├── .markdownlint-cli2.yaml
 ├── .pre-commit-config.yaml
-├── commitlint.config.cjs
+├── scripts/lint-commit-msg.sh
 ├── lychee.toml
 ├── phpstan.dist.neon
 ├── .php-cs-fixer.dist.php
@@ -315,7 +315,7 @@ Relancer `bootstrap apply` sur un projet déjà configuré ne doit produire aucu
 
 ### 9.7 Installation des hooks
 
-Après dépôt du profil, le script lance `pre-commit install` (et `pre-commit install --hook-type commit-msg` pour commitlint) pour activer les hooks. Sur `fullstack`, équivalent côté Husky.
+Après dépôt du profil, le script lance `pre-commit install` (et `pre-commit install --hook-type commit-msg`) pour le linter de message shell) pour activer les hooks. Sur `fullstack`, équivalent côté Husky.
 
 ---
 
@@ -323,11 +323,11 @@ Après dépôt du profil, le script lance `pre-commit install` (et `pre-commit i
 
 Le script copie des templates, mais ces templates ont un contrat minimal à respecter.
 
-- **`.pre-commit-config.yaml`** — doit câbler : editorconfig-checker, gitleaks, shellcheck, markdownlint-cli2, actionlint, hadolint, commitlint (hook `commit-msg`). En profil `symfony`, ajouter PHPStan / PHP-CS-Fixer / Rector via hooks `local` appelant les binaires du projet ou de la machine.
+- **`.pre-commit-config.yaml`** — doit câbler : editorconfig-checker, gitleaks, shellcheck, markdownlint-cli2, actionlint, hadolint, le linter commit-msg shell (`scripts/lint-commit-msg.sh`). En profil `symfony`, ajouter PHPStan / PHP-CS-Fixer / Rector via hooks `local` appelant les binaires du projet ou de la machine.
 - **`ci.yml`** — déclencheurs `push` + `pull_request`. Étapes : checkout, setup PHP **8.4**, `composer install`, `php-cs-fixer --dry-run --diff` (ruleset `@Symfony`), `phpstan analyse` (niveau 9), `rector --dry-run`, tests (Pest/PHPUnit). Échec bloquant.
 - **`security.yml`** — gitleaks sur l'historique + `dependency-review-action` sur les PR.
 - **`Makefile`** — cibles a minima : `make qa` (= lint + stan + test), `make lint`, `make stan`, `make cs`, `make test`, `make fix` (auto-correction CS + Rector).
-- **`commitlint.config.cjs`** — extends `@commitlint/config-conventional`, plus la liste Gitmoji autorisée (réutiliser la config de `mac-setup`).
+- **`scripts/lint-commit-msg.sh`** — script shell autonome validant gitmoji + Conventional Commits (aligné sur `mac-setup`).
 - **`CLAUDE.md`** — squelette : stack, conventions de commit, commandes `make`, règles projet. À enrichir par projet.
 - **`.bootstrap.yaml`** — champs minimaux : `profile` (profil appliqué), `bootstrap_version` (version des templates au moment du dépôt), `applied_at` (horodatage ISO), `files` (liste des fichiers déposés, idéalement avec un hash par fichier pour la détection de dérive en Phase 2). Fichier lu par `bootstrap doctor`, jamais édité à la main.
 

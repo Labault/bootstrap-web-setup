@@ -35,5 +35,5 @@ delegates:
 2. `pre-commit run` — the repo-wide and PHP checks, reusing the pre-commit
    framework's hook definitions
 
-The `commit-msg` script runs commitlint. `bootstrap apply` wires this by setting
+The `commit-msg` hook runs `scripts/lint-commit-msg.sh`. `bootstrap apply` wires this by setting
 `core.hooksPath` and making the scripts executable.

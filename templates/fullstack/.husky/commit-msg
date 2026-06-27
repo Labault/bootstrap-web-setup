@@ -1,2 +1,2 @@
 # Managed by bootstrap (fullstack profile). Validate the commit message.
-npx --no -- commitlint --edit "$1"
+scripts/lint-commit-msg.sh "$1"

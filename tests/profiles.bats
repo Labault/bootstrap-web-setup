@@ -38,9 +38,15 @@ load test_helper
   [ "$(git -C "$PROJ" config --get core.hooksPath)" = ".husky" ]
 }
 
-@test "fullstack suggests npm deps incl commitlint inherited from minimal" {
+@test "fullstack suggests front npm deps (eslint/prettier/husky)" {
   run "$BS" apply --profile fullstack --target "$PROJ" --skip-bin-check
   [[ "$output" == *"npm install -D"* ]]
-  [[ "$output" == *"commitlint"* ]]
   [[ "$output" == *"eslint"* ]]
+  [[ "$output" == *"husky"* ]]
+}
+
+@test "no profile deposits commitlint config (replaced by a shell linter)" {
+  run "$BS" apply --profile fullstack --target "$PROJ" --skip-bin-check
+  [ ! -e "$PROJ/commitlint.config.cjs" ]
+  [ -f "$PROJ/scripts/lint-commit-msg.sh" ]
 }

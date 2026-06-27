@@ -4,15 +4,15 @@
 
 extends: symfony
 
-# Machine-global binaries only. eslint/prettier/commitlint live in the project's
+# Machine-global binaries only. eslint/prettier live in the project's
 # node_modules/.bin (installed via npm), so they are suggestions, not hard
 # requirements — see suggest_npm below.
 requires_bin:
   - node
 
-# suggest_npm: front dev deps added on top of the commitlint deps inherited from
-# minimal. bootstrap never edits package.json (§5.3/§10); it only prints the
-# command to run.
+# suggest_npm: front dev deps. Commit-message linting is a deposited shell script,
+# so nothing is inherited here. bootstrap never edits package.json (§5.3/§10);
+# it only prints the command to run.
 suggest_npm:
   - eslint
   - "@eslint/js"
