@@ -8,13 +8,19 @@ writes its own `RESULT.txt` (`PASS`/`FAIL`) and `output.log`.
 This complements the unit-style `tests/` (bats): here we drive the real CLI
 end to end and assert on its observable behaviour.
 
-`smoke-php-hooks.sh` (top-level, **not** part of `run-all.sh`) is a separate,
-heavier end-to-end check: it scaffolds a throwaway Symfony project, deposits the
-`symfony` profile, installs the latest PHP tools from Composer, and runs the
-deposited PHP hooks (php-cs-fixer / phpstan / rector) for real. It needs PHP,
-Composer and `pre-commit`, so it runs in its own CI job rather than the no-PHP
-acceptance suite. Its job is to catch hook-flag drift against floating
-`vendor/bin` binaries before it reaches a real project.
+The two `smoke-*-hooks.sh` scripts (top-level, **not** part of `run-all.sh`) are
+separate, heavier end-to-end checks. Each scaffolds a throwaway project, deposits
+a profile, installs the **latest** tools from the package manager, and runs the
+deposited hooks/gates for real on a clean fixture — so a hardcoded command that
+drifts against a floating binary fails here, not in the next bootstrapped project:
+
+- `smoke-php-hooks.sh` — `symfony` profile; runs the php-cs-fixer / phpstan /
+  rector pre-commit hooks. Needs PHP, Composer and `pre-commit`.
+- `smoke-js-hooks.sh` — `fullstack` profile; runs the eslint / prettier / tsc /
+  lint-staged front gates. Needs Node and npm.
+
+They need a real language toolchain, so each runs in its own CI job rather than
+the no-PHP/no-Node acceptance suite.
 
 ## Requirements
 

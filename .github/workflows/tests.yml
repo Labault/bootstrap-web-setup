@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install bats (pinned)
         uses: bats-core/bats-action@3.0.1
@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0   # reconcile cases need the recorded commit (git show)
 
@@ -53,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up PHP 8.4
         uses: shivammathur/setup-php@v2
@@ -70,3 +70,25 @@ jobs:
 
       - name: Smoke-test the deposited PHP hooks
         run: bash validation/smoke-php-hooks.sh
+
+  smoke-js-hooks:
+    # Scaffolds a throwaway fullstack project, deposits the fullstack profile,
+    # and runs the deposited front gates (eslint/prettier/tsc/lint-staged)
+    # against the LATEST npm tools — so a hardcoded command that drifts against a
+    # floating binary fails here instead of in the next bootstrapped project.
+    name: smoke (js hooks)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Ensure jq is available
+        run: jq --version
+
+      - name: Smoke-test the deposited front gates
+        run: bash validation/smoke-js-hooks.sh
