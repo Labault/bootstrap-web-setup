@@ -1,6 +1,9 @@
 # Proposal — intensity levels (Phase 2)
 
-**Status:** proposed, not implemented. Gated on real demand.
+**Status:** REJECTED. Decision: keep a **single, highest-intensity baseline** for
+all tools — no `--level`, no light/standard/strict variants. The opinionated
+strict config is the product's identity; configurability would dilute it. Kept
+here as a record of the analysis in case the need ever resurfaces.
 **Author:** project maintainer.
 **Relates to:** [`../cahier-des-charges-bootstrap.md`](../cahier-des-charges-bootstrap.md)
 (locked params), the `apply` / `doctor` / `reconcile` lifecycle.
