@@ -43,3 +43,30 @@ jobs:
 
       - name: Run the acceptance suite
         run: bash validation/run-all.sh
+
+  smoke-php-hooks:
+    # Scaffolds a throwaway Symfony project, deposits the symfony profile, and
+    # runs the deposited PHP hooks (php-cs-fixer/phpstan/rector) against the
+    # LATEST Composer tools — so a hook flag that drifts against a floating
+    # binary fails here instead of in the next bootstrapped project.
+    name: smoke (php hooks)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          tools: composer
+          coverage: none
+
+      - name: Install pre-commit
+        run: pipx install pre-commit
+
+      - name: Ensure jq is available
+        run: jq --version
+
+      - name: Smoke-test the deposited PHP hooks
+        run: bash validation/smoke-php-hooks.sh

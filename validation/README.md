@@ -8,6 +8,14 @@ writes its own `RESULT.txt` (`PASS`/`FAIL`) and `output.log`.
 This complements the unit-style `tests/` (bats): here we drive the real CLI
 end to end and assert on its observable behaviour.
 
+`smoke-php-hooks.sh` (top-level, **not** part of `run-all.sh`) is a separate,
+heavier end-to-end check: it scaffolds a throwaway Symfony project, deposits the
+`symfony` profile, installs the latest PHP tools from Composer, and runs the
+deposited PHP hooks (php-cs-fixer / phpstan / rector) for real. It needs PHP,
+Composer and `pre-commit`, so it runs in its own CI job rather than the no-PHP
+acceptance suite. Its job is to catch hook-flag drift against floating
+`vendor/bin` binaries before it reaches a real project.
+
 ## Requirements
 
 - bash 4+
