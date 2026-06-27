@@ -16,8 +16,12 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Install bats (pinned)
-        uses: bats-core/bats-action@3.0.1
+        uses: bats-core/bats-action@4.0.0
         with:
+          # 4.0.0 ships the Node 24 actions/cache (3.0.1 pinned the deprecated
+          # Node 20 build) and no longer passes the CI token automatically, so
+          # hand it the job token to avoid release-download rate limits.
+          github-token: ${{ github.token }}
           support-install: false
           assert-install: false
           detik-install: false
