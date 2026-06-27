@@ -1,8 +1,30 @@
-node_modules
-vendor
-dist
-build
-public/build
-var
+# Managed by bootstrap (fullstack profile). Prettier owns the front-end source
+# only — every other part of the repo belongs to another tool: markdownlint →
+# Markdown, actionlint → GitHub workflows, PHP-CS-Fixer → PHP, the package
+# managers → lockfiles. Letting Prettier loose on all of them makes
+# `prettier --check .` (and lint-staged) fight hand-authored config and docs.
+#
+# So: ignore everything, then re-include just the front-end surface. Front-end
+# code is expected under assets/ (same convention as tsconfig.json's `include`);
+# adjust the re-includes below if your front lives elsewhere.
+
+# Always-off: generated or vendored output.
+node_modules/
+vendor/
+dist/
+build/
+public/build/
+public/bundles/
+var/
 *.min.js
 *.min.css
+
+# Ignore everything at the repo root by default…
+/*
+
+# …then re-include the front-end source and its Prettier-owned config.
+!/assets/
+!/eslint.config.js
+!/tsconfig.json
+!/.prettierrc
+!/.lintstagedrc.json
