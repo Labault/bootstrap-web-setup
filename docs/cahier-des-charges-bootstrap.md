@@ -32,7 +32,7 @@ Il manque le maillon suivant : quand on démarre — ou qu'on reprend — un pro
 
 | Pattern mac-setup | Repris dans bootstrap |
 | --- | --- |
-| Profils (`minimal`, `full`) pilotés par fichier | Profils `minimal` / `symfony` / `fullstack` |
+| Profils (`minimal`, `full`) pilotés par fichier | Profils `minimal` / `symfony` / `shell` / `fullstack` |
 | `--dry-run` (preview sans rien changer) | Idem, obligatoire |
 | `mac doctor` (état machine vs attendu) | `bootstrap doctor` (binaires requis + dérive de config) |
 | Backup avant remplacement d'un fichier existant | Idem, indispensable sur projet existant |
@@ -176,7 +176,7 @@ files:                    # source → destination dans le projet
     dest: rector.php
 ```
 
-L'héritage (`extends`) évite la duplication : `symfony` = `minimal` + ses ajouts, `fullstack` = `symfony` + ses ajouts.
+L'héritage (`extends`) évite la duplication : `symfony` = `minimal` + ses ajouts, `shell` = `minimal` + ses ajouts (frère de `symfony`), `fullstack` = `symfony` + ses ajouts.
 
 ---
 
@@ -192,6 +192,7 @@ bootstrap/
 ├── profiles/
 │   ├── minimal.yaml            # manifeste profil minimal
 │   ├── symfony.yaml            # manifeste profil symfony
+│   ├── shell.yaml              # manifeste profil shell (frère de symfony)
 │   └── fullstack.yaml          # manifeste profil fullstack
 ├── templates/                  # tous les fichiers déposables
 │   ├── common/
@@ -223,6 +224,11 @@ bootstrap/
 │   │   ├── .php-cs-fixer.dist.php
 │   │   ├── rector.php
 │   │   └── .hadolint.yaml
+│   ├── shell/
+│   │   ├── tests/                  # bats skeleton (smoke.bats + test_helper.bash)
+│   │   ├── tests.yml               # bats CI workflow
+│   │   ├── .pre-commit-config.yaml # + shfmt hook
+│   │   └── Makefile                # + make test / fmt
 │   └── fullstack/
 │       ├── eslint.config.js
 │       ├── .prettierrc
@@ -338,7 +344,7 @@ Le script copie des templates, mais ces templates ont un contrat minimal à resp
 
 ## 11. Contraintes et décisions techniques
 
-1. **`pre-commit` est le socle unique** au niveau `minimal`/`symfony`. Husky n'apparaît qu'en `fullstack`. Pas deux gestionnaires de hooks en doublon (la redondance à nettoyer dans mac-setup sert de leçon).
+1. **`pre-commit` est le socle unique** au niveau `minimal`/`symfony`/`shell`. Husky n'apparaît qu'en `fullstack`. Pas deux gestionnaires de hooks en doublon (la redondance à nettoyer dans mac-setup sert de leçon).
 2. **Agnostique langage au niveau `minimal`** : le profil de base ne présuppose ni PHP ni Node.
 3. **Le script écrit, n'installe pas.** Toute installation de binaire est hors scope, par conception.
 4. **Aucune écriture dans les manifests** (`composer.json`, `package.json`) : suggestion uniquement.

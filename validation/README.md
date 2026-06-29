@@ -68,7 +68,7 @@ validation/
 ├── run-all.sh        runs all cases, prints a summary
 ├── _lib.sh           shared setup / assertions / verdict
 └── cases/
-    ├── 01-list … 24-dry-run-collision      (nominal: it works)
+    ├── 01-list … 25-apply-shell            (nominal: it works)
     └── 50-fail-… … 75-strict-drift-exits   (robustness: it fails cleanly)
 ```
 

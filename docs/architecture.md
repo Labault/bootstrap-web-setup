@@ -27,7 +27,7 @@ dependency beyond `git` and `jq`.
 - **`profiles/*.yaml`** — declarative manifests (`extends`, `requires_bin`,
   `files`, `suggest_*`). Adding a profile is data, not code.
 - **`templates/`** — the actual files deposited into projects, organized by
-  profile family (`common/`, `symfony/`, `fullstack/`).
+  profile family (`common/`, `symfony/`, `shell/`, `fullstack/`).
 
 ## Conventions
 

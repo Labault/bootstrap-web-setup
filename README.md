@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/Labault/bootstrap-web-setup/actions/workflows/ci.yml/badge.svg)](https://github.com/Labault/bootstrap-web-setup/actions/workflows/ci.yml)
 [![Tests](https://github.com/Labault/bootstrap-web-setup/actions/workflows/tests.yml/badge.svg)](https://github.com/Labault/bootstrap-web-setup/actions/workflows/tests.yml)
+[![Acceptance](https://github.com/Labault/bootstrap-web-setup/actions/workflows/acceptance.yml/badge.svg)](https://github.com/Labault/bootstrap-web-setup/actions/workflows/acceptance.yml)
 [![Security](https://github.com/Labault/bootstrap-web-setup/actions/workflows/security.yml/badge.svg)](https://github.com/Labault/bootstrap-web-setup/actions/workflows/security.yml)
 [![Reference](https://github.com/Labault/bootstrap-web-setup/actions/workflows/reference.yml/badge.svg)](https://github.com/Labault/bootstrap-web-setup/actions/workflows/reference.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -91,12 +92,13 @@ required**. Profiles inherit from each other.
 EditorConfig, a local-mode `.pre-commit-config.yaml` (editorconfig-checker,
 gitleaks, shellcheck, markdownlint, actionlint, commit-msg lint), and — per profile —
 PHP-CS-Fixer (`@Symfony`), PHPStan (level 9 + auto baseline), Rector, ESLint and
-Prettier.
+Prettier (`symfony` / `fullstack`), and `shfmt` (`shell`).
 
 ### CI & security
 
 GitHub Actions workflows (`ci.yml` lint + links, `security.yml` gitleaks +
-dependency review, plus `php.yml` / front CI on the relevant profiles), a
+dependency review, plus per-profile CI: `php.yml` (`symfony`), front CI
+(`fullstack`) and `tests.yml` running `bats tests/` (`shell`)), a
 `.gitleaks.toml` secret-scanning config, and a `.github/dependabot.yml`.
 
 ### Docs, hooks & transverse files
@@ -271,6 +273,7 @@ can later detect drift and merge template updates without forgetting your edits.
 - Per-profile file lists: [`docs/profiles/`](docs/profiles/) —
   [minimal](docs/profiles/minimal.md) ·
   [symfony](docs/profiles/symfony.md) ·
+  [shell](docs/profiles/shell.md) ·
   [fullstack](docs/profiles/fullstack.md)
 - How the CLI is built: [`docs/architecture.md`](docs/architecture.md)
 - The full design spec (all locked decisions):
@@ -279,11 +282,14 @@ can later detect drift and merge template updates without forgetting your edits.
   above; this is the one-shot-evolutive lifecycle (apply records state → doctor
   signals drift → reconcile merges).
 - **Tests** — a [bats](https://github.com/bats-core/bats-core) unit suite
-  (`bats tests/`) and a black-box [acceptance harness](validation/README.md)
-  (`cd validation && ./run-all.sh`), both run in CI.
-- **Proof on real PHP** — the `Reference` workflow applies the `symfony` profile
-  to [`examples/symfony-reference/`](examples/symfony-reference/) and runs the
-  deposited quality gates to prove the pipeline stays green.
+  (`bats tests/`, the `Tests` workflow) and a black-box
+  [acceptance harness](validation/README.md) (`cd validation && ./run-all.sh`,
+  the `Acceptance` workflow), both run in CI.
+- **Proof on real projects** — the `Reference` workflow applies a profile to a
+  matching example and runs the deposited gates to prove the pipeline stays green:
+  the `symfony` profile on [`examples/symfony-reference/`](examples/symfony-reference/)
+  (php-cs-fixer / phpstan / rector / phpunit) and the `shell` profile on
+  [`examples/shell-reference/`](examples/shell-reference/) (shellcheck / shfmt / bats).
 
 ## License
 
