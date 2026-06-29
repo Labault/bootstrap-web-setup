@@ -81,9 +81,10 @@ required**. Profiles inherit from each other.
 | --- | --- | --- |
 | `minimal` | Any web repo (language-agnostic) | pre-commit, EditorConfig, commit-msg lint, gitleaks, shellcheck, markdownlint, actionlint, lychee, base CI/security workflows, Dependabot, transverse files |
 | `symfony` | PHP/Symfony | PHPStan, PHP-CS-Fixer, Rector, hadolint, PHP CI, PHP `make` targets |
+| `shell` | Shell/Bash tooling repos | bats, shfmt, `tests.yml` CI, shell `make` targets (on top of the inherited shellcheck) |
 | `fullstack` | Symfony + JS/TS front | ESLint, Prettier, Husky + lint-staged, front CI |
 
-![bootstrap profile inheritance: minimal is the language-agnostic base; symfony extends minimal and adds the PHP tooling; fullstack extends symfony and adds the JS/TS front tooling. Detection picks symfony when a composer.json is present, fullstack when a package.json is also present, otherwise minimal; override with the profile flag](docs/assets/images/profile-inheritance.svg)
+![bootstrap profile inheritance: minimal is the language-agnostic base; symfony extends minimal and adds the PHP tooling; shell also extends minimal (a sibling of symfony) and adds bats and shfmt; fullstack extends symfony and adds the JS/TS front tooling. Detection picks symfony when a composer.json is present, fullstack when a package.json is also present, shell when the repo tracks shell scripts and has no such manifest, otherwise minimal; override with the profile flag](docs/assets/images/profile-inheritance.svg)
 
 ### Linting & formatting
 
@@ -143,7 +144,8 @@ bootstrap apply           # deposit the config + write .bootstrap.yaml + install
 ### Choosing a profile
 
 Auto-detection: `composer.json` → `symfony`; `+ package.json` → `fullstack`;
-otherwise `minimal`. Override anytime with `--profile`:
+tracked `*.sh`/`*.bash` with no such manifest → `shell`; otherwise `minimal`.
+Override anytime with `--profile`:
 
 ```sh
 bootstrap apply --profile symfony
@@ -170,7 +172,8 @@ bootstrap is a fork-friendly, data-driven tool: the profiles live in
 [`profiles/`](profiles/) (declarative YAML manifests) and the files they deposit
 live in [`templates/`](templates/). To adjust the baseline, edit a template or a
 manifest and re-`apply`. The repo eats its own dog food — it self-applies the
-`minimal` profile and its CI runs the very pipeline it ships.
+`shell` profile (it's a Bash tooling repo with a bats suite) and its CI runs the
+very pipeline it ships.
 
 ## The `bootstrap` CLI — command reference
 

@@ -151,6 +151,7 @@ Le profil décide **quels fichiers sont déposés** et **quels binaires sont req
 | --- | --- | --- |
 | `minimal` | N'importe quel repo web, agnostique langage | pre-commit, editorconfig, commit-msg lint, gitleaks, shellcheck, markdownlint, actionlint, lychee, workflows de base, fichiers transverses |
 | `symfony` | Projet PHP/Symfony | `minimal` + PHPStan, PHP-CS-Fixer, Rector, hadolint, cibles `make` PHP, étapes CI PHP |
+| `shell` | Repo d'outillage Shell/Bash | `minimal` + bats, shfmt, workflow `tests.yml`, cibles `make` shell (au-dessus du shellcheck hérité) — frère de `symfony` |
 | `fullstack` | Symfony + front JS/TS | `symfony` + ESLint, Prettier, Husky + lint-staged, étapes CI front |
 
 ### Format du manifeste (proposition)
@@ -344,7 +345,7 @@ Le script copie des templates, mais ces templates ont un contrat minimal à resp
 5. **Langage du script :** Bash, pour rester cohérent avec `mac-setup` et sans dépendance d'exécution. Manifests en YAML lus via `yq` (à ajouter aux `requires_bin` du bootstrap lui-même).
 6. **Modèle de cycle de vie : tranché.** One-shot évolutif, voir §4. Pas de moteur de merge en v1 ; `.bootstrap.yaml` déposé dès la v1 pour ouvrir la Phase 2.
 7. **Paramètres applicatifs verrouillés :**
-   - Détection auto du profil : `composer.json` → `symfony`, `+ package.json` → `fullstack`, override par `--profile`.
+   - Détection auto du profil : `composer.json` → `symfony`, `+ package.json` → `fullstack`, `*.sh`/`*.bash` trackés sans manifeste → `shell`, sinon `minimal` ; override par `--profile`.
    - PHP **8.4** seul en CI (pas de matrice).
    - PHPStan **niveau 9**, avec **baseline auto** générée quand le projet n'est pas vierge.
    - PHP-CS-Fixer : ruleset **`@Symfony`**.
@@ -353,7 +354,11 @@ Le script copie des templates, mais ces templates ont un contrat minimal à resp
    - Mises à jour de dépendances : **Dependabot** (`.github/dependabot.yml`).
    - Fusion `.gitignore` par **sections balisées** (`# >>> bootstrap` … `# <<< bootstrap`).
    - Versioning **global** du bootstrap, écrit dans `.bootstrap.yaml` (un seul numéro en v1).
-8. **Reporté — non bloquant pour la v1 :**
+8. **Profil `shell` (verrouillé).** Frère de `symfony` dans l'arbre : il **étend `minimal`** (jamais `symfony`), pour les repos d'outillage Bash (bootstrap lui-même, server-setup…).
+   - **Détection raffinée :** dans la branche « sinon » (ni `composer.json` ni `package.json`), des fichiers `*.sh`/`*.bash` **trackés par git** déclenchent `shell` ; sinon `minimal`. Signal tracké uniquement — un script non suivi ne bascule pas le profil. La branche web (`symfony`/`fullstack`) est inchangée.
+   - **Trio shell : `shellcheck` + `shfmt` + `bats`.** `shellcheck` est hérité de `minimal` (jamais redéclaré) ; le profil n'ajoute que `shfmt` (formatage, piloté par `.editorconfig`, `.bats` exclu du hook car non parsable) et `bats` (harnais de tests + smoke test qui passe d'emblée, workflow `tests.yml`).
+   - **Binaires requis :** `bats`, `shfmt` (en plus des binaires de `minimal`). `make test` lance `bats tests/` ; `shfmt` est intégré à `make lint` (`shfmt -d`, contrôle) et `make fix` (`shfmt -w`).
+9. **Reporté — non bloquant pour la v1 :**
    - `bootstrap` distribué aussi comme **repo template GitHub** (cas « projet neuf » pur) — à décider une fois le script debout.
    - Format du hash dans `.bootstrap.yaml` (par fichier vs global) — repoussé à la Phase 2.
 
@@ -364,7 +369,7 @@ Le script copie des templates, mais ces templates ont un contrat minimal à resp
 ### v1 — one-shot tracké (Phase 1)
 
 - [ ] `install.sh` met en place la CLI `bootstrap`, façon `mac-setup`.
-- [ ] Trois profils fonctionnels (`minimal`, `symfony`, `fullstack`) avec héritage.
+- [ ] Quatre profils fonctionnels (`minimal`, `symfony`, `shell`, `fullstack`) avec héritage.
 - [ ] `bootstrap doctor` détecte les binaires manquants et propose la commande d'install.
 - [ ] `bootstrap apply` est idempotent, gère neuf + existant, fusionne `.gitignore`/`extensions.json`, backup avant écrasement.
 - [ ] `apply` écrit `.bootstrap.yaml` (profil + version + fichiers).
@@ -373,7 +378,7 @@ Le script copie des templates, mais ces templates ont un contrat minimal à resp
 - [ ] Hooks `pre-commit` (+ `commit-msg`) installés et fonctionnels après `apply`.
 - [ ] Le pipeline CI déposé tourne vert sur un projet Symfony de référence.
 - [ ] Documentation : README + une page par profil.
-- [ ] Le repo `bootstrap` se respecte lui-même (il s'auto-applique le profil `minimal`).
+- [ ] Le repo `bootstrap` se respecte lui-même (il s'auto-applique le profil `shell` — c'est un repo d'outillage Bash avec une suite bats).
 
 ### Plus tard — détection de dérive (Phase 2, hors v1)
 
@@ -382,4 +387,4 @@ Le script copie des templates, mais ces templates ont un contrat minimal à resp
 
 ---
 
-*Document de conception — v1.0. Toutes les décisions structurantes verrouillées (§11.7) ; ne restent que les points reportés du §11.8, non bloquants pour la v1.*
+*Document de conception — v1.0. Toutes les décisions structurantes verrouillées (§11.7, profil `shell` en §11.8) ; ne restent que les points reportés du §11.9, non bloquants pour la v1.*

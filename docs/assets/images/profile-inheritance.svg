@@ -1,24 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 480" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 620" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif" role="img" aria-labelledby="title desc">
   <title id="title">bootstrap profile inheritance</title>
-  <desc id="desc">Profiles inherit from each other. minimal is the language-agnostic base (pre-commit, EditorConfig, commit-msg lint, gitleaks, shellcheck, markdownlint, actionlint, lychee, CI and security workflows, Dependabot, docs and templates). symfony extends minimal and adds PHPStan level 9, PHP-CS-Fixer, Rector, hadolint, a PHP CI workflow and make targets. fullstack extends symfony and adds ESLint, Prettier, Husky with lint-staged, and a front CI workflow. Detection: composer.json picks symfony, an extra package.json picks fullstack, otherwise minimal; override with the profile flag.</desc>
-  <rect width="900" height="480" fill="#ffffff"/>
+  <desc id="desc">Profiles inherit from each other. minimal is the language-agnostic base (pre-commit, EditorConfig, commit-msg lint, gitleaks, shellcheck, markdownlint, actionlint, lychee, CI and security workflows, Dependabot, docs and templates). symfony extends minimal and adds PHPStan level 9, PHP-CS-Fixer, Rector, hadolint, a PHP CI workflow and make targets; fullstack extends symfony and adds ESLint, Prettier, Husky with lint-staged, and a front CI workflow. shell is a sibling of symfony — it also extends minimal — and adds bats and shfmt, a tests CI workflow and shell make targets, on top of the shellcheck inherited from minimal. Detection: composer.json picks symfony, an extra package.json picks fullstack, tracked shell scripts with no such manifest pick shell, otherwise minimal; override with the profile flag.</desc>
+  <rect width="900" height="620" fill="#ffffff"/>
 
   <!-- minimal (outer) -->
-  <rect x="30" y="30" width="540" height="420" rx="12" fill="#eef2f7" stroke="#8a8f98" stroke-width="1.5"/>
+  <rect x="30" y="30" width="840" height="420" rx="12" fill="#eef2f7" stroke="#8a8f98" stroke-width="1.5"/>
   <text x="50" y="58" font-size="16" font-weight="700" fill="#1f2937">minimal</text>
   <text x="118" y="58" font-size="12" fill="#6b7280">— any web repo (language-agnostic)</text>
   <text x="50" y="86" font-size="12.5" fill="#374151">pre-commit · EditorConfig · commit-msg lint · gitleaks</text>
   <text x="50" y="108" font-size="12.5" fill="#374151">shellcheck · markdownlint · actionlint · lychee</text>
   <text x="50" y="130" font-size="12.5" fill="#374151">CI + security workflows · Dependabot · docs &amp; templates</text>
 
-  <!-- symfony (nested) -->
+  <!-- symfony (nested in minimal) -->
   <rect x="55" y="150" width="490" height="280" rx="10" fill="#e9f6ec" stroke="#3fa45e" stroke-width="1.5"/>
   <text x="75" y="178" font-size="15" font-weight="700" fill="#1f2937">symfony</text>
   <text x="142" y="178" font-size="12" fill="#6b7280">— extends minimal · PHP/Symfony</text>
   <text x="75" y="205" font-size="12.5" fill="#374151">+ PHPStan (level 9) · PHP-CS-Fixer (@Symfony) · Rector</text>
   <text x="75" y="227" font-size="12.5" fill="#374151">+ hadolint · php.yml CI · PHP make targets</text>
 
-  <!-- fullstack (nested) -->
+  <!-- fullstack (nested in symfony) -->
   <rect x="80" y="250" width="440" height="160" rx="10" fill="#fff3e6" stroke="#e08a3c" stroke-width="1.5"/>
   <text x="100" y="278" font-size="15" font-weight="700" fill="#1f2937">fullstack</text>
   <text x="172" y="278" font-size="12" fill="#6b7280">— extends symfony · + JS/TS front</text>
@@ -26,13 +26,22 @@
   <text x="100" y="328" font-size="12.5" fill="#374151">+ front.yml CI</text>
   <text x="100" y="384" font-size="11.5" fill="#9a6a2c">inheritance: fullstack ⊂ symfony ⊂ minimal</text>
 
-  <!-- detection panel -->
-  <rect x="600" y="120" width="270" height="230" rx="10" fill="#f4f5f7" stroke="#8a8f98" stroke-width="1.5"/>
-  <text x="622" y="150" font-size="14" font-weight="700" fill="#1f2937">Auto-detection</text>
-  <text x="622" y="184" font-size="13" fill="#374151">composer.json → symfony</text>
-  <text x="622" y="212" font-size="13" fill="#374151">+ package.json → fullstack</text>
-  <text x="622" y="240" font-size="13" fill="#374151">otherwise → minimal</text>
-  <line x1="622" y1="262" x2="848" y2="262" stroke="#cbd2da" stroke-width="1"/>
-  <text x="622" y="290" font-size="12.5" fill="#6b7280">override anytime with</text>
-  <text x="622" y="312" font-size="12.5" font-weight="600" fill="#3b74d6">--profile &lt;name&gt;</text>
+  <!-- shell (nested in minimal, sibling of symfony) -->
+  <rect x="565" y="150" width="285" height="280" rx="10" fill="#f0ecf9" stroke="#8b6fc7" stroke-width="1.5"/>
+  <text x="585" y="178" font-size="15" font-weight="700" fill="#1f2937">shell</text>
+  <text x="635" y="178" font-size="12" fill="#6b7280">— extends minimal</text>
+  <text x="585" y="205" font-size="12.5" fill="#374151">Shell/Bash tooling repos</text>
+  <text x="585" y="232" font-size="12.5" fill="#374151">+ bats · shfmt</text>
+  <text x="585" y="254" font-size="12.5" fill="#374151">+ tests.yml CI · shell make targets</text>
+  <text x="585" y="282" font-size="11.5" fill="#6f5aa6">(shellcheck inherited from minimal)</text>
+  <text x="585" y="384" font-size="11.5" fill="#6f5aa6">sibling of symfony · shell ⊂ minimal</text>
+
+  <!-- detection panel (bottom strip) -->
+  <rect x="30" y="480" width="840" height="110" rx="10" fill="#f4f5f7" stroke="#8a8f98" stroke-width="1.5"/>
+  <text x="52" y="508" font-size="14" font-weight="700" fill="#1f2937">Auto-detection</text>
+  <text x="560" y="508" font-size="12.5" fill="#6b7280">override anytime with</text>
+  <text x="700" y="508" font-size="12.5" font-weight="600" fill="#3b74d6">--profile &lt;name&gt;</text>
+  <line x1="52" y1="522" x2="848" y2="522" stroke="#cbd2da" stroke-width="1"/>
+  <text x="52" y="548" font-size="13" fill="#374151">composer.json → symfony   ·   + package.json → fullstack</text>
+  <text x="52" y="574" font-size="13" fill="#374151">tracked *.sh / *.bash (no manifest) → shell   ·   otherwise → minimal</text>
 </svg>

@@ -35,5 +35,6 @@ dependency beyond `git` and `jq`.
 - **`set -euo pipefail`** everywhere; file-deposit functions report through a
   global and are called directly (never in `$()`) so write failures can't be
   swallowed.
-- **shellcheck-clean**, portable (BSD/GNU), and self-applied — the repo runs the
-  very `minimal` profile it ships.
+- **shellcheck-clean** and **shfmt-clean**, portable (BSD/GNU), and self-applied
+  — as a Bash tooling repo with a bats suite, it runs the very `shell` profile it
+  ships (shellcheck + shfmt + bats).
