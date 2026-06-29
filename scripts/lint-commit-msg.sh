@@ -11,9 +11,9 @@
 set -euo pipefail
 
 # Self-contained logging (no external dependency in deposited projects).
-error()    { printf 'lint-commit-msg: %s\n' "$*" >&2; }
+error() { printf 'lint-commit-msg: %s\n' "$*" >&2; }
 log_line() { printf '%s\n' "$*" >&2; }
-success()  { printf '%s\n' "$*" >&2; }
+success() { printf '%s\n' "$*" >&2; }
 
 # Conventional Commit types accepted (from @gitmoji/commit-types).
 GITMOJI_TYPES='build ci docs feat fix perf refactor revert style test chore wip'
@@ -218,18 +218,18 @@ validate_message() {
       emoji_ok=1
       break
     fi
-  done <<< "$GITMOJI_UNICODE"
+  done <<<"$GITMOJI_UNICODE"
 
   if [ "$emoji_ok" -eq 0 ]; then
     code="${h%%[[:space:]]*}"
     case $'\n'"$GITMOJI_CODES"$'\n' in
-      *$'\n'"$code"$'\n'*)
-        prefix="$code "
-        if [ "${h#"$prefix"}" != "$h" ]; then
-          rest="${h#"$prefix"}"
-          emoji_ok=1
-        fi
-        ;;
+    *$'\n'"$code"$'\n'*)
+      prefix="$code "
+      if [ "${h#"$prefix"}" != "$h" ]; then
+        rest="${h#"$prefix"}"
+        emoji_ok=1
+      fi
+      ;;
     esac
   fi
 
@@ -241,12 +241,12 @@ validate_message() {
     subject="${BASH_REMATCH[5]}"
 
     case " $GITMOJI_TYPES " in
-      *" $type "*) ;;
-      *) errs+=("type \"$type\" is not allowed — use one of: $GITMOJI_TYPES") ;;
+    *" $type "*) ;;
+    *) errs+=("type \"$type\" is not allowed — use one of: $GITMOJI_TYPES") ;;
     esac
 
     case "$scope" in
-      *[A-Z]*) errs+=("scope \"$scope\" must be lower-case") ;;
+    *[A-Z]*) errs+=("scope \"$scope\" must be lower-case") ;;
     esac
 
     if [ -z "${subject//[[:space:]]/}" ]; then
@@ -254,7 +254,7 @@ validate_message() {
     fi
 
     case "$subject" in
-      *.) errs+=("subject must not end with a period") ;;
+    *.) errs+=("subject must not end with a period") ;;
     esac
   else
     errs+=("header must match \"<emoji> <type>(<scope>): <subject>\"")
