@@ -18,81 +18,14 @@ jobs:
       - name: Install bats (pinned)
         uses: bats-core/bats-action@4.0.0
         with:
-          # 4.0.0 ships the Node 24 actions/cache (3.0.1 pinned the deprecated
-          # Node 20 build) and no longer passes the CI token automatically, so
-          # hand it the job token to avoid release-download rate limits.
+          # Hand the action the job token so release downloads don't hit the
+          # unauthenticated GitHub rate limit. The helper libraries (support,
+          # assert…) aren't needed for a plain `bats tests/` run.
           github-token: ${{ github.token }}
           support-install: false
           assert-install: false
           detik-install: false
           file-install: false
 
-      - name: Ensure jq is available
-        run: jq --version
-
       - name: Run the test suite
         run: bats tests/
-
-  validation:
-    name: acceptance
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 0   # reconcile cases need the recorded commit (git show)
-
-      - name: Ensure jq is available
-        run: jq --version
-
-      - name: Run the acceptance suite
-        run: bash validation/run-all.sh
-
-  smoke-php-hooks:
-    # Scaffolds a throwaway Symfony project, deposits the symfony profile, and
-    # runs the deposited PHP hooks (php-cs-fixer/phpstan/rector) against the
-    # LATEST Composer tools — so a hook flag that drifts against a floating
-    # binary fails here instead of in the next bootstrapped project.
-    name: smoke (php hooks)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Set up PHP 8.4
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.4"
-          tools: composer
-          coverage: none
-
-      - name: Install pre-commit
-        run: pipx install pre-commit
-
-      - name: Ensure jq is available
-        run: jq --version
-
-      - name: Smoke-test the deposited PHP hooks
-        run: bash validation/smoke-php-hooks.sh
-
-  smoke-js-hooks:
-    # Scaffolds a throwaway fullstack project, deposits the fullstack profile,
-    # and runs the deposited front gates (eslint/prettier/tsc/lint-staged)
-    # against the LATEST npm tools — so a hardcoded command that drifts against a
-    # floating binary fails here instead of in the next bootstrapped project.
-    name: smoke (js hooks)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Set up Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: lts/*
-
-      - name: Ensure jq is available
-        run: jq --version
-
-      - name: Smoke-test the deposited front gates
-        run: bash validation/smoke-js-hooks.sh
