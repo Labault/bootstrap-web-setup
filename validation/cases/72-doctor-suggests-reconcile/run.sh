@@ -3,7 +3,7 @@
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../../_lib.sh"
 p=$(new_project)
 "$BS" apply --profile minimal --target "$p" --skip-bin-check >/dev/null 2>&1
-echo "# edit" >> "$p/Makefile"
+echo "# edit" >>"$p/Makefile"
 run "doctor sur fichier modifié" "$BS" doctor --target "$p" --skip-bin-check
 check "signale 'modified locally'" "$(out_has 'modified locally')"
 check "suggère 'reconcile' (préserve les édits)" "$(out_has 'reconcile')"

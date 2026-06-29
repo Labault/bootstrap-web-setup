@@ -18,8 +18,9 @@ three_way_merge() {
     return
   fi
 
-  local tmpO; tmpO="$(mktemp)"
-  if ! git -C "$BOOTSTRAP_ROOT" show "${commit}:${src}" > "$tmpO" 2>/dev/null; then
+  local tmpO
+  tmpO="$(mktemp)"
+  if ! git -C "$BOOTSTRAP_ROOT" show "${commit}:${src}" >"$tmpO" 2>/dev/null; then
     rm -f "$tmpO"
     _reconcile_no_base "$path" "$srcpath"
     return
@@ -36,21 +37,24 @@ three_way_merge() {
       cp "$srcpath" "$dpath" || die "cannot write ${path}"
       log_ok "update ${path} (fast-forward, backed up)"
     fi
-    DEPOSIT_RESULT='updated'; return
+    DEPOSIT_RESULT='updated'
+    return
   fi
 
-  local tmpM; tmpM="$(mktemp)"
+  local tmpM
+  tmpM="$(mktemp)"
   local rc=0
   git merge-file -p \
     -L "your version (${path})" -L "base" -L "bootstrap template" \
-    "$dpath" "$tmpO" "$srcpath" > "$tmpM" 2>/dev/null || rc=$?
+    "$dpath" "$tmpO" "$srcpath" >"$tmpM" 2>/dev/null || rc=$?
   rm -f "$tmpO"
 
   # No-op: the merge reproduces the current file (e.g. re-running after a clean
   # reconcile). Don't back up or rewrite — report it as in sync.
   if [[ "$rc" -eq 0 && "$(file_sha256 "$tmpM")" == "$(file_sha256 "$dpath")" ]]; then
     rm -f "$tmpM"
-    DEPOSIT_RESULT='insync'; return
+    DEPOSIT_RESULT='insync'
+    return
   fi
 
   if is_dry_run; then
@@ -82,7 +86,8 @@ _reconcile_no_base() {
   local dpath="$TARGET_DIR/$path"
   if is_dry_run; then
     log_dry "replace ${path} — no merge base available; would back up + replace"
-    DEPOSIT_RESULT='replaced-nobase'; return
+    DEPOSIT_RESULT='replaced-nobase'
+    return
   fi
   backup_file "$dpath"
   cp "$srcpath" "$dpath" || die "cannot write ${path}"
@@ -99,11 +104,20 @@ reconcile_file() {
 
   # Merge-strategy files already have a non-destructive additive merge — reuse it.
   case "$strategy" in
-    merge-gitignore) deposit_merge "$srcpath" "$dpath" "$strategy" render_gitignore '' ; return ;;
-    merge-json)      deposit_merge "$srcpath" "$dpath" "$strategy" render_extensions_json canonical_json ; return ;;
+  merge-gitignore)
+    deposit_merge "$srcpath" "$dpath" "$strategy" render_gitignore ''
+    return
+    ;;
+  merge-json)
+    deposit_merge "$srcpath" "$dpath" "$strategy" render_extensions_json canonical_json
+    return
+    ;;
   esac
 
-  if [[ ! -f "$srcpath" ]]; then DEPOSIT_RESULT='skip-nosrc'; return; fi
+  if [[ ! -f "$srcpath" ]]; then
+    DEPOSIT_RESULT='skip-nosrc'
+    return
+  fi
 
   if [[ -d "$dpath" ]]; then die "cannot reconcile ${path}: a directory exists there."; fi
 
@@ -113,12 +127,14 @@ reconcile_file() {
       cp "$srcpath" "$dpath" || die "cannot write ${path}"
       log_ok "recreate ${path}"
     fi
-    DEPOSIT_RESULT='recreated'; return
+    DEPOSIT_RESULT='recreated'
+    return
   fi
 
   # Already identical to the current template -> nothing to do.
   if [[ "$(file_sha256 "$dpath")" == "$(file_sha256 "$srcpath")" ]]; then
-    DEPOSIT_RESULT='insync'; return
+    DEPOSIT_RESULT='insync'
+    return
   fi
 
   # Otherwise 3-way merge. It fast-forwards when the file equals the base (no
@@ -137,11 +153,13 @@ reconcile_run() {
   local state="$target/$STATE_FILE_NAME"
 
   local -A cur_src=() cur_strat=() tracked=()
-  local -a cur_order=()   # deterministic resolve_files order, for stable state output
+  local -a cur_order=() # deterministic resolve_files order, for stable state output
   local src dest strat
   while IFS=$'\t' read -r src dest strat; do
     [[ -z "$dest" ]] && continue
-    cur_src["$dest"]="$src"; cur_strat["$dest"]="$strat"; cur_order+=("$dest")
+    cur_src["$dest"]="$src"
+    cur_strat["$dest"]="$strat"
+    cur_order+=("$dest")
   done < <(resolve_files "$profile")
 
   local n_insync=0 n_updated=0 n_merged=0 n_conflict=0 n_recreated=0 n_nobase=0 n_new=0 n_orphan=0
@@ -151,18 +169,19 @@ reconcile_run() {
     tracked["$path"]=1
     if [[ -z "${cur_src[$path]+x}" ]]; then
       log_info "orphaned ${path} — no longer in profile, left as-is"
-      n_orphan=$((n_orphan + 1)); continue
+      n_orphan=$((n_orphan + 1))
+      continue
     fi
     DEPOSIT_RESULT=''
     reconcile_file "$path" "${cur_src[$path]}" "${cur_strat[$path]}" "$commit"
     status="$DEPOSIT_RESULT"
     case "$status" in
-      insync|identical) n_insync=$((n_insync + 1)) ;;
-      updated) n_updated=$((n_updated + 1)) ;;
-      merged|created) n_merged=$((n_merged + 1)) ;;
-      conflict) n_conflict=$((n_conflict + 1)) ;;
-      recreated) n_recreated=$((n_recreated + 1)) ;;
-      replaced-nobase) n_nobase=$((n_nobase + 1)) ;;
+    insync | identical) n_insync=$((n_insync + 1)) ;;
+    updated) n_updated=$((n_updated + 1)) ;;
+    merged | created) n_merged=$((n_merged + 1)) ;;
+    conflict) n_conflict=$((n_conflict + 1)) ;;
+    recreated) n_recreated=$((n_recreated + 1)) ;;
+    replaced-nobase) n_nobase=$((n_nobase + 1)) ;;
     esac
   done < <(state_files "$state")
 
@@ -175,7 +194,8 @@ reconcile_run() {
   done
 
   printf '\n' >&2
-  local verb="Reconciled"; is_dry_run && verb="Dry-run"
+  local verb="Reconciled"
+  is_dry_run && verb="Dry-run"
   log_info "${verb}: ${n_merged} merged, ${n_updated} fast-forwarded, ${n_recreated} recreated, ${n_new} added, ${n_conflict} CONFLICTS, ${n_nobase} replaced (no base), ${n_insync} in sync, ${n_orphan} orphaned."
 
   # Refresh .bootstrap.yaml so the recorded hashes + commit match the reconciled

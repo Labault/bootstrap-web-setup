@@ -28,7 +28,7 @@ load test_helper
 
 @test "replace collision backs up then overwrites" {
   apply_minimal "$BS" "$PROJ" >/dev/null
-  echo "# local edit" >> "$PROJ/.shellcheckrc"
+  echo "# local edit" >>"$PROJ/.shellcheckrc"
   run apply_minimal "$BS" "$PROJ"
   [[ "$output" == *"replace .shellcheckrc"* ]]
   # original (with the edit) is preserved in a backup
@@ -41,7 +41,7 @@ load test_helper
 
 @test "--no-overwrite preserves local changes" {
   apply_minimal "$BS" "$PROJ" >/dev/null
-  echo "# keep me" >> "$PROJ/.shellcheckrc"
+  echo "# keep me" >>"$PROJ/.shellcheckrc"
   run "$BS" apply --profile minimal --target "$PROJ" --skip-bin-check --no-overwrite
   [[ "$output" == *"--no-overwrite"* ]]
   grep -q 'keep me' "$PROJ/.shellcheckrc"

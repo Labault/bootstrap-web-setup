@@ -20,8 +20,8 @@ cmd_doctor() {
   local target="." override="" strict=0 skip_bin_check=0
   while [[ $# -gt 0 ]]; do
     case "$1" in
-      -h|--help)
-        cat >&2 <<EOF
+    -h | --help)
+      cat >&2 <<EOF
 Usage: bootstrap doctor [--target <dir>] [--profile <name>] [--skip-bin-check] [--strict]
 
 Check that every binary required by the (detected or given) profile is installed,
@@ -34,21 +34,29 @@ a .bootstrap.yaml. Drift is informational by default.
 Exit code: 1 if a required binary is missing (unless --skip-bin-check), or with
 --strict if drift exists.
 EOF
-        return 0 ;;
-      --target) target="${2:?--target needs a value}"; shift ;;
-      --target=*) target="${1#*=}" ;;
-      --profile) override="${2:?--profile needs a value}"; shift ;;
-      --profile=*) override="${1#*=}" ;;
-      --skip-bin-check) skip_bin_check=1 ;;
-      --strict) strict=1 ;;
-      *) die "Unknown option for 'doctor': $1" ;;
+      return 0
+      ;;
+    --target)
+      target="${2:?--target needs a value}"
+      shift
+      ;;
+    --target=*) target="${1#*=}" ;;
+    --profile)
+      override="${2:?--profile needs a value}"
+      shift
+      ;;
+    --profile=*) override="${1#*=}" ;;
+    --skip-bin-check) skip_bin_check=1 ;;
+    --strict) strict=1 ;;
+    *) die "Unknown option for 'doctor': $1" ;;
     esac
     shift
   done
 
   [[ -d "$target" ]] || die "Target is not a directory: $target"
 
-  local profile; profile="$(resolve_profile "$target" "$override")"
+  local profile
+  profile="$(resolve_profile "$target" "$override")"
   log_info "Checking binaries for profile ${C_BOLD}${profile}${C_RESET}"
 
   local bin missing=0 total=0

@@ -18,11 +18,11 @@ else
 fi
 
 # --- Logging (everything to stderr; stdout stays clean for data) -------------
-log_info()  { printf '%s\n' "${C_BLUE}•${C_RESET} $*" >&2; }
-log_ok()    { printf '%s\n' "${C_GREEN}✓${C_RESET} $*" >&2; }
-log_warn()  { printf '%s\n' "${C_YELLOW}!${C_RESET} $*" >&2; }
+log_info() { printf '%s\n' "${C_BLUE}•${C_RESET} $*" >&2; }
+log_ok() { printf '%s\n' "${C_GREEN}✓${C_RESET} $*" >&2; }
+log_warn() { printf '%s\n' "${C_YELLOW}!${C_RESET} $*" >&2; }
 log_error() { printf '%s\n' "${C_RED}✗${C_RESET} $*" >&2; }
-log_dry()   { printf '%s\n' "${C_DIM}[dry-run]${C_RESET} $*" >&2; }
+log_dry() { printf '%s\n' "${C_DIM}[dry-run]${C_RESET} $*" >&2; }
 
 die() {
   log_error "$*"
@@ -63,7 +63,7 @@ require_cmd() {
 # bootstrap_version -> the template/CLI version from the repo's VERSION file.
 bootstrap_version() {
   if [[ -f "$BOOTSTRAP_ROOT/VERSION" ]]; then
-    tr -d '[:space:]' < "$BOOTSTRAP_ROOT/VERSION"
+    tr -d '[:space:]' <"$BOOTSTRAP_ROOT/VERSION"
   else
     printf 'unknown'
   fi

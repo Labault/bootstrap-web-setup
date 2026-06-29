@@ -21,7 +21,8 @@ write_bootstrap_state() {
 
   # Write to a temp IN THE TARGET DIR so the final mv is same-filesystem (atomic):
   # no reader ever sees a half-written state file.
-  local tmp; tmp="$(mktemp "$target/.bootstrap.yaml.XXXXXX")" || die "cannot write state in ${target}"
+  local tmp
+  tmp="$(mktemp "$target/.bootstrap.yaml.XXXXXX")" || die "cannot write state in ${target}"
   {
     printf '# Managed by bootstrap — do not edit by hand.\n'
     # Literal backticks in a comment; nothing to expand.
@@ -34,7 +35,7 @@ write_bootstrap_state() {
     printf 'files:\n'
     local entry rel strat src hash tpl
     for entry in ${MANAGED_FILES[@]+"${MANAGED_FILES[@]}"}; do
-      IFS=$'\t' read -r rel strat src <<< "$entry"
+      IFS=$'\t' read -r rel strat src <<<"$entry"
       hash="$(file_sha256 "$target/$rel")"
       # tpl_sha256 = hash of the template source at deposit time. Lets `doctor`
       # tell "template changed" (behind) from "local edits preserved" (customized).
@@ -51,7 +52,7 @@ write_bootstrap_state() {
         printf '    strategy: %s\n' "$strat"
       fi
     done
-  } > "$tmp"
+  } >"$tmp"
 
   # Idempotence: if only applied_at would change (everything else identical), keep
   # the existing file so re-applying an unchanged project produces no git diff.

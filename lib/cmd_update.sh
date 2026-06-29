@@ -5,15 +5,16 @@
 cmd_update() {
   while [[ $# -gt 0 ]]; do
     case "$1" in
-      -h|--help)
-        cat >&2 <<EOF
+    -h | --help)
+      cat >&2 <<EOF
 Usage: bootstrap update [--dry-run]
 
 Update bootstrap itself (git pull in its own checkout). Never touches projects.
 With --dry-run, fetch and report whether an update is available without pulling.
 EOF
-        return 0 ;;
-      *) die "Unknown option for 'update': $1" ;;
+      return 0
+      ;;
+    *) die "Unknown option for 'update': $1" ;;
     esac
     shift
   done
@@ -22,7 +23,8 @@ EOF
     die "bootstrap is not a git checkout ($BOOTSTRAP_ROOT) — cannot self-update."
   fi
 
-  local before; before="$(bootstrap_version)"
+  local before
+  before="$(bootstrap_version)"
 
   if is_dry_run; then
     log_info "fetching to preview updates…"
@@ -39,7 +41,8 @@ EOF
 
   log_info "updating bootstrap (git pull --ff-only)…"
   if git -C "$BOOTSTRAP_ROOT" pull --ff-only --quiet; then
-    local after; after="$(bootstrap_version)"
+    local after
+    after="$(bootstrap_version)"
     if [[ "$before" == "$after" ]]; then
       log_ok "bootstrap is up to date (version ${after}). Projects are untouched."
     else

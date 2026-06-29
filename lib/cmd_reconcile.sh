@@ -20,8 +20,8 @@ cmd_reconcile() {
   local target="."
   while [[ $# -gt 0 ]]; do
     case "$1" in
-      -h|--help)
-        cat >&2 <<EOF
+    -h | --help)
+      cat >&2 <<EOF
 Usage: bootstrap reconcile [--target <dir>] [--dry-run]
 
 3-way merge the project's files with the current templates, keeping local edits.
@@ -31,10 +31,14 @@ Requires the project to have been set up by bootstrap (.bootstrap.yaml present).
 
   --dry-run   Show what would merge / conflict without writing.
 EOF
-        return 0 ;;
-      --target) target="${2:?--target needs a value}"; shift ;;
-      --target=*) target="${1#*=}" ;;
-      *) die "Unknown option for 'reconcile': $1" ;;
+      return 0
+      ;;
+    --target)
+      target="${2:?--target needs a value}"
+      shift
+      ;;
+    --target=*) target="${1#*=}" ;;
+    *) die "Unknown option for 'reconcile': $1" ;;
     esac
     shift
   done

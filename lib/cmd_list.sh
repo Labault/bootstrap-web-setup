@@ -7,15 +7,16 @@ source "$BOOTSTRAP_ROOT/lib/manifest.sh"
 cmd_list() {
   while [[ $# -gt 0 ]]; do
     case "$1" in
-      -h|--help)
-        cat >&2 <<EOF
+    -h | --help)
+      cat >&2 <<EOF
 Usage: bootstrap list
 
 List the available profiles, their inheritance, required binaries and the files
 they deposit (inheritance resolved).
 EOF
-        return 0 ;;
-      *) die "Unknown option for 'list': $1" ;;
+      return 0
+      ;;
+    *) die "Unknown option for 'list': $1" ;;
     esac
   done
 

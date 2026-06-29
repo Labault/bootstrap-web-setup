@@ -16,7 +16,10 @@ set -euo pipefail
 
 BASE_URL="https://github.com/Labault/bootstrap-web-setup"
 
-die() { printf 'release: %s\n' "$*" >&2; exit 1; }
+die() {
+  printf 'release: %s\n' "$*" >&2
+  exit 1
+}
 
 cd "$(git rev-parse --show-toplevel 2>/dev/null)" || die "not in a git repository."
 
@@ -27,14 +30,14 @@ dry_run=0
 
 [[ -f VERSION && -f CHANGELOG.md ]] || die "VERSION and CHANGELOG.md must exist."
 
-cur="$(tr -d '[:space:]' < VERSION)"
-IFS=. read -r major minor patch <<< "$cur"
+cur="$(tr -d '[:space:]' <VERSION)"
+IFS=. read -r major minor patch <<<"$cur"
 case "$bump" in
-  major) next="$((major + 1)).0.0" ;;
-  minor) next="${major}.$((minor + 1)).0" ;;
-  patch) next="${major}.${minor}.$((patch + 1))" ;;
-  [0-9]*.[0-9]*.[0-9]*) next="$bump" ;;
-  *) die "invalid bump '$bump' (use patch | minor | major | X.Y.Z)." ;;
+major) next="$((major + 1)).0.0" ;;
+minor) next="${major}.$((minor + 1)).0" ;;
+patch) next="${major}.${minor}.$((patch + 1))" ;;
+[0-9]*.[0-9]*.[0-9]*) next="$bump" ;;
+*) die "invalid bump '$bump' (use patch | minor | major | X.Y.Z)." ;;
 esac
 tag="v$next"
 
@@ -43,8 +46,8 @@ grep -q '^## \[Unreleased\]' CHANGELOG.md || die "no '## [Unreleased]' section i
 
 # Release notes = the current [Unreleased] body (entries up to the next heading).
 notes="$(awk '/^## \[Unreleased\]/{f=1;next} /^## \[/{f=0} f' CHANGELOG.md | sed '/^[[:space:]]*$/d')"
-[[ -n "$notes" && "$notes" != "- Nothing yet." ]] \
-  || die "[Unreleased] is empty — add entries before releasing."
+[[ -n "$notes" && "$notes" != "- Nothing yet." ]] ||
+  die "[Unreleased] is empty — add entries before releasing."
 
 today="$(date -u +%Y-%m-%d)"
 
@@ -75,9 +78,9 @@ awk -v ver="$next" -v date="$today" -v base="$BASE_URL" '
     next
   }
   { print }
-' CHANGELOG.md > "$tmp" && mv "$tmp" CHANGELOG.md
+' CHANGELOG.md >"$tmp" && mv "$tmp" CHANGELOG.md
 
-printf '%s\n' "$next" > VERSION
+printf '%s\n' "$next" >VERSION
 
 git add VERSION CHANGELOG.md
 git commit --no-verify -m "🔖 chore(release): $tag"

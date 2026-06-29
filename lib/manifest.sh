@@ -67,12 +67,14 @@ manifest_files() {
 # Guards against cycles and unknown profiles.
 resolve_chain() {
   local profile="$1" seen="${2:-}"
-  local file; file="$(manifest_path "$profile")"
+  local file
+  file="$(manifest_path "$profile")"
   [[ -f "$file" ]] || die "Unknown profile: '$profile' (no $file)"
   case " $seen " in
-    *" $profile "*) die "Cyclic profile inheritance detected at '$profile'" ;;
+  *" $profile "*) die "Cyclic profile inheritance detected at '$profile'" ;;
   esac
-  local parent; parent="$(manifest_extends "$file")"
+  local parent
+  parent="$(manifest_extends "$file")"
   if [[ -n "$parent" ]]; then
     resolve_chain "$parent" "$seen $profile"
   fi

@@ -8,8 +8,8 @@
 # match mac-setup as it evolves.
 install_hint() {
   case "$1" in
-    markdownlint-cli2) printf 'npm install -g markdownlint-cli2\n' ;;
-    *)                 printf 'brew install %s\n' "$1" ;;
+  markdownlint-cli2) printf 'npm install -g markdownlint-cli2\n' ;;
+  *) printf 'brew install %s\n' "$1" ;;
   esac
 }
 

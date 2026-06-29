@@ -6,7 +6,7 @@ load test_helper
   if [ "$(id -u)" -eq 0 ]; then skip "root bypasses -w permissions"; fi
   chmod -w "$PROJ"
   run "$BS" apply --profile minimal --target "$PROJ" --skip-bin-check
-  chmod +w "$PROJ"   # restore so teardown can clean up
+  chmod +w "$PROJ" # restore so teardown can clean up
   [ "$status" -ne 0 ]
   [ ! -f "$PROJ/.bootstrap.yaml" ]
 }
@@ -21,7 +21,7 @@ load test_helper
 
 # C2: a lone begin marker must not delete content after it.
 @test "gitignore with begin marker but no end marker: no data loss" {
-  printf '# user\n# >>> bootstrap\nGARBAGE\nKEEPME\n' > "$PROJ/.gitignore"
+  printf '# user\n# >>> bootstrap\nGARBAGE\nKEEPME\n' >"$PROJ/.gitignore"
   apply_minimal "$BS" "$PROJ" >/dev/null
   grep -q KEEPME "$PROJ/.gitignore"
 }
@@ -29,7 +29,7 @@ load test_helper
 # I1: invalid existing JSON aborts clearly instead of silently doing nothing.
 @test "invalid existing extensions.json aborts with a clear message" {
   mkdir -p "$PROJ/.vscode"
-  printf '{ broken,,, }' > "$PROJ/.vscode/extensions.json"
+  printf '{ broken,,, }' >"$PROJ/.vscode/extensions.json"
   run "$BS" apply --profile minimal --target "$PROJ" --skip-bin-check
   [ "$status" -ne 0 ]
   [[ "$output" == *"invalid JSON"* ]]
@@ -40,8 +40,8 @@ load test_helper
 @test "reconcile warns on a dirty bootstrap checkout" {
   make_workcopy
   apply_minimal "$WBS" "$PROJ" >/dev/null
-  printf '\n# dirty\n' >> "$WORK/templates/common/.shellcheckrc"
-  echo "# local" >> "$PROJ/.shellcheckrc"
+  printf '\n# dirty\n' >>"$WORK/templates/common/.shellcheckrc"
+  echo "# local" >>"$PROJ/.shellcheckrc"
   run "$WBS" reconcile --target "$PROJ"
   [[ "$output" == *"uncommitted changes"* ]]
 }
@@ -56,7 +56,7 @@ load test_helper
 # R4: a corrupt state file is reported, not read as "everything is new".
 @test "corrupt .bootstrap.yaml is reported as unreadable" {
   apply_minimal "$BS" "$PROJ" >/dev/null
-  printf 'garbage not yaml @#$\n' > "$PROJ/.bootstrap.yaml"
+  printf 'garbage not yaml @#$\n' >"$PROJ/.bootstrap.yaml"
   run "$BS" doctor --target "$PROJ" --skip-bin-check
   [[ "$output" == *"unreadable"* ]]
 }

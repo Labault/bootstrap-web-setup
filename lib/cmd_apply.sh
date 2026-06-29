@@ -17,8 +17,8 @@ cmd_apply() {
   local target="." override="" skip_bin_check=0
   while [[ $# -gt 0 ]]; do
     case "$1" in
-      -h|--help)
-        cat >&2 <<EOF
+    -h | --help)
+      cat >&2 <<EOF
 Usage: bootstrap apply [--target <dir>] [--profile <name>] [--no-overwrite] [--skip-bin-check] [--dry-run]
 
 Deposit the (detected or given) profile's config into <dir> (default: current directory).
@@ -29,14 +29,21 @@ Deposit the (detected or given) profile's config into <dir> (default: current di
   --skip-bin-check   Don't block on missing required binaries (CI / deferred install).
   --dry-run          Preview without writing anything.
 EOF
-        return 0 ;;
-      --target) target="${2:?--target needs a value}"; shift ;;
-      --target=*) target="${1#*=}" ;;
-      --profile) override="${2:?--profile needs a value}"; shift ;;
-      --profile=*) override="${1#*=}" ;;
-      --no-overwrite) NO_OVERWRITE=1 ;;
-      --skip-bin-check) skip_bin_check=1 ;;
-      *) die "Unknown option for 'apply': $1" ;;
+      return 0
+      ;;
+    --target)
+      target="${2:?--target needs a value}"
+      shift
+      ;;
+    --target=*) target="${1#*=}" ;;
+    --profile)
+      override="${2:?--profile needs a value}"
+      shift
+      ;;
+    --profile=*) override="${1#*=}" ;;
+    --no-overwrite) NO_OVERWRITE=1 ;;
+    --skip-bin-check) skip_bin_check=1 ;;
+    *) die "Unknown option for 'apply': $1" ;;
     esac
     shift
   done
@@ -45,7 +52,8 @@ EOF
   # Normalize to an absolute path so relative-path display and writes are stable.
   target="$(cd "$target" && pwd)"
 
-  local profile; profile="$(resolve_profile "$target" "$override")"
+  local profile
+  profile="$(resolve_profile "$target" "$override")"
 
   # bootstrap's own runtime dependency. Checked here at the top level (where die
   # actually exits) BEFORE writing anything, so a missing jq can never corrupt a

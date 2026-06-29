@@ -25,9 +25,12 @@ set -euo pipefail
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BS="$REPO/bin/bootstrap"
 
-log()  { printf '\033[1;34m▸\033[0m %s\n' "$*" >&2; }
-ok()   { printf '\033[1;32m✓\033[0m %s\n' "$*" >&2; }
-fail() { printf '\033[1;31m✗ %s\033[0m\n' "$*" >&2; exit 1; }
+log() { printf '\033[1;34m▸\033[0m %s\n' "$*" >&2; }
+ok() { printf '\033[1;32m✓\033[0m %s\n' "$*" >&2; }
+fail() {
+  printf '\033[1;31m✗ %s\033[0m\n' "$*" >&2
+  exit 1
+}
 
 for bin in node npm git jq; do
   command -v "$bin" >/dev/null 2>&1 || fail "missing required tool: $bin"
@@ -46,7 +49,7 @@ git config user.name 'bootstrap smoke'
 
 # composer.json + package.json make this a fullstack project; we force the
 # profile anyway so the test is deterministic.
-cat > composer.json <<'JSON'
+cat >composer.json <<'JSON'
 {
     "name": "bootstrap/smoke-fixture",
     "description": "Throwaway project for the bootstrap front-hook smoke test.",
@@ -54,7 +57,7 @@ cat > composer.json <<'JSON'
 }
 JSON
 
-cat > package.json <<'JSON'
+cat >package.json <<'JSON'
 {
     "name": "bootstrap-smoke-fixture",
     "version": "0.0.0",
@@ -66,7 +69,7 @@ JSON
 # An intentionally inert TS fixture: clean under the strict tsconfig, the
 # type-aware ESLint flat config, and Prettier's deposited .prettierrc. It lives
 # in assets/ because that is what tsconfig.json includes.
-cat > assets/app.ts <<'TS'
+cat >assets/app.ts <<'TS'
 export function greet(name: string): string {
   return `hello, ${name}`;
 }
@@ -93,7 +96,8 @@ git add -A
 log "running the deposited front gates for real"
 gates_failed=0
 run_gate() { # <label> <cmd...>
-  local label="$1"; shift
+  local label="$1"
+  shift
   if "$@" >&2; then
     ok "gate '$label' is green"
   else
@@ -102,12 +106,12 @@ run_gate() { # <label> <cmd...>
   fi
 }
 
-run_gate "tsc --noEmit"      npx --no-install tsc --noEmit
-run_gate "eslint ."          npx --no-install eslint .
-run_gate "prettier --check"  npx --no-install prettier --check .
-run_gate "lint-staged"       npx --no-install lint-staged
+run_gate "tsc --noEmit" npx --no-install tsc --noEmit
+run_gate "eslint ." npx --no-install eslint .
+run_gate "prettier --check" npx --no-install prettier --check .
+run_gate "lint-staged" npx --no-install lint-staged
 
-[[ "$gates_failed" -eq 0 ]] \
-  || fail "a deposited front gate failed — flag/API drift or an unclean deposited file"
+[[ "$gates_failed" -eq 0 ]] ||
+  fail "a deposited front gate failed — flag/API drift or an unclean deposited file"
 
 ok "all deposited front gates are green against the latest tools"

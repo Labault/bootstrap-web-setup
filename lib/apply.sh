@@ -52,7 +52,8 @@ deposit_file() {
 
   if [[ ! -f "$src" ]]; then
     log_warn "skip ${rel} — template source not found (${src#"$BOOTSTRAP_ROOT"/})"
-    DEPOSIT_RESULT='skipped-nosrc'; return 0
+    DEPOSIT_RESULT='skipped-nosrc'
+    return 0
   fi
 
   # A destination that exists as a directory can't be a config file we manage —
@@ -63,8 +64,14 @@ deposit_file() {
 
   # Merge strategies have their own renderer-driven path (idempotent, additive).
   case "$strategy" in
-    merge-gitignore) deposit_merge "$src" "$dest" "$strategy" render_gitignore '' ; return 0 ;;
-    merge-json)      deposit_merge "$src" "$dest" "$strategy" render_extensions_json canonical_json ; return 0 ;;
+  merge-gitignore)
+    deposit_merge "$src" "$dest" "$strategy" render_gitignore ''
+    return 0
+    ;;
+  merge-json)
+    deposit_merge "$src" "$dest" "$strategy" render_extensions_json canonical_json
+    return 0
+    ;;
   esac
 
   # --- replace strategy --------------------------------------------------------
@@ -77,24 +84,28 @@ deposit_file() {
       cp "$src" "$dest" || die "cannot write ${rel} (permission denied? read-only target?)"
       log_ok "create ${label}"
     fi
-    DEPOSIT_RESULT='created'; return 0
+    DEPOSIT_RESULT='created'
+    return 0
   fi
 
   # Present and byte-identical: nothing to do.
   if cmp -s "$src" "$dest"; then
     log_info "ok ${rel} — already up to date"
-    DEPOSIT_RESULT='identical'; return 0
+    DEPOSIT_RESULT='identical'
+    return 0
   fi
 
   if [[ "$NO_OVERWRITE" == "1" ]]; then
     log_warn "skip ${rel} — differs but --no-overwrite is set"
-    DEPOSIT_RESULT='skipped-nooverwrite'; return 0
+    DEPOSIT_RESULT='skipped-nooverwrite'
+    return 0
   fi
 
   local bpath="$BACKUP_RUN_DIR/$rel"
   if is_dry_run; then
     log_dry "replace ${rel} — would back up to $(tildify "$bpath") then overwrite"
-    DEPOSIT_RESULT='replaced'; return 0
+    DEPOSIT_RESULT='replaced'
+    return 0
   fi
 
   backup_file "$dest"
@@ -113,7 +124,8 @@ deposit_merge() {
   local label="$rel [$strategy]"
   local bpath="$BACKUP_RUN_DIR/$rel"
 
-  local new; new="$("$render_fn" "$dest" "$src")"
+  local new
+  new="$("$render_fn" "$dest" "$src")"
   # A render that yields nothing from a non-empty file means the renderer failed
   # (e.g. invalid existing JSON). Abort rather than write an empty file or claim
   # success while doing nothing.
@@ -127,16 +139,19 @@ deposit_merge() {
       log_dry "create ${label}"
     else
       mkdir -p "$(dirname "$dest")" || die "cannot create parent dir for ${rel}"
-      printf '%s\n' "$new" > "$dest" || die "cannot write ${rel}"
+      printf '%s\n' "$new" >"$dest" || die "cannot write ${rel}"
       log_ok "create ${label}"
     fi
-    DEPOSIT_RESULT='created'; return 0
+    DEPOSIT_RESULT='created'
+    return 0
   fi
 
   # Existing file: has the merged result actually changed anything?
   local same=0
   if [[ -n "$canon_fn" ]]; then
-    local tmp; tmp="$(mktemp)"; printf '%s\n' "$new" > "$tmp"
+    local tmp
+    tmp="$(mktemp)"
+    printf '%s\n' "$new" >"$tmp"
     [[ "$("$canon_fn" "$dest")" == "$("$canon_fn" "$tmp")" ]] && same=1
     rm -f "$tmp"
   else
@@ -144,21 +159,24 @@ deposit_merge() {
   fi
   if [[ "$same" == 1 ]]; then
     log_info "ok ${rel} — already up to date [${strategy}]"
-    DEPOSIT_RESULT='identical'; return 0
+    DEPOSIT_RESULT='identical'
+    return 0
   fi
 
   if [[ "$NO_OVERWRITE" == "1" ]]; then
     log_warn "skip ${rel} — would merge but --no-overwrite is set"
-    DEPOSIT_RESULT='skipped-nooverwrite'; return 0
+    DEPOSIT_RESULT='skipped-nooverwrite'
+    return 0
   fi
 
   if is_dry_run; then
     log_dry "merge ${label} — would back up to $(tildify "$bpath") then update"
-    DEPOSIT_RESULT='merged'; return 0
+    DEPOSIT_RESULT='merged'
+    return 0
   fi
 
   backup_file "$dest"
-  printf '%s\n' "$new" > "$dest" || die "cannot write ${rel}"
+  printf '%s\n' "$new" >"$dest" || die "cannot write ${rel}"
   log_ok "merge ${label} — backed up to $(tildify "$bpath")"
   DEPOSIT_RESULT='merged'
 }
@@ -188,23 +206,24 @@ run_apply() {
     deposit_file "$srcpath" "$destpath" "$strat"
     status="$DEPOSIT_RESULT"
     case "$status" in
-      created)             n_created=$((n_created + 1)) ;;
-      identical)           n_identical=$((n_identical + 1)) ;;
-      replaced)            n_replaced=$((n_replaced + 1)) ;;
-      merged)              n_merged=$((n_merged + 1)) ;;
-      skipped-nooverwrite) n_noover=$((n_noover + 1)) ;;
-      skipped-nosrc)       n_nosrc=$((n_nosrc + 1)) ;;
+    created) n_created=$((n_created + 1)) ;;
+    identical) n_identical=$((n_identical + 1)) ;;
+    replaced) n_replaced=$((n_replaced + 1)) ;;
+    merged) n_merged=$((n_merged + 1)) ;;
+    skipped-nooverwrite) n_noover=$((n_noover + 1)) ;;
+    skipped-nosrc) n_nosrc=$((n_nosrc + 1)) ;;
     esac
     # A file is "managed" once it exists and came from us: created, replaced,
     # merged or already-identical. Skipped (no source / --no-overwrite) are not.
     # Record the template src too, so the state can store the template's own hash.
     case "$status" in
-      created|identical|replaced|merged) MANAGED_FILES+=("${dest}"$'\t'"${strat}"$'\t'"${src}") ;;
+    created | identical | replaced | merged) MANAGED_FILES+=("${dest}"$'\t'"${strat}"$'\t'"${src}") ;;
     esac
   done < <(resolve_files "$profile")
 
   printf '\n' >&2
-  local verb="Applied"; is_dry_run && verb="Dry-run"
+  local verb="Applied"
+  is_dry_run && verb="Dry-run"
   log_info "${verb}: ${n_created} created, ${n_identical} unchanged, ${n_replaced} replaced, ${n_merged} merged, ${n_noover} skipped (--no-overwrite), ${n_nosrc} not-yet-authored."
 
   # State file: written on a real apply only; previewed in dry-run.
@@ -258,7 +277,7 @@ install_hooks() {
     log_dry "would run: pre-commit install && pre-commit install --hook-type commit-msg"
     return 0
   fi
-  if ( cd "$target" && pre-commit install >/dev/null && pre-commit install --hook-type commit-msg >/dev/null ); then
+  if (cd "$target" && pre-commit install >/dev/null && pre-commit install --hook-type commit-msg >/dev/null); then
     log_ok "hooks: pre-commit installed (pre-commit + commit-msg)"
   else
     log_warn "hooks: pre-commit install failed — run it manually in ${target}"
@@ -313,7 +332,7 @@ setup_phpstan_baseline() {
     if is_dry_run; then
       log_dry "would create an empty phpstan-baseline.neon"
     else
-      printf 'parameters:\n\tignoreErrors: []\n' > "$baseline"
+      printf 'parameters:\n\tignoreErrors: []\n' >"$baseline"
       log_ok "create phpstan-baseline.neon (empty)"
     fi
   fi
@@ -346,8 +365,8 @@ setup_phpstan_baseline() {
   fi
 
   log_info "phpstan baseline: generating for existing code…"
-  if ( cd "$target" && "$phpstan" analyse --configuration phpstan.dist.neon \
-      --generate-baseline phpstan-baseline.neon --no-progress >/dev/null 2>&1 ); then
+  if (cd "$target" && "$phpstan" analyse --configuration phpstan.dist.neon \
+    --generate-baseline phpstan-baseline.neon --no-progress >/dev/null 2>&1); then
     log_ok "phpstan baseline: generated"
   else
     log_warn "phpstan baseline: generation failed (likely no 'composer install' yet); empty baseline kept. Run later:"

@@ -8,7 +8,7 @@ set -euo pipefail
 
 # We use associative arrays and other bash 4+ features. macOS ships bash 3.2 as
 # /bin/bash, so fail loudly rather than break mysteriously under the wrong shell.
-if (( BASH_VERSINFO[0] < 4 )); then
+if ((BASH_VERSINFO[0] < 4)); then
   printf 'bootstrap: bash 4+ required (found %s). Install a modern bash (brew install bash).\n' \
     "${BASH_VERSION}" >&2
   exit 1
@@ -16,7 +16,7 @@ fi
 
 # --- Resolve our own location (repo root), following symlinks ----------------
 _src="${BASH_SOURCE[0]}"
-while [[ -h "$_src" ]]; do
+while [[ -L "$_src" ]]; do
   _dir="$(cd -P "$(dirname "$_src")" >/dev/null 2>&1 && pwd)"
   _src="$(readlink "$_src")"
   [[ "$_src" != /* ]] && _src="$_dir/$_src"
@@ -61,29 +61,41 @@ declare -a ARGS=()
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --dry-run)      DRY_RUN=1 ;;
-    -h|--help)
-      if [[ -z "$COMMAND" ]]; then usage; exit 0; fi
-      ARGS+=("$1") ;;
-    -V|--version)
-      printf '%s\n' "$(bootstrap_version)"; exit 0 ;;
-    --)
+  --dry-run) DRY_RUN=1 ;;
+  -h | --help)
+    if [[ -z "$COMMAND" ]]; then
+      usage
+      exit 0
+    fi
+    ARGS+=("$1")
+    ;;
+  -V | --version)
+    printf '%s\n' "$(bootstrap_version)"
+    exit 0
+    ;;
+  --)
+    shift
+    while [[ $# -gt 0 ]]; do
+      ARGS+=("$1")
       shift
-      while [[ $# -gt 0 ]]; do ARGS+=("$1"); shift; done
-      break ;;
-    -*)
-      if [[ -z "$COMMAND" ]]; then
-        log_error "Unknown global option: $1"
-        usage
-        exit 2
-      fi
-      ARGS+=("$1") ;;
-    *)
-      if [[ -z "$COMMAND" ]]; then
-        COMMAND="$1"
-      else
-        ARGS+=("$1")
-      fi ;;
+    done
+    break
+    ;;
+  -*)
+    if [[ -z "$COMMAND" ]]; then
+      log_error "Unknown global option: $1"
+      usage
+      exit 2
+    fi
+    ARGS+=("$1")
+    ;;
+  *)
+    if [[ -z "$COMMAND" ]]; then
+      COMMAND="$1"
+    else
+      ARGS+=("$1")
+    fi
+    ;;
   esac
   shift
 done
@@ -95,20 +107,21 @@ if [[ -z "$COMMAND" ]]; then
 fi
 
 dispatch() {
-  local cmd="$1"; shift
+  local cmd="$1"
+  shift
   local module="$BOOTSTRAP_ROOT/lib/cmd_${cmd}.sh"
   case "$cmd" in
-    apply|doctor|update|list|detect|reconcile)
-      [[ -f "$module" ]] || die "Internal error: missing module ${module}"
-      # shellcheck source=/dev/null
-      source "$module"
-      "cmd_${cmd}" "$@"
-      ;;
-    *)
-      log_error "Unknown command: ${cmd}"
-      usage
-      exit 2
-      ;;
+  apply | doctor | update | list | detect | reconcile)
+    [[ -f "$module" ]] || die "Internal error: missing module ${module}"
+    # shellcheck source=/dev/null
+    source "$module"
+    "cmd_${cmd}" "$@"
+    ;;
+  *)
+    log_error "Unknown command: ${cmd}"
+    usage
+    exit 2
+    ;;
   esac
 }
 

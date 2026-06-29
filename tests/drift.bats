@@ -15,12 +15,12 @@ load test_helper
 
 @test "locally modified file is reported and --strict exits non-zero" {
   apply_minimal "$BS" "$PROJ" >/dev/null
-  echo "# edit" >> "$PROJ/Makefile"
+  echo "# edit" >>"$PROJ/Makefile"
   run "$BS" doctor --target "$PROJ" --skip-bin-check
-  [ "$status" -eq 0 ]                       # informational by default
+  [ "$status" -eq 0 ] # informational by default
   [[ "$output" == *"Makefile"* && "$output" == *"modified locally"* ]]
   run "$BS" doctor --target "$PROJ" --skip-bin-check --strict
-  [ "$status" -ne 0 ]                       # strict mode flags drift
+  [ "$status" -ne 0 ] # strict mode flags drift
 }
 
 @test "missing file is reported" {
@@ -33,7 +33,7 @@ load test_helper
 @test "an updated template shows the file as behind" {
   make_workcopy
   apply_minimal "$WBS" "$PROJ" >/dev/null
-  printf '\n# evolved\n' >> "$WORK/templates/common/lychee.toml"
+  printf '\n# evolved\n' >>"$WORK/templates/common/lychee.toml"
   run "$WBS" doctor --target "$PROJ" --skip-bin-check
   [[ "$output" == *"lychee.toml"* && "$output" == *"template updated"* ]]
 }

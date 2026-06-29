@@ -16,8 +16,9 @@ load test_helper
   make_workcopy
   apply_minimal "$WBS" "$PROJ" >/dev/null
   ord1="$(grep 'path:' "$PROJ/.bootstrap.yaml")"
-  printf 'disable=SC2034\n' >> "$WORK/templates/common/.shellcheckrc"
-  sed -i.bak '1s/.*/# h/' "$PROJ/.shellcheckrc"; rm -f "$PROJ/.shellcheckrc.bak"
+  printf 'disable=SC2034\n' >>"$WORK/templates/common/.shellcheckrc"
+  sed -i.bak '1s/.*/# h/' "$PROJ/.shellcheckrc"
+  rm -f "$PROJ/.shellcheckrc.bak"
   "$WBS" reconcile --target "$PROJ" >/dev/null
   ord2="$(grep 'path:' "$PROJ/.bootstrap.yaml")"
   [ "$ord1" = "$ord2" ]
@@ -26,7 +27,7 @@ load test_helper
 # Fix C: applying from a dirty bootstrap checkout warns about the base mismatch.
 @test "apply from a dirty bootstrap checkout warns" {
   make_workcopy
-  printf '\n# uncommitted\n' >> "$WORK/templates/common/lychee.toml"
+  printf '\n# uncommitted\n' >>"$WORK/templates/common/lychee.toml"
   run apply_minimal "$WBS" "$PROJ"
   [[ "$output" == *"uncommitted changes"* ]]
 }
@@ -35,7 +36,7 @@ load test_helper
 # deposits nothing.
 @test "a profile with an unknown parent aborts and writes nothing" {
   make_workcopy
-  printf 'extends: nope\n' > "$WORK/profiles/_brokentest.yaml"
+  printf 'extends: nope\n' >"$WORK/profiles/_brokentest.yaml"
   run "$WBS" apply --profile _brokentest --target "$PROJ" --skip-bin-check
   [ "$status" -ne 0 ]
   run bash -c "ls -A '$PROJ' | grep -v '^.git$' || true"
@@ -45,7 +46,7 @@ load test_helper
 @test "update --dry-run never writes to the current directory" {
   # update operates on the bootstrap checkout, not cwd; don't assert its own exit
   # (it does a network fetch), only that the project dir is untouched.
-  ( cd "$PROJ" && "$BS" update --dry-run >/dev/null 2>&1 || true )
+  (cd "$PROJ" && "$BS" update --dry-run >/dev/null 2>&1 || true)
   run bash -c "ls -A '$PROJ' | grep -v '^.git$' || true"
   [ -z "$output" ]
 }

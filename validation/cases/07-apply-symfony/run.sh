@@ -2,7 +2,7 @@
 # shellcheck disable=SC1091
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../../_lib.sh"
 p=$(new_project)
-echo '{"name":"x/y"}' > "$p/composer.json"
+echo '{"name":"x/y"}' >"$p/composer.json"
 run "apply symfony" "$BS" apply --profile symfony --target "$p" --skip-bin-check
 check "phpstan.dist.neon" "$(exists "$p/phpstan.dist.neon")"
 check "rector.php" "$(exists "$p/rector.php")"

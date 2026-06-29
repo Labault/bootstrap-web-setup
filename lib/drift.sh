@@ -10,9 +10,9 @@
 expected_hash() {
   local src="$1" dest="$2" strategy="$3"
   case "$strategy" in
-    merge-gitignore) printf '%s\n' "$(render_gitignore "$dest" "$src")" | sha256_stdin ;;
-    merge-json)      printf '%s\n' "$(render_extensions_json "$dest" "$src")" | sha256_stdin ;;
-    *)               file_sha256 "$src" ;;
+  merge-gitignore) printf '%s\n' "$(render_gitignore "$dest" "$src")" | sha256_stdin ;;
+  merge-json) printf '%s\n' "$(render_extensions_json "$dest" "$src")" | sha256_stdin ;;
+  *) file_sha256 "$src" ;;
   esac
 }
 
@@ -46,16 +46,20 @@ detect_drift() {
 
     if [[ -z "${cur_src[$path]+x}" ]]; then
       printf '  %s⊘%s %s %s(orphaned — no longer in profile)%s\n' "$C_DIM" "$C_RESET" "$path" "$C_DIM" "$C_RESET" >&2
-      n_orphan=$((n_orphan + 1)); continue
+      n_orphan=$((n_orphan + 1))
+      continue
     fi
     if [[ ! -e "$dpath" ]]; then
       printf '  %s✗%s %s %s(missing — re-apply would recreate)%s\n' "$C_RED" "$C_RESET" "$path" "$C_DIM" "$C_RESET" >&2
-      n_miss=$((n_miss + 1)); continue
+      n_miss=$((n_miss + 1))
+      continue
     fi
 
-    csrc="$BOOTSTRAP_ROOT/${cur_src[$path]}"; cstrat="${cur_strat[$path]}"
+    csrc="$BOOTSTRAP_ROOT/${cur_src[$path]}"
+    cstrat="${cur_strat[$path]}"
     D="$(file_sha256 "$dpath")"
-    P=""; [[ -f "$csrc" ]] && P="$(expected_hash "$csrc" "$dpath" "$cstrat")"
+    P=""
+    [[ -f "$csrc" ]] && P="$(expected_hash "$csrc" "$dpath" "$cstrat")"
 
     if [[ -n "$P" && "$D" == "$P" ]]; then
       printf '  %s✓%s %s\n' "$C_GREEN" "$C_RESET" "$path" >&2
@@ -66,7 +70,8 @@ detect_drift() {
     else
       # File untouched since the last apply/reconcile (D == recorded). Did the
       # TEMPLATE move, or are these recorded local edits that are still current?
-      Tcur=""; [[ -f "$csrc" ]] && Tcur="$(file_sha256 "$csrc")"
+      Tcur=""
+      [[ -f "$csrc" ]] && Tcur="$(file_sha256 "$csrc")"
       if [[ -n "$tpl_rec" && -n "$Tcur" && "$tpl_rec" == "$Tcur" ]]; then
         printf '  %s✓%s %s %s(local edits kept; up to date)%s\n' "$C_GREEN" "$C_RESET" "$path" "$C_DIM" "$C_RESET" >&2
         n_ok=$((n_ok + 1))

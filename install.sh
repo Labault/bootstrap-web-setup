@@ -6,7 +6,7 @@
 #
 set -euo pipefail
 
-if (( BASH_VERSINFO[0] < 4 )); then
+if ((BASH_VERSINFO[0] < 4)); then
   printf 'install: bash 4+ required (found %s). brew install bash\n' "${BASH_VERSION}" >&2
   exit 1
 fi
@@ -18,9 +18,9 @@ source "$SCRIPT_DIR/lib/common.sh"
 DRY_RUN=0
 for arg in "$@"; do
   case "$arg" in
-    --dry-run) DRY_RUN=1 ;;
-    -h|--help)
-      cat >&2 <<EOF
+  --dry-run) DRY_RUN=1 ;;
+  -h | --help)
+    cat >&2 <<EOF
 Usage: ./install.sh [--dry-run]
 
 Symlink the bootstrap CLI into a directory on your PATH.
@@ -28,8 +28,9 @@ Symlink the bootstrap CLI into a directory on your PATH.
 Environment:
   BOOTSTRAP_BIN_DIR   Target dir for the symlink (default: ~/.local/bin)
 EOF
-      exit 0 ;;
-    *) die "Unknown option: $arg" ;;
+    exit 0
+    ;;
+  *) die "Unknown option: $arg" ;;
   esac
 done
 
@@ -65,13 +66,13 @@ fi
 
 # PATH check.
 case ":$PATH:" in
-  *":$BIN_DIR:"*) : ;;
-  *)
-    log_warn "$(tildify "$BIN_DIR") is not on your PATH. Add it, e.g.:"
-    # The literal $PATH below is intentional — it's a snippet the user pastes.
-    # shellcheck disable=SC2016
-    printf '    echo '\''export PATH="%s:$PATH"'\'' >> ~/.zshrc\n' "$BIN_DIR" >&2
-    ;;
+*":$BIN_DIR:"*) : ;;
+*)
+  log_warn "$(tildify "$BIN_DIR") is not on your PATH. Add it, e.g.:"
+  # The literal $PATH below is intentional — it's a snippet the user pastes.
+  # shellcheck disable=SC2016
+  printf '    echo '\''export PATH="%s:$PATH"'\'' >> ~/.zshrc\n' "$BIN_DIR" >&2
+  ;;
 esac
 
 if ! is_dry_run; then

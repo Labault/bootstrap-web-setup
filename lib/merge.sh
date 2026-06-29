@@ -31,8 +31,9 @@ render_gitignore() {
     # Replace the existing block in place. The section is fed through a file and
     # read with getline rather than passed via -v: BSD awk (macOS default)
     # rejects newlines in -v assignments.
-    local secfile; secfile="$(mktemp)"
-    printf '%s\n' "$section" > "$secfile"
+    local secfile
+    secfile="$(mktemp)"
+    printf '%s\n' "$section" >"$secfile"
     awk -v b="$GITIGNORE_BEGIN" -v e="$GITIGNORE_END" -v secfile="$secfile" '
       $0 == b { while ((getline line < secfile) > 0) print line; close(secfile); skip = 1; next }
       skip && $0 == e { skip = 0; next }

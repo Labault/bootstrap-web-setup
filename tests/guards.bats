@@ -4,7 +4,8 @@ load test_helper
 # Fix #2/#3: a missing jq must abort apply BEFORE writing anything — not corrupt
 # a half-deposited project from inside a $() subshell.
 @test "apply without jq aborts cleanly and writes nothing" {
-  helper="$TESTDIR/helperbin"; mkdir -p "$helper"
+  helper="$TESTDIR/helperbin"
+  mkdir -p "$helper"
   for b in bash git awk grep sed date mktemp dirname basename cp mkdir cat find shasum pre-commit rev tr; do
     src="$(command -v "$b" 2>/dev/null)" && ln -s "$src" "$helper/$b"
   done

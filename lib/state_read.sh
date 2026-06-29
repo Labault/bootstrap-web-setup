@@ -15,9 +15,9 @@ state_scalar() {
   ' "$1"
 }
 
-state_profile()    { state_scalar "$1" profile; }
-state_version()    { state_scalar "$1" bootstrap_version; }
-state_commit()     { state_scalar "$1" bootstrap_commit; }
+state_profile() { state_scalar "$1" profile; }
+state_version() { state_scalar "$1" bootstrap_version; }
+state_commit() { state_scalar "$1" bootstrap_commit; }
 state_applied_at() { state_scalar "$1" applied_at; }
 
 # state_files <file> -> "path<TAB>sha256<TAB>tpl_sha256<TAB>strategy" per line.

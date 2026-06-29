@@ -28,9 +28,12 @@ set -euo pipefail
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BS="$REPO/bin/bootstrap"
 
-log()  { printf '\033[1;34m▸\033[0m %s\n' "$*" >&2; }
-ok()   { printf '\033[1;32m✓\033[0m %s\n' "$*" >&2; }
-fail() { printf '\033[1;31m✗ %s\033[0m\n' "$*" >&2; exit 1; }
+log() { printf '\033[1;34m▸\033[0m %s\n' "$*" >&2; }
+ok() { printf '\033[1;32m✓\033[0m %s\n' "$*" >&2; }
+fail() {
+  printf '\033[1;31m✗ %s\033[0m\n' "$*" >&2
+  exit 1
+}
 
 for bin in php composer pre-commit git jq; do
   command -v "$bin" >/dev/null 2>&1 || fail "missing required tool: $bin"
@@ -47,7 +50,7 @@ git init -q
 git config user.email smoke@example.com
 git config user.name 'bootstrap smoke'
 
-cat > composer.json <<'JSON'
+cat >composer.json <<'JSON'
 {
     "name": "bootstrap/smoke-fixture",
     "description": "Throwaway project for the bootstrap PHP-hook smoke test.",
@@ -61,7 +64,7 @@ JSON
 # An intentionally inert fixture: a fixed point under @Symfony:risky (php-cs-fixer),
 # PHPStan level 9, and the rector sets in rector.php. The tools should want no
 # changes; if a future version does, that surfaces here rather than silently.
-cat > src/Smoke.php <<'PHP'
+cat >src/Smoke.php <<'PHP'
 <?php
 
 declare(strict_types=1);
@@ -82,10 +85,10 @@ log "depositing the symfony profile via 'bootstrap apply'"
 
 # Regression guard tied to the flags this test was born from: the deposited hook
 # must carry them. Catches a bad template edit even before the tools run.
-grep -q -- '--no-progress-bar' .pre-commit-config.yaml \
-  || fail "deposited rector hook is missing --no-progress-bar"
-grep -q -- '--path-mode=intersection' .pre-commit-config.yaml \
-  || fail "deposited php-cs-fixer hook is missing --path-mode=intersection"
+grep -q -- '--no-progress-bar' .pre-commit-config.yaml ||
+  fail "deposited rector hook is missing --no-progress-bar"
+grep -q -- '--path-mode=intersection' .pre-commit-config.yaml ||
+  fail "deposited php-cs-fixer hook is missing --path-mode=intersection"
 ok "deposited hook flags are present"
 
 log "installing the latest PHP tools from Composer (floating versions)"
@@ -116,7 +119,7 @@ for hook in php-cs-fixer phpstan rector; do
   fi
 done
 
-[[ "$hooks_failed" -eq 0 ]] \
-  || fail "a deposited PHP hook failed — flag drift or a template regression"
+[[ "$hooks_failed" -eq 0 ]] ||
+  fail "a deposited PHP hook failed — flag drift or a template regression"
 
 ok "all deposited PHP hooks are green against the latest tools"
