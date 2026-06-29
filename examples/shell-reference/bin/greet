@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# greet — a tiny demo CLI for the shell-reference project. It proves the deposited
+# shell gates (shellcheck + shfmt + bats) run green on a small, realistic codebase.
+set -euo pipefail
+
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Resolve the sourced helper relative to bin/'s parent (the project root), so
+# `shellcheck -x` follows it no matter which directory the linter runs from.
+# shellcheck source-path=SCRIPTDIR/..
+# shellcheck source=lib/colors.sh
+source "$HERE/lib/colors.sh"
+
+# greet <name> -> print a green greeting (plain when stdout isn't a TTY).
+greet() {
+  local name="${1:-world}"
+  printf '%s\n' "$(colorize "Hello, ${name}!")"
+}
+
+greet "$@"

@@ -56,3 +56,46 @@ jobs:
           make stan
           make rector
           make test
+
+  shell-pipeline:
+    name: deposited pipeline (shell reference)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout bootstrap
+        uses: actions/checkout@v7
+
+      - name: Install shfmt (pinned)
+        run: |
+          version=v3.10.0
+          curl -fsSL -o /usr/local/bin/shfmt \
+            "https://github.com/mvdan/sh/releases/download/${version}/shfmt_${version}_linux_amd64"
+          chmod +x /usr/local/bin/shfmt
+          shfmt --version
+
+      - name: Install bats (pinned)
+        uses: bats-core/bats-action@4.0.0
+        with:
+          github-token: ${{ github.token }}
+          support-install: false
+          assert-install: false
+          detik-install: false
+          file-install: false
+
+      - name: Scaffold the reference project
+        run: |
+          cp -R examples/shell-reference ref
+          git -C ref init -q
+
+      - name: Apply the shell profile (deposits the gates + configs)
+        run: bash bin/bootstrap apply --profile shell --target ref --skip-bin-check
+
+      - name: Run the deposited quality gates (must all pass)
+        working-directory: ref
+        run: |
+          # Lint + format-check every shell file in the deposited tree. shfmt -f
+          # lists them (so the set stays in sync), xargs runs shellcheck -x to
+          # follow sourced helpers, then shfmt -d is the deposited `make lint`
+          # format check. make test runs the deposited bats gate.
+          shfmt -f . | xargs -r shellcheck -x
+          shfmt -d .
+          make test
