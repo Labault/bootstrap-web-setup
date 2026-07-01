@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 $finder = (new PhpCsFixer\Finder())
     ->in(__DIR__)
-    ->exclude(['var', 'vendor', 'node_modules', 'public/bundles'])
+    ->exclude(['var', 'vendor', 'public/bundles'])
     ->append([__FILE__]);
 
 return (new PhpCsFixer\Config())
