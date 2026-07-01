@@ -28,3 +28,8 @@ indent_style = tab
 # NEON (PHPStan) is tab-indented: match the tool's own --generate-baseline output.
 [*.neon]
 indent_style = tab
+
+# XML (e.g. Symfony's phpunit.dist.xml) aligns attributes under the opening tag,
+# which yields non-multiple-of-2 padding. Don't enforce indent size on XML.
+[*.xml]
+indent_size = unset
