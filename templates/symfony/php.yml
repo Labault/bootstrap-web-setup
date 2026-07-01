@@ -23,7 +23,9 @@ jobs:
           tools: composer
 
       - name: Validate composer.json
-        run: composer validate --strict
+        # --no-check-publish: apps (type: project) are not published to Packagist,
+        # so name/description are not required.
+        run: composer validate --strict --no-check-publish
 
       - name: Install dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
