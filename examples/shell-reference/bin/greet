@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# greet — a tiny demo CLI for the shell-reference project. It proves the deposited
+# greet: a tiny demo CLI for the shell-reference project. It proves the deposited
 # shell gates (shellcheck + shfmt + bats) run green on a small, realistic codebase.
 set -euo pipefail
 

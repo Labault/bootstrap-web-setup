@@ -9,7 +9,7 @@ lives in the [`VERSION`](VERSION) file and is what `bootstrap --version` prints.
 
 ### Added
 
-- `make release` / `make release-preview` — a release workflow (`scripts/release.sh`)
+- `make release` / `make release-preview`: a release workflow (`scripts/release.sh`)
   that bumps `VERSION`, rolls the changelog's `[Unreleased]` into a dated section,
   commits, tags `vX.Y.Z`, pushes, and creates the GitHub release. Repo-local
   targets live in an optional, unmanaged `Makefile.local`, loaded by the deposited
@@ -30,7 +30,7 @@ documented.
 
 - **Commit-message linting is now a self-contained shell script.** bootstrap
   deposits `scripts/lint-commit-msg.sh` (gitmoji + Conventional Commits) wired as
-  a `commit-msg` hook — pre-commit on `minimal`/`symfony`, Husky on `fullstack`.
+  a `commit-msg` hook: pre-commit on `minimal`/`symfony`, Husky on `fullstack`.
   No npm dependency; the `minimal` profile now suggests no npm packages.
 - Symfony defaults made internally consistent: PHP-CS-Fixer owns code style
   (`declare_strict_types`), Rector no longer fights it (`codingStyle` off), and
@@ -51,7 +51,7 @@ documented.
 
 ### Rejected
 
-- Intensity levels (`--level` light/standard/strict) — see
+- Intensity levels (`--level` light/standard/strict): see
   [`docs/proposals/intensity-levels.md`](docs/proposals/intensity-levels.md). The
   project keeps a single, highest-intensity baseline.
 

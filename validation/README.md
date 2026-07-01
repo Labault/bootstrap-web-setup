@@ -11,12 +11,12 @@ end to end and assert on its observable behaviour.
 The two `smoke-*-hooks.sh` scripts (top-level, **not** part of `run-all.sh`) are
 separate, heavier end-to-end checks. Each scaffolds a throwaway project, deposits
 a profile, installs the **latest** tools from the package manager, and runs the
-deposited hooks/gates for real on a clean fixture — so a hardcoded command that
+deposited hooks/gates for real on a clean fixture, so a hardcoded command that
 drifts against a floating binary fails here, not in the next bootstrapped project:
 
-- `smoke-php-hooks.sh` — `symfony` profile; runs the php-cs-fixer / phpstan /
+- `smoke-php-hooks.sh`: `symfony` profile; runs the php-cs-fixer / phpstan /
   rector pre-commit hooks. Needs PHP, Composer and `pre-commit`.
-- `smoke-js-hooks.sh` — `fullstack` profile; runs the eslint / prettier / tsc /
+- `smoke-js-hooks.sh`: `fullstack` profile; runs the eslint / prettier / tsc /
   lint-staged front gates. Needs Node and npm.
 
 They need a real language toolchain, so each runs in its own CI job rather than
@@ -54,8 +54,8 @@ export BOOTSTRAP_REPO=/path/to/bootstrap-web-setup
 
 ## Reading a result
 
-- `RESULT.txt` — `PASS` (all assertions held) or `FAIL (n)`.
-- `output.log` — the command, its output, its exit code, then each assertion.
+- `RESULT.txt`: `PASS` (all assertions held) or `FAIL (n)`.
+- `output.log`: the command, its output, its exit code, then each assertion.
 
 For the `50…`–`75…` cases (prefix `fail-`), **`PASS` means the tool failed
 correctly**: it stopped, printed a clear message, and lost/overwrote nothing.

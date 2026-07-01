@@ -3,13 +3,13 @@
 For **Shell/Bash tooling repos** (bootstrap itself, server-setup, dotfiles…).
 Inherits everything from [`minimal`](minimal.md) and adds shell-specific tooling:
 `shfmt` formatting and a `bats` test harness wired into CI. A sibling of
-[`symfony`](symfony.md) — both extend `minimal`.
+[`symfony`](symfony.md), both extend `minimal`.
 
 ## Required binaries
 
 `minimal`'s binaries plus: `bats`, `shfmt`.
 
-`shellcheck` is **not** repeated here — it already comes from `minimal`. Together
+`shellcheck` is **not** repeated here: it already comes from `minimal`. Together
 `shellcheck` + `shfmt` + `bats` are the shell trio this profile gates on.
 
 ## Files added (on top of `minimal`)
@@ -22,9 +22,9 @@ Inherits everything from [`minimal`](minimal.md) and adds shell-specific tooling
 
 It also **overrides** two `minimal` files with shell-aware versions:
 
-- `.pre-commit-config.yaml` — adds a `shfmt` hook (excludes `.bats`, which shfmt
+- `.pre-commit-config.yaml`: adds a `shfmt` hook (excludes `.bats`, which shfmt
   can't parse) on top of the inherited shellcheck hook
-- `Makefile` — adds `make test` (bats) and folds `shfmt` into `lint` (`shfmt -d`,
+- `Makefile`: adds `make test` (bats) and folds `shfmt` into `lint` (`shfmt -d`,
   a format check) and `fix` (`shfmt -w`), plus a `make fmt` target
 
 ## Formatting

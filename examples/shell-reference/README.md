@@ -8,8 +8,8 @@ The workflow:
 1. copies this folder to a scratch dir and `git init`s it,
 2. runs `bootstrap apply --profile shell` on it (deposits the bats harness, the
    `tests.yml` workflow, the shfmt-aware pre-commit config and Makefile),
-3. runs the deposited gates — `shellcheck`, `shfmt -d`, and the bats suite
-   (`make test`) — which must all pass.
+3. runs the deposited gates: `shellcheck`, `shfmt -d`, and the bats suite
+   (`make test`), which must all pass.
 
 Only the source files (`bin/`, `lib/`, `tests/greet.bats`) are committed here;
 the bats helper (`tests/test_helper.bash`), the smoke test and the rest of the

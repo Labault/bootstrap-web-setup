@@ -7,7 +7,7 @@ For **PHP/Symfony** projects. Inherits everything from
 
 `minimal`'s binaries plus: `php`, `composer`, `hadolint`.
 
-PHPStan, PHP-CS-Fixer and Rector are **not** required binaries — they live in the
+PHPStan, PHP-CS-Fixer and Rector are **not** required binaries: they live in the
 project's `vendor/bin` (installed via Composer). `bootstrap apply` prints the
 `composer require --dev` line to add them; it never edits `composer.json`.
 
@@ -23,9 +23,9 @@ project's `vendor/bin` (installed via Composer). `bootstrap apply` prints the
 
 It also **overrides** three `minimal` files with PHP-aware versions:
 
-- `.pre-commit-config.yaml` — adds `php-cs-fixer`, `phpstan`, `rector`, `hadolint` hooks
-- `Makefile` — adds `cs`, `cs-fix`, `stan`, `rector`, `rector-fix`, `test`, `fix`
-- `.github/dependabot.yml` — adds the `composer` ecosystem
+- `.pre-commit-config.yaml`: adds `php-cs-fixer`, `phpstan`, `rector`, `hadolint` hooks
+- `Makefile`: adds `cs`, `cs-fix`, `stan`, `rector`, `rector-fix`, `test`, `fix`
+- `.github/dependabot.yml`: adds the `composer` ecosystem
 
 ## PHPStan baseline
 

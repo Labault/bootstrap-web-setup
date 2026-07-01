@@ -33,11 +33,11 @@ Checked by `bootstrap doctor` (must be on your machine via mac-setup):
 ## Hooks
 
 `pre-commit` is installed after deposit (`pre-commit` + `commit-msg` stages).
-All hooks run in `local` mode — they call binaries from your machine, not pinned
+All hooks run in `local` mode: they call binaries from your machine, not pinned
 remote repos.
 
 ## Notes
 
 - The CI workflow runs the linters via marketplace actions (no local binaries
   needed on the runner); the same checks run locally through pre-commit.
-- The `commit-msg` hook is a self-contained shell script — no extra binary needed.
+- The `commit-msg` hook is a self-contained shell script, no extra binary needed.

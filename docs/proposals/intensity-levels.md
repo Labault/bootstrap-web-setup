@@ -1,7 +1,7 @@
-# Proposal — intensity levels (Phase 2)
+# Proposal: intensity levels (Phase 2)
 
 **Status:** REJECTED. Decision: keep a **single, highest-intensity baseline** for
-all tools — no `--level`, no light/standard/strict variants. The opinionated
+all tools: no `--level`, no light/standard/strict variants. The opinionated
 strict config is the product's identity; configurability would dilute it. Kept
 here as a record of the analysis in case the need ever resurfaces.
 **Author:** project maintainer.
@@ -18,7 +18,7 @@ analysis. People then hand-lower the config, which drifts and defeats the point.
 The ask: offer a few **intensity levels** (e.g. light / standard / strict) so the
 *same* baseline can be dialed up or down without forking it.
 
-## Key insight — this is a second, orthogonal axis
+## Key insight: this is a second, orthogonal axis
 
 Today's `minimal / symfony / shell / fullstack` is the **scope** axis (stack →
 which tools). Intensity is a **different** axis (how strict), orthogonal to scope:
@@ -38,7 +38,7 @@ it is `symfony × light`. The two must stay separate concepts.
 ## Scope of this proposal
 
 - Exactly **three levels**: `light`, `standard`, `strict`. No 5-level ladder.
-- **`standard` is the default and is byte-for-byte today's output** — zero change
+- **`standard` is the default and is byte-for-byte today's output**: zero change
   for anyone who doesn't opt in.
 - Only the **handful of intensity-sensitive files** get level variants. Every
   other deposited file is level-agnostic and is deposited unchanged.
@@ -56,11 +56,11 @@ it is `symfony × light`. The two must stay separate concepts.
 Everything else (`.editorconfig`, `Makefile`, `SECURITY.md`, `dependabot.yml`,
 templates, issue/PR templates, …) is identical across levels.
 
-## Mechanism — `--level`, with per-file variants
+## Mechanism: `--level`, with per-file variants
 
 Prefer a dedicated **`--level` flag** over modelling levels as `extends` profiles
-(which would explode the profile namespace — `symfony-strict`, `fullstack-light`,
-… — and confuse detection). Level is its own axis, so give it its own flag.
+(which would explode the profile namespace, `symfony-strict`, `fullstack-light`,
+…, and confuse detection). Level is its own axis, so give it its own flag.
 
 Proposed convention, minimal blast radius:
 
@@ -71,7 +71,7 @@ Proposed convention, minimal blast radius:
   manifest barely changes and every other file is automatically level-agnostic.
 - `bootstrap apply --level light|standard|strict` (default `standard`).
 - The chosen level is recorded in `.bootstrap.yaml` (`level: standard`).
-- **Detection never infers a level** (there is no reliable signal) — it is always
+- **Detection never infers a level** (there is no reliable signal). It is always
   explicit, defaulting to `standard`.
 
 ## Interaction with the rest of the system
@@ -90,7 +90,7 @@ Proposed convention, minimal blast radius:
 
 ## Testing & docs impact
 
-- bats: a small matrix — for each level, assert the sensitive files resolve to the
+- bats: a small matrix: for each level, assert the sensitive files resolve to the
   right variant; assert `standard` output is unchanged (golden test).
 - `validation/`: 2-3 cases (`apply --level light/strict`, doctor on a levelled
   project, level migration).
@@ -99,7 +99,7 @@ Proposed convention, minimal blast radius:
 
 ## Non-goals
 
-- No content-templating engine — levels are **file variants**, not parameterized
+- No content-templating engine: levels are **file variants**, not parameterized
   files. If a file needs more than ~3 variants, it is the wrong tool.
 - No more than three levels. No per-tool fine-grained sliders.
 - No automatic level detection.
@@ -122,4 +122,4 @@ Proposed convention, minimal blast radius:
 Defer. Implement **only if** real usage shows projects routinely wanting a cran
 lighter or stricter. If/when it lands: three levels, `standard` default and
 unchanged, `--level` flag, `<file>.<level>` variant resolution, ~5 sensitive
-files — and re-open the locked params for the non-default levels only.
+files, and re-open the locked params for the non-default levels only.
