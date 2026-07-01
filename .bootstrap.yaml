@@ -1,4 +1,4 @@
-# Managed by bootstrap — do not edit by hand.
+# Managed by bootstrap. Do not edit by hand.
 # Written by `bootstrap apply`; read by `bootstrap doctor` (Phase 2).
 profile: shell
 bootstrap_version: 0.6.0

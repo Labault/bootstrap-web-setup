@@ -7,7 +7,7 @@
 #   tracked *.sh/*.bash, no manifest -> shell
 #   otherwise                        -> minimal
 # A package.json without composer.json stays `minimal`: fullstack extends symfony,
-# which presupposes PHP, so a front-only repo gets the language-agnostic base —
+# which presupposes PHP, so a front-only repo gets the language-agnostic base,
 # and a front-only repo is never a `shell` tooling repo, hence the package.json
 # guard on the shell branch.
 
@@ -51,7 +51,7 @@ resolve_profile() {
   local target="${1:-.}" override="${2:-}"
   local profile
   if [[ -n "$override" ]]; then
-    # A profile name is a bare manifest stem — reject path separators so
+    # A profile name is a bare manifest stem: reject path separators so
     # --profile can't reach outside profiles/ (defence in depth).
     [[ "$override" == */* || "$override" == *..* ]] && die "Invalid profile name: '$override'"
     profile_exists "$override" || die "Unknown profile: '$override' (available: $(available_profiles | paste -sd ',' - | sed 's/,/, /g'))"

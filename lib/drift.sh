@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 # Drift detection (Phase 2). Compares a project's .bootstrap.yaml against the
 # current templates and reports, per file, whether it is in sync, behind the
-# template, locally modified, missing, new or orphaned. It SIGNALS only — it
+# template, locally modified, missing, new or orphaned. It SIGNALS only: it
 # never merges (Phase 3). Depends on: common.sh, manifest.sh, merge.sh, state_read.sh.
 
 # expected_hash <src> <dest> <strategy> -> sha256 of what `apply` would produce now.
@@ -45,12 +45,12 @@ detect_drift() {
     dpath="$target/$path"
 
     if [[ -z "${cur_src[$path]+x}" ]]; then
-      printf '  %s⊘%s %s %s(orphaned — no longer in profile)%s\n' "$C_DIM" "$C_RESET" "$path" "$C_DIM" "$C_RESET" >&2
+      printf '  %s⊘%s %s %s(orphaned: no longer in profile)%s\n' "$C_DIM" "$C_RESET" "$path" "$C_DIM" "$C_RESET" >&2
       n_orphan=$((n_orphan + 1))
       continue
     fi
     if [[ ! -e "$dpath" ]]; then
-      printf '  %s✗%s %s %s(missing — re-apply would recreate)%s\n' "$C_RED" "$C_RESET" "$path" "$C_DIM" "$C_RESET" >&2
+      printf '  %s✗%s %s %s(missing: re-apply would recreate)%s\n' "$C_RED" "$C_RESET" "$path" "$C_DIM" "$C_RESET" >&2
       n_miss=$((n_miss + 1))
       continue
     fi
@@ -65,7 +65,7 @@ detect_drift() {
       printf '  %s✓%s %s\n' "$C_GREEN" "$C_RESET" "$path" >&2
       n_ok=$((n_ok + 1))
     elif [[ "$D" != "$rec_hash" ]]; then
-      printf '  %s!%s %s %s(modified locally — reconcile to merge, or re-apply to overwrite)%s\n' "$C_YELLOW" "$C_RESET" "$path" "$C_DIM" "$C_RESET" >&2
+      printf '  %s!%s %s %s(modified locally: reconcile to merge, or re-apply to overwrite)%s\n' "$C_YELLOW" "$C_RESET" "$path" "$C_DIM" "$C_RESET" >&2
       n_mod=$((n_mod + 1))
     else
       # File untouched since the last apply/reconcile (D == recorded). Did the
@@ -76,7 +76,7 @@ detect_drift() {
         printf '  %s✓%s %s %s(local edits kept; up to date)%s\n' "$C_GREEN" "$C_RESET" "$path" "$C_DIM" "$C_RESET" >&2
         n_ok=$((n_ok + 1))
       else
-        printf '  %s~%s %s %s(template updated — reconcile/re-apply to update)%s\n' "$C_YELLOW" "$C_RESET" "$path" "$C_DIM" "$C_RESET" >&2
+        printf '  %s~%s %s %s(template updated: reconcile/re-apply to update)%s\n' "$C_YELLOW" "$C_RESET" "$path" "$C_DIM" "$C_RESET" >&2
         n_out=$((n_out + 1))
       fi
     fi
@@ -85,7 +85,7 @@ detect_drift() {
   # 2) Files the current profile adds that the project never received (stable order).
   for dest in "${cur_order[@]}"; do
     [[ -n "${tracked[$dest]+x}" ]] && continue
-    printf '  %s+%s %s %s(new — re-apply would add)%s\n' "$C_BLUE" "$C_RESET" "$dest" "$C_DIM" "$C_RESET" >&2
+    printf '  %s+%s %s %s(new: re-apply would add)%s\n' "$C_BLUE" "$C_RESET" "$dest" "$C_DIM" "$C_RESET" >&2
     n_new=$((n_new + 1))
   done
 

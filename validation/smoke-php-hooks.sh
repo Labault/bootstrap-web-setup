@@ -6,14 +6,14 @@
 #   bootstrap is a shell repo, so the PHP hooks it deposits (php-cs-fixer,
 #   phpstan, rector) never actually execute anywhere until they land in a real
 #   project. Their commands are hardcoded in the template while the binaries
-#   float in vendor/bin — when a flag moves between tool versions, the hook
+#   float in vendor/bin, when a flag moves between tool versions, the hook
 #   breaks SILENTLY on the next bootstrapped project. That is exactly how the
 #   rector `--no-progress` / `--no-progress-bar` drift slipped through.
 #
 #   This test scaffolds a throwaway Symfony project, deposits the `symfony`
 #   profile with the real `bootstrap apply`, installs the *latest* PHP tools
 #   from Composer (floating versions, on purpose), and runs the deposited hooks
-#   for real. Flag drift — or a cs-vs-rector config regression — fails HERE,
+#   for real. Flag drift (or a cs-vs-rector config regression) fails HERE,
 #   before it reaches anyone's project.
 #
 # SCOPE
@@ -120,6 +120,6 @@ for hook in php-cs-fixer phpstan rector; do
 done
 
 [[ "$hooks_failed" -eq 0 ]] ||
-  fail "a deposited PHP hook failed — flag drift or a template regression"
+  fail "a deposited PHP hook failed: flag drift or a template regression"
 
 ok "all deposited PHP hooks are green against the latest tools"

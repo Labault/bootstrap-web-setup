@@ -1,5 +1,5 @@
 # shellcheck shell=bash
-# `bootstrap reconcile` — bring a project up to date with the current templates
+# `bootstrap reconcile`: bring a project up to date with the current templates
 # via a 3-way merge (Phase 3), keeping local edits. Backs up before writing;
 # conflicts are written with markers for manual resolution. Never auto-resolves.
 
@@ -53,7 +53,7 @@ EOF
   warn_if_bootstrap_dirty
 
   local state="$target/$STATE_FILE_NAME"
-  [[ -f "$state" ]] || die "No ${STATE_FILE_NAME} in ${target} — nothing to reconcile (run 'bootstrap apply' first)."
+  [[ -f "$state" ]] || die "No ${STATE_FILE_NAME} in ${target}: nothing to reconcile (run 'bootstrap apply' first)."
 
   local profile commit
   profile="$(state_profile "$state")"
@@ -66,7 +66,7 @@ EOF
     log_info "reconcile profile ${C_BOLD}${profile}${C_RESET} -> ${target}"
   fi
   if [[ -z "$commit" || "$commit" == "unknown" ]]; then
-    log_warn "no merge base recorded (bootstrap_commit) — files will be backed up + replaced instead of merged."
+    log_warn "no merge base recorded (bootstrap_commit): files will be backed up + replaced instead of merged."
   fi
 
   reconcile_run "$target" "$profile" "$commit"

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# bootstrap — deposits a standardized quality/CI/security config layer into a
+# bootstrap: deposits a standardized quality/CI/security config layer into a
 # web project. It writes config files only; it never installs binaries (those
 # come from mac-setup). See docs/cahier-des-charges-bootstrap.md.
 #
@@ -32,7 +32,7 @@ source "$BOOTSTRAP_ROOT/lib/common.sh"
 
 usage() {
   cat >&2 <<EOF
-${C_BOLD}bootstrap${C_RESET} — deposit a standardized quality/CI/security config into a web project.
+${C_BOLD}bootstrap${C_RESET}: deposit a standardized quality/CI/security config into a web project.
 
 ${C_BOLD}USAGE${C_RESET}
   bootstrap <command> [options]

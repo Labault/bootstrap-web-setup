@@ -5,7 +5,7 @@ extends: minimal
 
 # Machine-global binaries only. phpstan/php-cs-fixer/rector live in the project's
 # vendor/bin (installed via composer require --dev), so they are suggestions, not
-# hard requirements — see suggest_composer below.
+# hard requirements. See suggest_composer below.
 requires_bin:
   - php
   - composer

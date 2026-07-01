@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 load test_helper
 
-# Fix #2/#3: a missing jq must abort apply BEFORE writing anything — not corrupt
+# Fix #2/#3: a missing jq must abort apply BEFORE writing anything, not corrupt
 # a half-deposited project from inside a $() subshell.
 @test "apply without jq aborts cleanly and writes nothing" {
   helper="$TESTDIR/helperbin"

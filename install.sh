@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# install.sh — make the `bootstrap` CLI callable, façon mac-setup.
+# install.sh: make the `bootstrap` CLI callable, façon mac-setup.
 # It symlinks bin/bootstrap into a directory on your PATH. It installs no other
 # binaries. Re-runnable (idempotent). Honors --dry-run.
 #
@@ -69,7 +69,7 @@ case ":$PATH:" in
 *":$BIN_DIR:"*) : ;;
 *)
   log_warn "$(tildify "$BIN_DIR") is not on your PATH. Add it, e.g.:"
-  # The literal $PATH below is intentional — it's a snippet the user pastes.
+  # The literal $PATH below is intentional: it's a snippet the user pastes.
   # shellcheck disable=SC2016
   printf '    echo '\''export PATH="%s:$PATH"'\'' >> ~/.zshrc\n' "$BIN_DIR" >&2
   ;;

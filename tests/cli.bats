@@ -56,8 +56,8 @@ load test_helper
   [ "${lines[-1]}" = "minimal" ]
 }
 
-# Anti-regression: composer.json keeps winning even when shell sources exist —
-# the web branch is untouched.
+# Anti-regression: composer.json keeps winning even when shell sources exist.
+# The web branch is untouched.
 @test "detect: composer.json wins over shell sources -> symfony" {
   echo '{}' >"$PROJ/composer.json"
   printf '#!/usr/bin/env bash\n' >"$PROJ/deploy.sh"
@@ -67,7 +67,7 @@ load test_helper
 }
 
 # Anti-regression: a front-only repo (package.json, no composer.json) stays
-# minimal even with shell sources — fullstack presupposes PHP, shell excludes it.
+# minimal even with shell sources: fullstack presupposes PHP, shell excludes it.
 @test "detect: front-only repo with shell sources stays minimal" {
   echo '{}' >"$PROJ/package.json"
   printf '#!/usr/bin/env bash\n' >"$PROJ/x.sh"

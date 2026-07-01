@@ -1,12 +1,12 @@
 # Profile: fullstack
 # Symfony + JS/TS front. Inherits symfony (and therefore minimal) and adds the
-# front tooling. Husky lives here only — never on a pure-PHP project (§11.1).
+# front tooling. Husky lives here only, never on a pure-PHP project (§11.1).
 
 extends: symfony
 
 # Machine-global binaries only. eslint/prettier live in the project's
 # node_modules/.bin (installed via npm), so they are suggestions, not hard
-# requirements — see suggest_npm below.
+# requirements. See suggest_npm below.
 requires_bin:
   - node
 

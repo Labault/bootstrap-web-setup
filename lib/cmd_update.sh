@@ -1,5 +1,5 @@
 # shellcheck shell=bash
-# `bootstrap update` — update bootstrap itself, façon `mac update`. It pulls the
+# `bootstrap update`: update bootstrap itself, façon `mac update`. It pulls the
 # repo bootstrap is installed from. It NEVER touches projects (§9.1).
 
 cmd_update() {
@@ -20,7 +20,7 @@ EOF
   done
 
   if ! git -C "$BOOTSTRAP_ROOT" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-    die "bootstrap is not a git checkout ($BOOTSTRAP_ROOT) — cannot self-update."
+    die "bootstrap is not a git checkout ($BOOTSTRAP_ROOT): cannot self-update."
   fi
 
   local before

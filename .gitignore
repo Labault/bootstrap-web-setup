@@ -1,7 +1,7 @@
 .DS_Store
 
 # >>> bootstrap
-# Managed by bootstrap — do not edit inside this block.
+# Managed by bootstrap. Do not edit inside this block.
 # Re-run 'bootstrap apply' to update it.
 # OS / editor cruft
 .DS_Store

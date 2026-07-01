@@ -1,5 +1,5 @@
 # shellcheck shell=bash
-# Reader for .bootstrap.yaml — the state file written by `apply` (see lib/state.sh).
+# Reader for .bootstrap.yaml, the state file written by `apply` (see lib/state.sh).
 # Used by `doctor` (Phase 2) to detect drift. Parsed with awk, no yq dependency,
 # matching the exact shape we write.
 

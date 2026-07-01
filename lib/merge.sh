@@ -8,13 +8,13 @@ GITIGNORE_END="# <<< bootstrap"
 
 # render_gitignore <dest> <src>
 # Prints the .gitignore the project should have: the user's own lines untouched,
-# with bootstrap's managed entries kept inside a tagged block. Idempotent — an
+# with bootstrap's managed entries kept inside a tagged block. Idempotent: an
 # existing block is replaced in place; otherwise the block is appended.
 render_gitignore() {
   local dest="$1" src="$2"
   local section
   section="$GITIGNORE_BEGIN"$'\n'
-  section+="# Managed by bootstrap — do not edit inside this block."$'\n'
+  section+="# Managed by bootstrap. Do not edit inside this block."$'\n'
   section+="# Re-run 'bootstrap apply' to update it."$'\n'
   section+="$(cat "$src")"$'\n'
   section+="$GITIGNORE_END"
@@ -26,7 +26,7 @@ render_gitignore() {
 
   # Replace the block in place ONLY when BOTH markers are present. A lone begin
   # marker (corrupted/hand-edited block) must NOT cause us to delete everything
-  # after it — fall through to the append path, which preserves all user content.
+  # after it: fall through to the append path, which preserves all user content.
   if grep -qxF "$GITIGNORE_BEGIN" "$dest" && grep -qxF "$GITIGNORE_END" "$dest"; then
     # Replace the existing block in place. The section is fed through a file and
     # read with getline rather than passed via -v: BSD awk (macOS default)
@@ -54,8 +54,8 @@ render_gitignore() {
 # template `recommendations` (and `unwantedRecommendations`), other keys kept.
 # Both the absent and the existing case go through the SAME merge filter (with an
 # empty object standing in for an absent file) so the output is identical on a
-# fresh write and on rerun — i.e. idempotent from the second apply onward.
-# $cur/$tpl below are jq variables, not shell — single quotes are intentional.
+# fresh write and on rerun, i.e. idempotent from the second apply onward.
+# $cur/$tpl below are jq variables, not shell: single quotes are intentional.
 # shellcheck disable=SC2016
 EXTENSIONS_JQ_FILTER='
   (.[0] // {}) as $cur | (.[1] // {}) as $tpl |
@@ -71,7 +71,7 @@ render_extensions_json() {
   local dest="$1" src="$2"
   require_cmd jq
   if [[ -s "$dest" ]]; then
-    jq empty "$dest" 2>/dev/null || die "invalid JSON in ${dest#"$TARGET_DIR"/} — fix it (or remove it) and re-run."
+    jq empty "$dest" 2>/dev/null || die "invalid JSON in ${dest#"$TARGET_DIR"/}: fix it (or remove it) and re-run."
     jq -s "$EXTENSIONS_JQ_FILTER" "$dest" "$src"
   else
     jq -s "$EXTENSIONS_JQ_FILTER" <(printf '{}\n') "$src"

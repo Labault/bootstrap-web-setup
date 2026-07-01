@@ -27,7 +27,7 @@ three_way_merge() {
   fi
 
   # Fast-forward: the local file is unchanged from the base (no local edits), so
-  # just take the new template — no merge needed, nothing to lose.
+  # just take the new template: no merge needed, nothing to lose.
   if [[ "$(file_sha256 "$dpath")" == "$(file_sha256 "$tmpO")" ]]; then
     rm -f "$tmpO"
     if is_dry_run; then
@@ -50,7 +50,7 @@ three_way_merge() {
   rm -f "$tmpO"
 
   # No-op: the merge reproduces the current file (e.g. re-running after a clean
-  # reconcile). Don't back up or rewrite — report it as in sync.
+  # reconcile). Don't back up or rewrite: report it as in sync.
   if [[ "$rc" -eq 0 && "$(file_sha256 "$tmpM")" == "$(file_sha256 "$dpath")" ]]; then
     rm -f "$tmpM"
     DEPOSIT_RESULT='insync'
@@ -60,10 +60,10 @@ three_way_merge() {
   if is_dry_run; then
     rm -f "$tmpM"
     if [[ "$rc" -eq 0 ]]; then
-      log_dry "merge ${path} — would merge cleanly (local edits + template update)"
+      log_dry "merge ${path}: would merge cleanly (local edits + template update)"
       DEPOSIT_RESULT='merged'
     else
-      log_dry "merge ${path} — would merge WITH CONFLICTS (${rc}) to resolve by hand"
+      log_dry "merge ${path}: would merge WITH CONFLICTS (${rc}) to resolve by hand"
       DEPOSIT_RESULT='conflict'
     fi
     return
@@ -72,10 +72,10 @@ three_way_merge() {
   backup_file "$dpath"
   mv "$tmpM" "$dpath" || die "cannot write merged ${path}"
   if [[ "$rc" -eq 0 ]]; then
-    log_ok "merge ${path} — merged cleanly (backed up first)"
+    log_ok "merge ${path}: merged cleanly (backed up first)"
     DEPOSIT_RESULT='merged'
   else
-    log_warn "merge ${path} — ${rc} conflict(s) written with markers; resolve by hand (backed up first)"
+    log_warn "merge ${path}: ${rc} conflict(s) written with markers; resolve by hand (backed up first)"
     DEPOSIT_RESULT='conflict'
   fi
 }
@@ -85,13 +85,13 @@ _reconcile_no_base() {
   local path="$1" srcpath="$2"
   local dpath="$TARGET_DIR/$path"
   if is_dry_run; then
-    log_dry "replace ${path} — no merge base available; would back up + replace"
+    log_dry "replace ${path}: no merge base available; would back up + replace"
     DEPOSIT_RESULT='replaced-nobase'
     return
   fi
   backup_file "$dpath"
   cp "$srcpath" "$dpath" || die "cannot write ${path}"
-  log_warn "replace ${path} — no merge base (commit unknown); backed up + replaced"
+  log_warn "replace ${path}: no merge base (commit unknown); backed up + replaced"
   DEPOSIT_RESULT='replaced-nobase'
 }
 
@@ -102,7 +102,7 @@ reconcile_file() {
   local path="$1" src="$2" strategy="$3" commit="$4"
   local dpath="$TARGET_DIR/$path" srcpath="$BOOTSTRAP_ROOT/$src"
 
-  # Merge-strategy files already have a non-destructive additive merge — reuse it.
+  # Merge-strategy files already have a non-destructive additive merge: reuse it.
   case "$strategy" in
   merge-gitignore)
     deposit_merge "$srcpath" "$dpath" "$strategy" render_gitignore ''
@@ -168,7 +168,7 @@ reconcile_run() {
     [[ -z "$path" ]] && continue
     tracked["$path"]=1
     if [[ -z "${cur_src[$path]+x}" ]]; then
-      log_info "orphaned ${path} — no longer in profile, left as-is"
+      log_info "orphaned ${path}: no longer in profile, left as-is"
       n_orphan=$((n_orphan + 1))
       continue
     fi
@@ -199,7 +199,7 @@ reconcile_run() {
   log_info "${verb}: ${n_merged} merged, ${n_updated} fast-forwarded, ${n_recreated} recreated, ${n_new} added, ${n_conflict} CONFLICTS, ${n_nobase} replaced (no base), ${n_insync} in sync, ${n_orphan} orphaned."
 
   # Refresh .bootstrap.yaml so the recorded hashes + commit match the reconciled
-  # result — otherwise a later `doctor` keeps flagging merged files as drifted.
+  # result, otherwise a later `doctor` keeps flagging merged files as drifted.
   # Skip while conflicts remain (the files still carry markers): the user resolves
   # them, then re-runs to record a clean state.
   if [[ "$n_conflict" -gt 0 ]]; then

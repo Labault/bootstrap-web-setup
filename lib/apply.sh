@@ -10,7 +10,7 @@
 #
 # IMPORTANT (robustness): the deposit functions report their outcome via the
 # global DEPOSIT_RESULT and are called DIRECTLY (never as `$(deposit_file …)`),
-# because `set -e` is not effective inside a command substitution — a failing
+# because `set -e` is not effective inside a command substitution: a failing
 # cp/mkdir would otherwise be swallowed and apply would falsely report success.
 # Every filesystem write is also explicitly `|| die`d for a clear message.
 #
@@ -51,12 +51,12 @@ deposit_file() {
   [[ "$strategy" != "replace" ]] && label="$rel [$strategy]"
 
   if [[ ! -f "$src" ]]; then
-    log_warn "skip ${rel} — template source not found (${src#"$BOOTSTRAP_ROOT"/})"
+    log_warn "skip ${rel}: template source not found (${src#"$BOOTSTRAP_ROOT"/})"
     DEPOSIT_RESULT='skipped-nosrc'
     return 0
   fi
 
-  # A destination that exists as a directory can't be a config file we manage —
+  # A destination that exists as a directory can't be a config file we manage:
   # refuse rather than fail half-way (cp onto a dir) and report a false success.
   if [[ -d "$dest" ]]; then
     die "cannot deposit ${rel}: a directory exists there. Remove it and re-run."
@@ -90,27 +90,27 @@ deposit_file() {
 
   # Present and byte-identical: nothing to do.
   if cmp -s "$src" "$dest"; then
-    log_info "ok ${rel} — already up to date"
+    log_info "ok ${rel}: already up to date"
     DEPOSIT_RESULT='identical'
     return 0
   fi
 
   if [[ "$NO_OVERWRITE" == "1" ]]; then
-    log_warn "skip ${rel} — differs but --no-overwrite is set"
+    log_warn "skip ${rel}: differs but --no-overwrite is set"
     DEPOSIT_RESULT='skipped-nooverwrite'
     return 0
   fi
 
   local bpath="$BACKUP_RUN_DIR/$rel"
   if is_dry_run; then
-    log_dry "replace ${rel} — would back up to $(tildify "$bpath") then overwrite"
+    log_dry "replace ${rel}: would back up to $(tildify "$bpath") then overwrite"
     DEPOSIT_RESULT='replaced'
     return 0
   fi
 
   backup_file "$dest"
   cp "$src" "$dest" || die "cannot write ${rel} (permission denied? read-only target?)"
-  log_ok "replace ${rel} — backed up to $(tildify "$bpath")"
+  log_ok "replace ${rel}: backed up to $(tildify "$bpath")"
   DEPOSIT_RESULT='replaced'
 }
 
@@ -158,26 +158,26 @@ deposit_merge() {
     [[ "$(cat "$dest")" == "$new" ]] && same=1
   fi
   if [[ "$same" == 1 ]]; then
-    log_info "ok ${rel} — already up to date [${strategy}]"
+    log_info "ok ${rel}: already up to date [${strategy}]"
     DEPOSIT_RESULT='identical'
     return 0
   fi
 
   if [[ "$NO_OVERWRITE" == "1" ]]; then
-    log_warn "skip ${rel} — would merge but --no-overwrite is set"
+    log_warn "skip ${rel}: would merge but --no-overwrite is set"
     DEPOSIT_RESULT='skipped-nooverwrite'
     return 0
   fi
 
   if is_dry_run; then
-    log_dry "merge ${label} — would back up to $(tildify "$bpath") then update"
+    log_dry "merge ${label}: would back up to $(tildify "$bpath") then update"
     DEPOSIT_RESULT='merged'
     return 0
   fi
 
   backup_file "$dest"
   printf '%s\n' "$new" >"$dest" || die "cannot write ${rel}"
-  log_ok "merge ${label} — backed up to $(tildify "$bpath")"
+  log_ok "merge ${label}: backed up to $(tildify "$bpath")"
   DEPOSIT_RESULT='merged'
 }
 
@@ -247,7 +247,7 @@ install_hooks() {
   local target="$1"
 
   if ! git -C "$target" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-    log_warn "hooks: skipped — ${target} is not a git repository (run 'git init' then re-apply)"
+    log_warn "hooks: skipped, ${target} is not a git repository (run 'git init' then re-apply)"
     return 0
   fi
 
@@ -260,17 +260,17 @@ install_hooks() {
     if git -C "$target" config core.hooksPath .husky; then
       log_ok "hooks: Husky wired (core.hooksPath=.husky; delegates to lint-staged + pre-commit)"
     else
-      log_warn "hooks: failed to set core.hooksPath — wire Husky manually in ${target}"
+      log_warn "hooks: failed to set core.hooksPath. Wire Husky manually in ${target}"
     fi
     return 0
   fi
 
   if [[ ! -f "$target/.pre-commit-config.yaml" ]]; then
-    log_info "hooks: skipped — no .pre-commit-config.yaml deposited yet"
+    log_info "hooks: skipped, no .pre-commit-config.yaml deposited yet"
     return 0
   fi
   if ! has_bin pre-commit; then
-    log_warn "hooks: skipped — pre-commit not installed (brew install pre-commit)"
+    log_warn "hooks: skipped, pre-commit not installed (brew install pre-commit)"
     return 0
   fi
   if is_dry_run; then
@@ -280,7 +280,7 @@ install_hooks() {
   if (cd "$target" && pre-commit install >/dev/null && pre-commit install --hook-type commit-msg >/dev/null); then
     log_ok "hooks: pre-commit installed (pre-commit + commit-msg)"
   else
-    log_warn "hooks: pre-commit install failed — run it manually in ${target}"
+    log_warn "hooks: pre-commit install failed. Run it manually in ${target}"
   fi
 }
 
@@ -291,7 +291,7 @@ package_in_json() {
 
 # print_suggestions <target> <profile>
 # Prints the composer/npm dev packages the profile recommends but that are not
-# already declared. bootstrap never edits the manifests (§5.3/§10) — it only
+# already declared. bootstrap never edits the manifests (§5.3/§10): it only
 # prints the command to run.
 print_suggestions() {
   local target="$1" profile="$2"
@@ -342,7 +342,7 @@ setup_phpstan_baseline() {
   # fresh and the empty baseline is the right state. This avoids mistaking our
   # own deposited .php-cs-fixer.dist.php / rector.php configs for project code.
   if [[ ! -f "$target/composer.json" ]]; then
-    log_info "phpstan baseline: no composer.json (fresh project) — keeping the empty baseline"
+    log_info "phpstan baseline: no composer.json (fresh project), keeping the empty baseline"
     return 0
   fi
 
@@ -354,7 +354,7 @@ setup_phpstan_baseline() {
   fi
 
   if [[ -z "$phpstan" ]]; then
-    log_warn "phpstan baseline: phpstan not found — generate it later with:"
+    log_warn "phpstan baseline: phpstan not found. Generate it later with:"
     printf '    vendor/bin/phpstan analyse --generate-baseline phpstan-baseline.neon\n' >&2
     return 0
   fi

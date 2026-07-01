@@ -5,7 +5,7 @@
 
 extends: minimal
 
-# Machine-global binaries only. shellcheck already comes from minimal — bats and
+# Machine-global binaries only. shellcheck already comes from minimal, bats and
 # shfmt are the additions. mac-setup installs them; bootstrap only declares them
 # and deposits the config (hooks + CI) that drives them.
 requires_bin:
@@ -14,7 +14,7 @@ requires_bin:
 
 files:
   # bats harness skeleton. The smoke test passes from the first run so
-  # `bats tests/` is green immediately — bats errors on an empty tests/ dir.
+  # `bats tests/` is green immediately: bats errors on an empty tests/ dir.
   - src: templates/shell/tests/smoke.bats
     dest: tests/smoke.bats
   - src: templates/shell/tests/test_helper.bash

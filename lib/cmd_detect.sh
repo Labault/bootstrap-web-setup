@@ -1,5 +1,5 @@
 # shellcheck shell=bash
-# `bootstrap detect` — auxiliary command: print the profile that would be used
+# `bootstrap detect`, auxiliary command: print the profile that would be used
 # for a target directory. Handy for testing detection and for scripting.
 
 # shellcheck source=lib/manifest.sh

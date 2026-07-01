@@ -1,5 +1,5 @@
 # shellcheck shell=bash
-# Writes .bootstrap.yaml — the state file that records what `apply` deposited
+# Writes .bootstrap.yaml, the state file that records what `apply` deposited
 # (§4.2, §9.4, §10). It is the single trace that unlocks Phase 2 drift detection.
 # Written by `apply` only (never in dry-run); read later by `doctor`. Hand-edits
 # are not expected. We emit YAML by hand (no yq dependency) in a shape our own
@@ -15,7 +15,7 @@ write_bootstrap_state() {
   local version applied_at commit
   version="$(bootstrap_version)"
   applied_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-  # The bootstrap repo commit at apply time — lets `reconcile` retrieve the base
+  # The bootstrap repo commit at apply time: lets `reconcile` retrieve the base
   # template (O) via `git show <commit>:...` for a 3-way merge (Phase 3).
   commit="$(git -C "$BOOTSTRAP_ROOT" rev-parse HEAD 2>/dev/null || printf 'unknown')"
 
@@ -24,7 +24,7 @@ write_bootstrap_state() {
   local tmp
   tmp="$(mktemp "$target/.bootstrap.yaml.XXXXXX")" || die "cannot write state in ${target}"
   {
-    printf '# Managed by bootstrap — do not edit by hand.\n'
+    printf '# Managed by bootstrap. Do not edit by hand.\n'
     # Literal backticks in a comment; nothing to expand.
     # shellcheck disable=SC2016
     printf '# Written by `bootstrap apply`; read by `bootstrap doctor` (Phase 2).\n'

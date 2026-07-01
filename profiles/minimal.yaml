@@ -4,11 +4,11 @@
 
 # Commit-message linting (gitmoji + Conventional Commits) is a deposited,
 # self-contained shell script (scripts/lint-commit-msg.sh) run as a commit-msg
-# hook — self-contained, no npm dependency (mirrors mac-setup). minimal therefore
+# hook, self-contained, no npm dependency (mirrors mac-setup). minimal therefore
 # suggests no npm packages.
 
 # requires_bin: MACHINE-global binaries mac-setup must have installed for the
-# deposited config to be live. Only tools that must exist on PATH go here — NOT
+# deposited config to be live. Only tools that must exist on PATH go here, NOT
 # project-local dev tools (those live in vendor/bin or node_modules/.bin and are
 # surfaced as suggestions instead; see suggest_composer / suggest_npm).
 requires_bin:

@@ -76,7 +76,7 @@ bootstrap_version() {
 warn_if_bootstrap_dirty() {
   git -C "$BOOTSTRAP_ROOT" rev-parse --is-inside-work-tree >/dev/null 2>&1 || return 0
   [[ -z "$(git -C "$BOOTSTRAP_ROOT" status --porcelain 2>/dev/null)" ]] && return 0
-  log_warn "bootstrap checkout has uncommitted changes — deposited templates won't match the recorded commit, so a later 'reconcile' may use a wrong base. Commit template changes first."
+  log_warn "bootstrap checkout has uncommitted changes: deposited templates won't match the recorded commit, so a later 'reconcile' may use a wrong base. Commit template changes first."
 }
 
 # file_sha256 <file> -> hex sha256 of the file (portable: shasum or sha256sum).

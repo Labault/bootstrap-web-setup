@@ -1,5 +1,5 @@
 # shellcheck shell=bash
-# `bootstrap doctor` — check the binaries required by the profile, and (Phase 2)
+# `bootstrap doctor`: check the binaries required by the profile, and (Phase 2)
 # detect configuration drift against the current templates when the project has a
 # .bootstrap.yaml. Drift is reported, never merged.
 
@@ -67,7 +67,7 @@ EOF
       printf '  %s✓%s %s\n' "$C_GREEN" "$C_RESET" "$bin" >&2
     else
       missing=$((missing + 1))
-      printf '  %s✗%s %s — %s%s%s\n' \
+      printf '  %s✗%s %s: %s%s%s\n' \
         "$C_RED" "$C_RESET" "$bin" "$C_DIM" "$(install_hint "$bin")" "$C_RESET" >&2
     fi
   done < <(resolve_requires_bin "$profile")
@@ -91,15 +91,15 @@ EOF
     rec_version="$(state_version "$state")"
     cur_version="$(bootstrap_version)"
     printf '\n' >&2
-    # A state file with no readable profile is corrupt/hand-broken — say so plainly
+    # A state file with no readable profile is corrupt/hand-broken, say so plainly
     # rather than report every file as "new".
     if [[ -z "$rec_profile" ]] || ! profile_exists "$rec_profile"; then
-      log_warn "Drift check: ${STATE_FILE_NAME} is unreadable or has an unknown profile — re-run 'bootstrap apply' to rewrite it."
+      log_warn "Drift check: ${STATE_FILE_NAME} is unreadable or has an unknown profile. Re-run 'bootstrap apply' to rewrite it."
       return 1
     fi
     log_info "Drift check (recorded profile ${C_BOLD}${rec_profile}${C_RESET}, applied $(state_applied_at "$state"))"
     if [[ "$rec_version" != "$cur_version" ]]; then
-      log_warn "version: recorded ${rec_version} vs current ${cur_version} — templates may have changed"
+      log_warn "version: recorded ${rec_version} vs current ${cur_version}: templates may have changed"
     else
       printf '  %sversion: %s (up to date)%s\n' "$C_DIM" "$rec_version" "$C_RESET" >&2
     fi
@@ -107,7 +107,7 @@ EOF
     detect_drift "$target" "${rec_profile:-$profile}" || drift_found=1
   else
     printf '\n' >&2
-    log_info "Drift check skipped — no ${STATE_FILE_NAME} (project not set up by bootstrap yet)."
+    log_info "Drift check skipped: no ${STATE_FILE_NAME} (project not set up by bootstrap yet)."
   fi
 
   # --- Exit code ---------------------------------------------------------------

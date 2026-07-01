@@ -1,5 +1,5 @@
 # shellcheck shell=bash
-# `bootstrap list` — list available profiles and their resolved content.
+# `bootstrap list`: list available profiles and their resolved content.
 
 # shellcheck source=lib/manifest.sh
 source "$BOOTSTRAP_ROOT/lib/manifest.sh"

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Release helper for bootstrap-web-setup ITSELF (repo-only — not deposited to
+# Release helper for bootstrap-web-setup ITSELF (repo-only: not deposited to
 # projects). Bumps VERSION, rolls CHANGELOG's [Unreleased] into a dated section,
 # commits, tags vX.Y.Z, pushes, and creates the GitHub release from those notes.
 #
@@ -47,7 +47,7 @@ grep -q '^## \[Unreleased\]' CHANGELOG.md || die "no '## [Unreleased]' section i
 # Release notes = the current [Unreleased] body (entries up to the next heading).
 notes="$(awk '/^## \[Unreleased\]/{f=1;next} /^## \[/{f=0} f' CHANGELOG.md | sed '/^[[:space:]]*$/d')"
 [[ -n "$notes" && "$notes" != "- Nothing yet." ]] ||
-  die "[Unreleased] is empty — add entries before releasing."
+  die "[Unreleased] is empty: add entries before releasing."
 
 today="$(date -u +%Y-%m-%d)"
 
@@ -57,10 +57,10 @@ if [[ "$dry_run" == 1 ]]; then
   exit 0
 fi
 
-# Mutating preconditions — only enforced for a real release.
+# Mutating preconditions: only enforced for a real release.
 command -v gh >/dev/null 2>&1 || die "the gh CLI is required."
 [[ "$(git rev-parse --abbrev-ref HEAD)" == "main" ]] || die "not on main."
-[[ -z "$(git status --porcelain)" ]] || die "working tree not clean — commit or stash first."
+[[ -z "$(git status --porcelain)" ]] || die "working tree not clean: commit or stash first."
 
 printf 'release: %s -> %s  (%s)\n' "$cur" "$next" "$tag"
 

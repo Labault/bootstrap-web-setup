@@ -1,5 +1,5 @@
 # shellcheck shell=bash
-# `bootstrap apply` — deposit the profile's config into the target project.
+# `bootstrap apply`: deposit the profile's config into the target project.
 # Resolves the profile, runs the blocking binary guard, deposits the files
 # (collisions handled by the engine), writes .bootstrap.yaml, generates the
 # PHPStan baseline, installs hooks, and prints dependency suggestions.
@@ -79,7 +79,7 @@ EOF
     if [[ ${#missing[@]} -gt 0 ]]; then
       log_error "Missing ${#missing[@]} required binary/binaries for profile '${profile}':"
       for bin in "${missing[@]}"; do
-        printf '    %s — %s\n' "$bin" "$(install_hint "$bin")" >&2
+        printf '    %s: %s\n' "$bin" "$(install_hint "$bin")" >&2
       done
       die "Install them (see above) or re-run with --skip-bin-check."
     fi
