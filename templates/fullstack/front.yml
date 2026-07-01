@@ -33,7 +33,7 @@ jobs:
           if git ls-files '*.ts' '*.tsx' | grep -q .; then
             npx tsc --noEmit
           else
-            echo "No TypeScript sources found — skipping type-check."
+            echo "No TypeScript sources found, skipping type-check."
           fi
 
       - name: ESLint

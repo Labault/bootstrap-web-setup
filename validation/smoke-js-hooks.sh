@@ -4,8 +4,8 @@
 #
 # WHY THIS EXISTS
 #   Same failure mode as smoke-php-hooks.sh, on the JS side. The fullstack
-#   profile hardcodes commands — `npx eslint .`, `npx prettier --check .`,
-#   `npx tsc --noEmit`, `npx lint-staged` — while the binaries float in
+#   profile hardcodes commands (`npx eslint .`, `npx prettier --check .`,
+#   `npx tsc --noEmit`, `npx lint-staged`) while the binaries float in
 #   node_modules/.bin. When a flag moves or a flat-config API changes between
 #   versions, the gate breaks silently on the next bootstrapped front project.
 #
@@ -93,7 +93,7 @@ git add -A
 # Run the deposited gates exactly as front.yml and the Husky hook invoke them,
 # on the clean tree, and require zero complaints. A red here means a hardcoded
 # command drifted against a new tool version, or a deposited file stopped being
-# clean under one — both real regressions worth catching before a project does.
+# clean under one, both real regressions worth catching before a project does.
 log "running the deposited front gates for real"
 gates_failed=0
 run_gate() { # <label> <cmd...>
@@ -120,6 +120,6 @@ run_gate "make front" make front
 run_gate "make front-fix" make front-fix
 
 [[ "$gates_failed" -eq 0 ]] ||
-  fail "a deposited front gate failed — flag/API drift or an unclean deposited file"
+  fail "a deposited front gate failed: flag/API drift or an unclean deposited file"
 
 ok "all deposited front gates are green against the latest tools"
