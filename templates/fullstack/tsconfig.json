@@ -1,7 +1,7 @@
 {
   // Managed by bootstrap (fullstack profile). Strict TypeScript config.
   // Type-checks a Symfony front (assets/) at the highest level. Bundling is your
-  // bundler's job (Vite / Webpack Encore), so this config does NOT emit — it is
+  // bundler's job (Vite / Webpack Encore), so this config does NOT emit. It is
   // used by `tsc --noEmit` in CI and by type-aware ESLint. tsconfig is JSONC, so
   // these comments are intentional. Adjust `include`/`lib` for your project.
   "compilerOptions": {

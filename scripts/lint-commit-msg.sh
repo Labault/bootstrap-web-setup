@@ -234,7 +234,7 @@ validate_message() {
   fi
 
   if [ "$emoji_ok" -eq 0 ]; then
-    errs+=("must start with a valid gitmoji (Unicode emoji or :code:) — see https://gitmoji.dev/")
+    errs+=("must start with a valid gitmoji (Unicode emoji or :code:). See https://gitmoji.dev/")
   elif [[ "$rest" =~ ^([^(!:[:space:]]+)(\(([^)]*)\))?(!)?:[[:space:]](.*)$ ]]; then
     type="${BASH_REMATCH[1]}"
     scope="${BASH_REMATCH[3]}"
@@ -242,7 +242,7 @@ validate_message() {
 
     case " $GITMOJI_TYPES " in
     *" $type "*) ;;
-    *) errs+=("type \"$type\" is not allowed — use one of: $GITMOJI_TYPES") ;;
+    *) errs+=("type \"$type\" is not allowed. Use one of: $GITMOJI_TYPES") ;;
     esac
 
     case "$scope" in

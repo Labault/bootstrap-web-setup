@@ -16,5 +16,5 @@ Security fixes target the latest released version unless stated otherwise.
 
 ## Scope
 
-This project ships configuration and tooling. Secrets must never be committed —
+This project ships configuration and tooling. Secrets must never be committed,
 `gitleaks` runs both locally (pre-commit) and in CI to catch them.

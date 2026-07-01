@@ -32,7 +32,7 @@ export default tseslint.config(
     },
   },
 
-  // Plain JS / config files have no type information — turn the type-aware rules
+  // Plain JS / config files have no type information. Turn the type-aware rules
   // off for them so ESLint doesn't error trying to type-check them.
   {
     files: ['**/*.{js,mjs,cjs}'],

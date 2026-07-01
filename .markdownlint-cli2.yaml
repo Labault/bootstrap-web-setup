@@ -1,13 +1,13 @@
 # markdownlint-cli2 configuration.
 config:
   default: true
-  # Allow long lines (URLs, tables) — line length is not a useful gate here.
+  # Allow long lines (URLs, tables). Line length is not a useful gate here.
   MD013: false
   # Allow inline HTML (badges, details/summary).
   MD033: false
   # First line in file need not be a top-level heading.
   MD041: false
-  # Don't enforce table pipe alignment — cosmetic and painful with prose cells.
+  # Don't enforce table pipe alignment: cosmetic and painful with prose cells.
   MD060: false
   # Allow repeated subsection names (Added, Changed, …) under different parents,
   # e.g. one per version in a CHANGELOG.

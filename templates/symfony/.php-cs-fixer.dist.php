@@ -6,7 +6,7 @@ declare(strict_types=1);
 //
 // PHP-CS-Fixer owns code style here, including `declare(strict_types=1);`
 // placement. We enforce strict types right after `<?php` (no blank line in
-// between) so it agrees with Rector's declare handling — otherwise the cs and
+// between) so it agrees with Rector's declare handling. Otherwise the cs and
 // rector dry-run gates fight over that one line.
 
 $finder = (new PhpCsFixer\Finder())

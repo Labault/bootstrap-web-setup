@@ -1,4 +1,4 @@
-# EditorConfig — consistent indentation / line endings / charset across editors.
+# EditorConfig: consistent indentation / line endings / charset across editors.
 # https://editorconfig.org
 root = true
 
@@ -25,6 +25,6 @@ indent_size = unset
 [{Makefile,Makefile.*,*.mk}]
 indent_style = tab
 
-# NEON (PHPStan) is tab-indented — match the tool's own --generate-baseline output.
+# NEON (PHPStan) is tab-indented: match the tool's own --generate-baseline output.
 [*.neon]
 indent_style = tab

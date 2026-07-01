@@ -1,5 +1,5 @@
 # Shared helpers for the bats suite (managed by bootstrap, shell profile).
-# `load test_helper` in a .bats file pulls this in — add common setup/teardown
+# `load test_helper` in a .bats file pulls this in. Add common setup/teardown
 # and helper functions here as your suite grows.
 #
 # Variables defined here are consumed by the .bats files that load this helper,

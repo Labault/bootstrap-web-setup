@@ -13,10 +13,10 @@ Project context for Claude Code. Enrich this per project.
 
 Quality and tooling go through `make` (tools come from the machine, not the repo):
 
-- `make qa` — run all quality checks
-- `make lint` — run every pre-commit hook on all files
-- `make fix` — re-run hooks applying auto-fixes
-- `make hooks` — install git hooks (pre-commit + commit-msg)
+- `make qa`: run all quality checks
+- `make lint`: run every pre-commit hook on all files
+- `make fix`: re-run hooks applying auto-fixes
+- `make hooks`: install git hooks (pre-commit + commit-msg)
 
 ## Conventions
 

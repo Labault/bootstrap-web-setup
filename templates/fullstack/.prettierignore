@@ -1,5 +1,5 @@
 # Managed by bootstrap (fullstack profile). Prettier owns the front-end source
-# only — every other part of the repo belongs to another tool: markdownlint →
+# only. Every other part of the repo belongs to another tool: markdownlint →
 # Markdown, actionlint → GitHub workflows, PHP-CS-Fixer → PHP, the package
 # managers → lockfiles. Letting Prettier loose on all of them makes
 # `prettier --check .` (and lint-staged) fight hand-authored config and docs.
