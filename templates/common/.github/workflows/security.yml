@@ -6,6 +6,8 @@ on:
 
 permissions:
   contents: read
+  # gitleaks-action needs to read PR data to scan pull requests.
+  pull-requests: read
 
 jobs:
   gitleaks:
@@ -20,11 +22,15 @@ jobs:
       - name: Scan for secrets
         uses: gitleaks/gitleaks-action@v3
         env:
+          # gitleaks-action v3 requires a token to scan pull requests.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_CONFIG: .gitleaks.toml
 
   dependency-review:
     name: Dependency review
-    if: github.event_name == 'pull_request'
+    # Needs GitHub Advanced Security (Dependency graph), unavailable on private
+    # repos: skip unless the repo is public. Dependabot still covers alerts.
+    if: github.event_name == 'pull_request' && github.event.repository.visibility == 'public'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
