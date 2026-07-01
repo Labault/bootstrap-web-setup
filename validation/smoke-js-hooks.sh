@@ -15,7 +15,8 @@
 #
 # SCOPE
 #   The front-end gates only (eslint / prettier / tsc / lint-staged), exactly as
-#   front.yml and the Husky pre-commit hook invoke them. The PHP hooks are
+#   front.yml and the Husky pre-commit hook invoke them, plus the deposited
+#   Makefile front targets (`make front` / `make front-fix`). The PHP hooks are
 #   covered by smoke-php-hooks.sh; the language-agnostic hooks by this repo's
 #   own ci.yml.
 #
@@ -32,7 +33,7 @@ fail() {
   exit 1
 }
 
-for bin in node npm git jq; do
+for bin in node npm git jq make; do
   command -v "$bin" >/dev/null 2>&1 || fail "missing required tool: $bin"
 done
 
@@ -110,6 +111,13 @@ run_gate "tsc --noEmit" npx --no-install tsc --noEmit
 run_gate "eslint ." npx --no-install eslint .
 run_gate "prettier --check" npx --no-install prettier --check .
 run_gate "lint-staged" npx --no-install lint-staged
+
+# The same front tools, but driven through the deposited Makefile, to cover the
+# qa/lint/fix wiring, not just the raw commands. (`make fix`/`make qa` also
+# pull in php-cs-fixer/rector/pre-commit, absent from this PHP-less fixture, so
+# we exercise the front-only targets.)
+run_gate "make front" make front
+run_gate "make front-fix" make front-fix
 
 [[ "$gates_failed" -eq 0 ]] ||
   fail "a deposited front gate failed — flag/API drift or an unclean deposited file"
