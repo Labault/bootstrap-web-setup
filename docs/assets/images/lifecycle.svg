@@ -34,7 +34,7 @@
 
   <!-- loop back to in sync -->
   <path d="M710 156 L710 220 L150 220 L150 158" fill="none" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrow)"/>
-  <text x="430" y="214" text-anchor="middle" font-size="12" fill="#4b5563">back in sync — re-run doctor / reconcile as the templates evolve</text>
+  <text x="430" y="214" text-anchor="middle" font-size="12" fill="#4b5563">back in sync: re-run doctor / reconcile as the templates evolve</text>
 
   <!-- note -->
   <text x="430" y="270" text-anchor="middle" font-size="12" fill="#6b7280">A backup is taken before any write · every step has a --dry-run</text>

@@ -49,8 +49,8 @@
   <!-- what apply deposits -->
   <rect x="40" y="300" width="740" height="146" rx="10" fill="#f4f5f7" stroke="#8a8f98" stroke-width="1.5"/>
   <text x="62" y="326" font-size="14" font-weight="700" fill="#1f2937">bootstrap apply deposits into your project:</text>
-  <text x="62" y="352" font-size="13" fill="#374151">• Config files only — never binaries (those come from mac-setup)</text>
-  <text x="62" y="378" font-size="13" fill="#374151">• .bootstrap.yaml — profile, version, files + hashes (the state)</text>
-  <text x="62" y="404" font-size="13" fill="#374151">• Git hooks — pre-commit (Husky on the fullstack profile)</text>
-  <text x="62" y="430" font-size="13" fill="#374151">• Backups of replaced files — ~/Documents/Backups/bootstrap</text>
+  <text x="62" y="352" font-size="13" fill="#374151">• Config files only, never binaries (those come from mac-setup)</text>
+  <text x="62" y="378" font-size="13" fill="#374151">• .bootstrap.yaml: profile, version, files + hashes (the state)</text>
+  <text x="62" y="404" font-size="13" fill="#374151">• Git hooks: pre-commit (Husky on the fullstack profile)</text>
+  <text x="62" y="430" font-size="13" fill="#374151">• Backups of replaced files: ~/Documents/Backups/bootstrap</text>
 </svg>

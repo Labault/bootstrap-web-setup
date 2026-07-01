@@ -17,7 +17,7 @@
 
   <!-- lib/common.sh -->
   <rect x="300" y="104" width="280" height="46" rx="10" fill="#e6f0ff" stroke="#3b74d6" stroke-width="1.5"/>
-  <text x="440" y="132" text-anchor="middle" font-size="13.5" font-weight="700" fill="#1f2937">lib/common.sh — logging · dry-run · die</text>
+  <text x="440" y="132" text-anchor="middle" font-size="13.5" font-weight="700" fill="#1f2937">lib/common.sh: logging · dry-run · die</text>
 
   <!-- branch lines to command modules -->
   <line x1="440" y1="150" x2="99" y2="196" stroke="#6b7280" stroke-width="1.2" marker-end="url(#arrow)"/>
@@ -42,7 +42,7 @@
 
   <!-- engine -->
   <rect x="24" y="288" width="560" height="150" rx="10" fill="#f4f5f7" stroke="#8a8f98" stroke-width="1.5"/>
-  <text x="46" y="316" font-size="14" font-weight="700" fill="#1f2937">engine — lib/</text>
+  <text x="46" y="316" font-size="14" font-weight="700" fill="#1f2937">engine: lib/</text>
   <text x="46" y="346" font-size="13" fill="#374151">manifest · detect · merge · apply · state · state_read</text>
   <text x="46" y="372" font-size="13" fill="#374151">drift · reconcile · bincheck</text>
   <text x="46" y="412" font-size="11.5" fill="#6b7280">writes config files · backs up · records .bootstrap.yaml</text>
