@@ -24,6 +24,10 @@ suggest_npm:
   - lint-staged
 
 files:
+  # Override: Husky owns git hooks here, so `make hooks` activates Husky instead
+  # of running `pre-commit install` (which refuses when core.hooksPath is set).
+  - src: templates/fullstack/Makefile
+    dest: Makefile
   - src: templates/fullstack/eslint.config.js
     dest: eslint.config.js
   - src: templates/fullstack/tsconfig.json
