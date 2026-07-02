@@ -24,6 +24,13 @@ lives in the [`VERSION`](VERSION) file and is what `bootstrap --version` prints.
   `front.yml`) now restrict their `push` trigger to `main`: pushing a PR branch
   no longer runs every workflow twice (push + pull_request).
 
+### Fixed
+
+- `.bootstrap.yaml` is written with mode 0644 instead of inheriting mktemp's
+  0600 — the state file is meant to be committed, like every deposited file.
+- `validation/run-all.sh` now runs under `set -uo pipefail`, aligned with
+  server-setup's harness.
+
 ### Security
 
 - Profile names (`--profile` and `extends:` values) are validated against an

@@ -66,4 +66,7 @@ write_bootstrap_state() {
     fi
   fi
   mv "$tmp" "$statefile"
+  # mktemp creates 0600; the state file is meant to be committed, so open it
+  # up to the umask-standard 0644 (matches every other deposited file).
+  chmod 0644 "$statefile"
 }

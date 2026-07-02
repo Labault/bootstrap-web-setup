@@ -3,6 +3,10 @@
 # Each case writes its own RESULT.txt (PASS/FAIL) and output.log in its folder.
 # Usage: ./run-all.sh            (run all)
 #        ./run-all.sh 04 50      (run only cases whose name starts with 04 / 50)
+# No -e: a failing case must not abort the harness — failures are collected
+# and reported in the summary table (same contract as server-setup's harness).
+set -uo pipefail
+
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cases=("$HERE"/cases/*/)
 pass=0
