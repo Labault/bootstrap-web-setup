@@ -20,6 +20,9 @@ lives in the [`VERSION`](VERSION) file and is what `bootstrap --version` prints.
 - markdownlint config gains `MD024: siblings_only` so a changelog can repeat
   `### Added` / `### Changed` once per version; EditorConfig's tab rule now covers
   `Makefile.*` and `*.mk`.
+- Deposited workflows (`ci.yml`, `security.yml`, `tests.yml`, `php.yml`,
+  `front.yml`) now restrict their `push` trigger to `main`: pushing a PR branch
+  no longer runs every workflow twice (push + pull_request).
 
 ### Security
 
