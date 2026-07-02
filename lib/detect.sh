@@ -51,9 +51,10 @@ resolve_profile() {
   local target="${1:-.}" override="${2:-}"
   local profile
   if [[ -n "$override" ]]; then
-    # A profile name is a bare manifest stem: reject path separators so
-    # --profile can't reach outside profiles/ (defence in depth).
-    [[ "$override" == */* || "$override" == *..* ]] && die "Invalid profile name: '$override'"
+    # A profile name is a bare manifest stem: allowlist it here, before
+    # profile_exists builds a path with it (defence in depth — resolve_chain
+    # re-checks the whole inheritance chain, extends: values included).
+    valid_profile_name "$override" || die "Invalid profile name: '$override' (expected ^[a-z][a-z0-9-]*\$)"
     profile_exists "$override" || die "Unknown profile: '$override' (available: $(available_profiles | paste -sd ',' - | sed 's/,/, /g'))"
     profile="$override"
   else

@@ -21,6 +21,12 @@ lives in the [`VERSION`](VERSION) file and is what `bootstrap --version` prints.
   `### Added` / `### Changed` once per version; EditorConfig's tab rule now covers
   `Makefile.*` and `*.mk`.
 
+### Security
+
+- Profile names (`--profile` and `extends:` values) are validated against an
+  allowlist (`^[a-z][a-z0-9-]*$`) before any path is built from them — back-port
+  of server-setup's traversal hardening (its CHANGELOG 0.2.0).
+
 ## [0.5.0] - 2026-06-27
 
 First tagged release. The CLI and its three profiles are complete, tested, and
