@@ -1,0 +1,44 @@
+name: WordPress
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  php:
+    name: WordPress PHP quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          coverage: none
+          tools: composer
+
+      - name: Validate composer.json
+        run: composer validate --strict --no-check-publish
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: PHPCS (WordPress Coding Standards)
+        run: vendor/bin/phpcs
+
+      - name: PHPStan
+        run: vendor/bin/phpstan analyse --configuration=phpstan.dist.neon --memory-limit=512M --no-progress
+
+      - name: Tests
+        run: |
+          if [ -x vendor/bin/phpunit ]; then
+            vendor/bin/phpunit
+          else
+            echo "No PHPUnit suite configured; skipping tests."
+          fi

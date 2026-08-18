@@ -1,10 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 620" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 660" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif" role="img" aria-labelledby="title desc">
   <title id="title">bootstrap profile inheritance</title>
-  <desc id="desc">Profiles inherit from each other. minimal is the language-agnostic base (pre-commit, EditorConfig, commit-msg lint, gitleaks, shellcheck, markdownlint, actionlint, lychee, CI and security workflows, Dependabot, docs and templates). symfony extends minimal and adds PHPStan level 9, PHP-CS-Fixer, Rector, hadolint, a PHP CI workflow and make targets; fullstack extends symfony and adds ESLint, Prettier, Husky with lint-staged, and a front CI workflow. shell is a sibling of symfony (it also extends minimal) and adds bats and shfmt, a tests CI workflow and shell make targets, on top of the shellcheck inherited from minimal. Detection: composer.json picks symfony, an extra package.json picks fullstack, tracked shell scripts with no such manifest pick shell, otherwise minimal; override with the profile flag.</desc>
-  <rect width="900" height="620" fill="#ffffff"/>
+  <desc id="desc">minimal is the language-agnostic base. symfony, wordpress and shell extend minimal; fullstack extends symfony. WordPress adds WordPress Coding Standards, PHPStan with WordPress stubs, a dedicated CI workflow and make targets. Detection checks for wp-config.php or a complete WordPress core tree before composer, package and tracked shell-script signals. Any profile can be selected explicitly.</desc>
+  <rect width="1000" height="660" fill="#ffffff"/>
 
   <!-- minimal (outer) -->
-  <rect x="30" y="30" width="840" height="420" rx="12" fill="#eef2f7" stroke="#8a8f98" stroke-width="1.5"/>
+  <rect x="30" y="30" width="940" height="450" rx="12" fill="#eef2f7" stroke="#8a8f98" stroke-width="1.5"/>
   <text x="50" y="58" font-size="16" font-weight="700" fill="#1f2937">minimal</text>
   <text x="118" y="58" font-size="12" fill="#6b7280">any web repo (language-agnostic)</text>
   <text x="50" y="86" font-size="12.5" fill="#374151">pre-commit · EditorConfig · commit-msg lint · gitleaks</text>
@@ -12,36 +12,50 @@
   <text x="50" y="130" font-size="12.5" fill="#374151">CI + security workflows · Dependabot · docs &amp; templates</text>
 
   <!-- symfony (nested in minimal) -->
-  <rect x="55" y="150" width="490" height="280" rx="10" fill="#e9f6ec" stroke="#3fa45e" stroke-width="1.5"/>
+  <rect x="55" y="150" width="400" height="310" rx="10" fill="#e9f6ec" stroke="#3fa45e" stroke-width="1.5"/>
   <text x="75" y="178" font-size="15" font-weight="700" fill="#1f2937">symfony</text>
-  <text x="142" y="178" font-size="12" fill="#6b7280">extends minimal · PHP/Symfony</text>
-  <text x="75" y="205" font-size="12.5" fill="#374151">+ PHPStan (level 9) · PHP-CS-Fixer (@Symfony) · Rector</text>
+  <text x="155" y="178" font-size="12" fill="#6b7280">extends minimal · PHP/Symfony</text>
+  <text x="75" y="205" font-size="12.5" fill="#374151">+ PHPStan · PHP-CS-Fixer · Rector</text>
   <text x="75" y="227" font-size="12.5" fill="#374151">+ hadolint · php.yml CI · PHP make targets</text>
 
   <!-- fullstack (nested in symfony) -->
-  <rect x="80" y="250" width="440" height="160" rx="10" fill="#fff3e6" stroke="#e08a3c" stroke-width="1.5"/>
+  <rect x="80" y="250" width="350" height="190" rx="10" fill="#fff3e6" stroke="#e08a3c" stroke-width="1.5"/>
   <text x="100" y="278" font-size="15" font-weight="700" fill="#1f2937">fullstack</text>
-  <text x="172" y="278" font-size="12" fill="#6b7280">extends symfony · + JS/TS front</text>
-  <text x="100" y="306" font-size="12.5" fill="#374151">+ ESLint · Prettier · Husky + lint-staged</text>
-  <text x="100" y="328" font-size="12.5" fill="#374151">+ front.yml CI</text>
-  <text x="100" y="384" font-size="11.5" fill="#9a6a2c">inheritance: fullstack ⊂ symfony ⊂ minimal</text>
+  <text x="185" y="278" font-size="12" fill="#6b7280">extends symfony</text>
+  <text x="100" y="306" font-size="12.5" fill="#374151">Symfony + JS/TS front</text>
+  <text x="100" y="333" font-size="12.5" fill="#374151">+ ESLint · Prettier</text>
+  <text x="100" y="355" font-size="12.5" fill="#374151">+ Husky + lint-staged · front.yml CI</text>
+  <text x="100" y="414" font-size="11.5" fill="#9a6a2c">fullstack inherits symfony, then minimal</text>
 
   <!-- shell (nested in minimal, sibling of symfony) -->
-  <rect x="565" y="150" width="285" height="280" rx="10" fill="#f0ecf9" stroke="#8b6fc7" stroke-width="1.5"/>
-  <text x="585" y="178" font-size="15" font-weight="700" fill="#1f2937">shell</text>
-  <text x="635" y="178" font-size="12" fill="#6b7280">extends minimal</text>
-  <text x="585" y="205" font-size="12.5" fill="#374151">Shell/Bash tooling repos</text>
-  <text x="585" y="232" font-size="12.5" fill="#374151">+ bats · shfmt</text>
-  <text x="585" y="254" font-size="12.5" fill="#374151">+ tests.yml CI · shell make targets</text>
-  <text x="585" y="282" font-size="11.5" fill="#6f5aa6">(shellcheck inherited from minimal)</text>
-  <text x="585" y="384" font-size="11.5" fill="#6f5aa6">sibling of symfony · shell ⊂ minimal</text>
+  <rect x="475" y="150" width="215" height="310" rx="10" fill="#f0ecf9" stroke="#8b6fc7" stroke-width="1.5"/>
+  <text x="495" y="178" font-size="15" font-weight="700" fill="#1f2937">shell</text>
+  <text x="545" y="178" font-size="12" fill="#6b7280">extends minimal</text>
+  <text x="495" y="205" font-size="12.5" fill="#374151">Shell/Bash tooling</text>
+  <text x="495" y="232" font-size="12.5" fill="#374151">+ bats · shfmt</text>
+  <text x="495" y="254" font-size="12.5" fill="#374151">+ tests.yml CI</text>
+  <text x="495" y="276" font-size="12.5" fill="#374151">+ shell make targets</text>
+  <text x="495" y="306" font-size="11.5" fill="#6f5aa6">shellcheck inherited</text>
+  <text x="495" y="414" font-size="11.5" fill="#6f5aa6">shell inherits minimal</text>
 
-  <!-- detection panel (bottom strip) -->
-  <rect x="30" y="480" width="840" height="110" rx="10" fill="#f4f5f7" stroke="#8a8f98" stroke-width="1.5"/>
-  <text x="52" y="508" font-size="14" font-weight="700" fill="#1f2937">Auto-detection</text>
-  <text x="560" y="508" font-size="12.5" fill="#6b7280">override anytime with</text>
-  <text x="700" y="508" font-size="12.5" font-weight="600" fill="#3b74d6">--profile &lt;name&gt;</text>
-  <line x1="52" y1="522" x2="848" y2="522" stroke="#cbd2da" stroke-width="1"/>
-  <text x="52" y="548" font-size="13" fill="#374151">composer.json → symfony   ·   + package.json → fullstack</text>
-  <text x="52" y="574" font-size="13" fill="#374151">tracked *.sh / *.bash (no manifest) → shell   ·   otherwise → minimal</text>
+  <!-- wordpress (nested in minimal, sibling of symfony) -->
+  <rect x="710" y="150" width="240" height="310" rx="10" fill="#e9f2fc" stroke="#3b74d6" stroke-width="1.5"/>
+  <text x="730" y="178" font-size="15" font-weight="700" fill="#1f2937">wordpress</text>
+  <text x="827" y="178" font-size="12" fill="#6b7280">extends minimal</text>
+  <text x="730" y="205" font-size="12.5" fill="#374151">Sites · plugins · themes</text>
+  <text x="730" y="232" font-size="12.5" fill="#374151">+ WordPress Coding Standards</text>
+  <text x="730" y="254" font-size="12.5" fill="#374151">+ PHPStan + WordPress stubs</text>
+  <text x="730" y="276" font-size="12.5" fill="#374151">+ wordpress.yml CI</text>
+  <text x="730" y="298" font-size="12.5" fill="#374151">+ WordPress make targets</text>
+  <text x="730" y="414" font-size="11.5" fill="#315f9f">wordpress inherits minimal</text>
+
+  <!-- detection panel -->
+  <rect x="30" y="510" width="940" height="120" rx="10" fill="#f4f5f7" stroke="#8a8f98" stroke-width="1.5"/>
+  <text x="52" y="538" font-size="14" font-weight="700" fill="#1f2937">Auto-detection</text>
+  <text x="660" y="538" font-size="12.5" fill="#6b7280">override anytime with</text>
+  <text x="800" y="538" font-size="12.5" font-weight="600" fill="#3b74d6">--profile &lt;name&gt;</text>
+  <line x1="52" y1="552" x2="948" y2="552" stroke="#cbd2da" stroke-width="1"/>
+  <text x="52" y="577" font-size="13" fill="#374151">wp-config.php or complete core tree → wordpress</text>
+  <text x="52" y="601" font-size="13" fill="#374151">composer.json → symfony · + package.json → fullstack</text>
+  <text x="510" y="601" font-size="13" fill="#374151">tracked shell files → shell · otherwise → minimal</text>
 </svg>

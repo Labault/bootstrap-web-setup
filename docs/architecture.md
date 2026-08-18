@@ -25,9 +25,10 @@ dependency beyond `git` and `jq`.
   - `reconcile`: the 3-way merge.
   - `bincheck`: the required-binary guard.
 - **`profiles/*.yaml`**: declarative manifests (`extends`, `requires_bin`,
-  `files`, `suggest_*`). Adding a profile is data, not code.
+  `allow_composer_plugin`, `files`, `suggest_*`). Adding a profile is mostly
+  data; detection rules stay deliberately explicit.
 - **`templates/`**: the actual files deposited into projects, organized by
-  profile family (`common/`, `symfony/`, `shell/`, `fullstack/`).
+  profile family (`common/`, `symfony/`, `wordpress/`, `shell/`, `fullstack/`).
 
 ## Conventions
 

@@ -18,7 +18,8 @@ Usage: bootstrap detect [--target <dir>] [--profile <name>]
 Print the profile that would be applied to <dir> (default: current directory).
 With --profile, validate and echo that profile instead of auto-detecting.
 
-Detection: composer.json -> symfony ; + package.json -> fullstack ;
+Detection: wp-config.php or complete core tree -> wordpress ;
+composer.json -> symfony ; + package.json -> fullstack ;
 tracked *.sh/*.bash (no manifest) -> shell ; else minimal.
 EOF
       return 0

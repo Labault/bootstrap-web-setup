@@ -1,5 +1,9 @@
 # Cahier des charges : `bootstrap`
 
+> Historical v1 design document. The implementation has since grown a
+> `wordpress` profile; the README and per-profile pages describe the current
+> product. The locked v1 decisions below are kept as the design record they are.
+>
 > Nom de travail. À brander plus tard (format court type `WebKit`, `Forge`, etc.).
 > Projet compagnon de **mac-setup**, opérant au niveau projet et non au niveau machine.
 

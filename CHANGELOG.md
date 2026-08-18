@@ -9,6 +9,10 @@ lives in the [`VERSION`](VERSION) file and is what `bootstrap --version` prints.
 
 ### Added
 
+- A `wordpress` profile for sites, plugins and themes: WPCS, PHPStan level 9
+  with WordPress stubs, dedicated hooks, CI, Make targets, Composer updates and
+  shared AI conventions. Auto-detection only fires on `wp-config.php` or a full
+  core tree; custom layouts stay explicit instead of being guessed.
 - `make release` / `make release-preview`: a release workflow (`scripts/release.sh`)
   that bumps `VERSION`, rolls the changelog's `[Unreleased]` into a dated section,
   commits, tags `vX.Y.Z`, pushes, and creates the GitHub release. Repo-local

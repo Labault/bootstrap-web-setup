@@ -2,6 +2,7 @@
 # Profile auto-detection and resolution.
 #
 # Detection rules (§11.7):
+#   wp-config.php or full core tree  -> wordpress
 #   composer.json present            -> symfony
 #   composer.json + package.json     -> fullstack
 #   tracked *.sh/*.bash, no manifest -> shell
@@ -22,10 +23,22 @@ has_shell_signal() {
   [[ -n "$tracked" ]]
 }
 
+# has_wordpress_signal <target-dir> -> 0 for an unmistakable WordPress install.
+# A lone wp-content/ directory is intentionally not enough: custom layouts and
+# unrelated PHP projects may use that name. Plugins, themes and Bedrock layouts
+# without a core tree stay explicit `--profile wordpress` choices.
+has_wordpress_signal() {
+  local target="${1:-.}"
+  [[ -f "$target/wp-config.php" ]] ||
+    [[ -d "$target/wp-admin" && -d "$target/wp-content" && -d "$target/wp-includes" ]]
+}
+
 # detect_profile <target-dir> -> prints the auto-detected profile name
 detect_profile() {
   local target="${1:-.}"
-  if [[ -f "$target/composer.json" ]]; then
+  if has_wordpress_signal "$target"; then
+    printf 'wordpress\n'
+  elif [[ -f "$target/composer.json" ]]; then
     if [[ -f "$target/package.json" ]]; then
       printf 'fullstack\n'
     else

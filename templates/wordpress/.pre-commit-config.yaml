@@ -1,0 +1,61 @@
+# Managed by bootstrap (wordpress profile). Machine-wide tools handle the base
+# checks; project-local Composer binaries handle WordPress PHP code.
+# Activate with: pre-commit install && pre-commit install --hook-type commit-msg
+minimum_pre_commit_version: "3.0.0"
+default_install_hook_types: [pre-commit, commit-msg]
+
+repos:
+  - repo: local
+    hooks:
+      # Language-agnostic base
+      - id: editorconfig-checker
+        name: editorconfig-checker
+        entry: editorconfig-checker
+        language: system
+        pass_filenames: false
+
+      - id: gitleaks
+        name: gitleaks (staged secrets)
+        entry: gitleaks protect --staged --redact --verbose
+        language: system
+        pass_filenames: false
+
+      - id: shellcheck
+        name: shellcheck
+        entry: shellcheck -x
+        language: system
+        types: [shell]
+
+      - id: markdownlint-cli2
+        name: markdownlint-cli2
+        entry: markdownlint-cli2
+        language: system
+        types: [markdown]
+
+      - id: actionlint
+        name: actionlint
+        entry: actionlint
+        language: system
+        files: ^\.github/workflows/.*\.(ya?ml)$
+
+      # WordPress PHP
+      - id: phpcs
+        name: PHPCS (WordPress Coding Standards)
+        entry: vendor/bin/phpcs
+        language: system
+        types: [php]
+        require_serial: true
+
+      - id: phpstan
+        name: PHPStan
+        entry: vendor/bin/phpstan analyse --configuration=phpstan.dist.neon --memory-limit=512M --no-progress
+        language: system
+        types: [php]
+        pass_filenames: false
+
+      # Commit message
+      - id: commit-msg-lint
+        name: commit-msg-lint
+        entry: scripts/lint-commit-msg.sh
+        language: script
+        stages: [commit-msg]

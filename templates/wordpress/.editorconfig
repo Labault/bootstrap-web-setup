@@ -1,0 +1,30 @@
+# EditorConfig for WordPress projects.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+# WordPress Coding Standards use tabs for PHP indentation.
+[*.php]
+indent_style = tab
+indent_size = 4
+
+# Markdown has context-sensitive list indentation. markdownlint owns its style.
+[*.md]
+trim_trailing_whitespace = false
+indent_size = unset
+
+[{Makefile,Makefile.*,*.mk}]
+indent_style = tab
+
+[*.neon]
+indent_style = tab
+
+# XML attributes often align under the opening tag.
+[*.xml]
+indent_size = unset

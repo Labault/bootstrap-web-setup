@@ -81,3 +81,34 @@ load test_helper
   run bats "$PROJ/tests/"
   [ "$status" -eq 0 ]
 }
+
+@test "wordpress extends minimal and deposits WordPress quality tooling" {
+  echo '{"name":"x/y"}' >"$PROJ/composer.json"
+  run "$BS" apply --profile wordpress --target "$PROJ" --skip-bin-check
+  [ "$status" -eq 0 ]
+  [ -f "$PROJ/phpcs.xml.dist" ]
+  [ -f "$PROJ/phpstan.dist.neon" ]
+  [ -f "$PROJ/.github/workflows/wordpress.yml" ]
+  [ -f "$PROJ/.github/workflows/ci.yml" ]
+  awk '
+    /^\[\*\.php\]$/ { in_php = 1; next }
+    in_php && /^\[/ { exit }
+    in_php && /^indent_style = tab$/ { found = 1 }
+    END { exit !found }
+  ' "$PROJ/.editorconfig"
+  grep -q 'WordPress' "$PROJ/phpcs.xml.dist"
+  grep -q 'phpcs' "$PROJ/.pre-commit-config.yaml"
+  grep -q 'package-ecosystem: composer' "$PROJ/.github/dependabot.yml"
+  grep -q 'vendor/bin/phpcbf' "$PROJ/Makefile"
+}
+
+@test "wordpress suggests its Composer quality tools without changing composer.json" {
+  echo '{"name":"x/y"}' >"$PROJ/composer.json"
+  run "$BS" apply --profile wordpress --target "$PROJ" --skip-bin-check
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"composer config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true"* ]]
+  [[ "$output" == *"composer require --dev"* ]]
+  [[ "$output" == *"wp-coding-standards/wpcs"* ]]
+  [[ "$output" == *"szepeviktor/phpstan-wordpress"* ]]
+  [ "$(cat "$PROJ/composer.json")" = '{"name":"x/y"}' ]
+}

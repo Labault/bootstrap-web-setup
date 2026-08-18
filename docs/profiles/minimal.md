@@ -1,7 +1,7 @@
-| `scripts/lint-commit-msg.sh` | Commit-msg linter: gitmoji + Conventional Commits |actionlint, commit-msg lint |# Profile: `minimal`
+# Profile: `minimal`
 
-The base layer for **any web repo**, language-agnostic. `symfony`, `shell` and
-`fullstack` inherit everything here.
+The base layer for **any web repo**, language-agnostic. `symfony`, `wordpress`,
+`shell` and `fullstack` inherit everything here.
 
 ## Required binaries
 

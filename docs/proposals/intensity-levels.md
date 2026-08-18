@@ -20,13 +20,15 @@ The ask: offer a few **intensity levels** (e.g. light / standard / strict) so th
 
 ## Key insight: this is a second, orthogonal axis
 
-Today's `minimal / symfony / shell / fullstack` is the **scope** axis (stack →
-which tools). Intensity is a **different** axis (how strict), orthogonal to scope:
+Today's `minimal / symfony / wordpress / shell / fullstack` is the **scope**
+axis (stack → which tools). Intensity is a **different** axis (how strict),
+orthogonal to scope:
 
 ```text
             light        standard(*)      strict
 minimal      …              …               …
 symfony      …              …               …
+wordpress    …              …               …
 shell        …              …               …
 fullstack    …              …               …
             (*) = today's behaviour, the default

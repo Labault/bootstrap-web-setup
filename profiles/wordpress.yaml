@@ -1,0 +1,45 @@
+# Profile: wordpress
+# WordPress sites, plugins and themes. Inherits the language-agnostic base and
+# adds a WordPress-native PHP quality stack. It deliberately does not inherit
+# Symfony's coding standard, Rector config or project conventions.
+
+extends: minimal
+
+# PHPCS and PHPStan are project-local Composer dependencies, so only their
+# runtime and package manager are machine-global requirements.
+requires_bin:
+  - php
+  - composer
+
+# WPCS installs a Composer plugin which registers its PHPCS rulesets. Composer
+# 2.2+ requires this explicit permission before dependencies are installed.
+allow_composer_plugin:
+  - dealerdirect/phpcodesniffer-composer-installer
+
+suggest_composer:
+  - phpstan/phpstan
+  - szepeviktor/phpstan-wordpress
+  - wp-coding-standards/wpcs
+
+files:
+  # WordPress PHP tooling
+  - src: templates/wordpress/phpcs.xml.dist
+    dest: phpcs.xml.dist
+  - src: templates/wordpress/phpstan.dist.neon
+    dest: phpstan.dist.neon
+  - src: templates/wordpress/wordpress.yml
+    dest: .github/workflows/wordpress.yml
+  # Shared AI conventions, specialized for WordPress
+  - src: templates/wordpress/AGENTS.md
+    dest: AGENTS.md
+  # Overrides of common files that need WordPress-aware content
+  - src: templates/wordpress/.editorconfig
+    dest: .editorconfig
+  - src: templates/wordpress/.pre-commit-config.yaml
+    dest: .pre-commit-config.yaml
+  - src: templates/wordpress/CLAUDE.md
+    dest: CLAUDE.md
+  - src: templates/wordpress/Makefile
+    dest: Makefile
+  - src: templates/wordpress/dependabot.yml
+    dest: .github/dependabot.yml

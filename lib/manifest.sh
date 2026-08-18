@@ -8,6 +8,8 @@
 #   extends: <parent>
 #   requires_bin:
 #     - <bin>
+#   allow_composer_plugin:
+#     - <vendor/plugin>
 #   files:
 #     - src: <path>
 #       dest: <path>

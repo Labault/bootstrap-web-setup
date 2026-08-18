@@ -38,8 +38,9 @@ non-mutating check.
 
 A repo is auto-detected as `shell` when it tracks `*.sh`/`*.bash` files and has
 **no** `composer.json` or `package.json` (a manifest would pick `symfony` /
-`fullstack` / `minimal` instead). The signal is **git-tracked** files only, so a
-stray untracked script doesn't flip the profile.
+`fullstack` / `minimal` instead), and no strong WordPress signal. The shell
+signal uses **git-tracked** files only, so a stray untracked script doesn't flip
+the profile.
 
 ## Parameters (locked)
 

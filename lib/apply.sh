@@ -295,8 +295,13 @@ package_in_json() {
 # prints the command to run.
 print_suggestions() {
   local target="$1" profile="$2"
-  local pkg
-  local -a composer_missing=() npm_missing=()
+  local pkg plugin
+  local -a composer_missing=() composer_plugins_missing=() npm_missing=()
+
+  while IFS= read -r plugin; do
+    [[ -z "$plugin" ]] && continue
+    package_in_json "$target/composer.json" "$plugin" || composer_plugins_missing+=("$plugin")
+  done < <(resolve_seq "$profile" allow_composer_plugin)
 
   while IFS= read -r pkg; do
     [[ -z "$pkg" ]] && continue
@@ -308,6 +313,12 @@ print_suggestions() {
     package_in_json "$target/package.json" "$pkg" || npm_missing+=("$pkg")
   done < <(resolve_seq "$profile" suggest_npm)
 
+  if [[ ${#composer_plugins_missing[@]} -gt 0 ]]; then
+    log_info "Suggested Composer plugin permissions (required before install):"
+    for plugin in "${composer_plugins_missing[@]}"; do
+      printf '    composer config allow-plugins.%s true\n' "$plugin" >&2
+    done
+  fi
   if [[ ${#composer_missing[@]} -gt 0 ]]; then
     log_info "Suggested PHP dev deps (bootstrap won't touch composer.json):"
     printf '    composer require --dev %s\n' "${composer_missing[*]}" >&2
@@ -355,7 +366,7 @@ setup_phpstan_baseline() {
 
   if [[ -z "$phpstan" ]]; then
     log_warn "phpstan baseline: phpstan not found. Generate it later with:"
-    printf '    vendor/bin/phpstan analyse --generate-baseline phpstan-baseline.neon\n' >&2
+    printf '    vendor/bin/phpstan analyse --generate-baseline phpstan-baseline.neon --memory-limit=512M\n' >&2
     return 0
   fi
 
@@ -366,10 +377,10 @@ setup_phpstan_baseline() {
 
   log_info "phpstan baseline: generating for existing code…"
   if (cd "$target" && "$phpstan" analyse --configuration phpstan.dist.neon \
-    --generate-baseline phpstan-baseline.neon --no-progress >/dev/null 2>&1); then
+    --generate-baseline phpstan-baseline.neon --memory-limit=512M --no-progress >/dev/null 2>&1); then
     log_ok "phpstan baseline: generated"
   else
-    log_warn "phpstan baseline: generation failed (likely no 'composer install' yet); empty baseline kept. Run later:"
-    printf '    composer install && vendor/bin/phpstan analyse --generate-baseline phpstan-baseline.neon\n' >&2
+    log_warn "phpstan baseline: none generated (dependencies may be missing, or the project is already clean); empty baseline kept. Retry with:"
+    printf '    composer install && vendor/bin/phpstan analyse --generate-baseline phpstan-baseline.neon --memory-limit=512M\n' >&2
   fi
 }

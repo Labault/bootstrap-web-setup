@@ -12,14 +12,16 @@ load test_helper
   [ "$status" -eq 2 ]
 }
 
-@test "list shows the four profiles with inheritance" {
+@test "list shows the five profiles with inheritance" {
   run "$BS" list
   [ "$status" -eq 0 ]
   [[ "$output" == *"minimal"* ]]
   [[ "$output" == *"symfony"* ]]
   [[ "$output" == *"fullstack"* ]]
   [[ "$output" == *"shell"* ]]
+  [[ "$output" == *"wordpress"* ]]
   [[ "$output" == *"extends symfony"* ]]
+  echo "$output" | grep -Eq '^wordpress .*\(extends minimal\)'
 }
 
 @test "detect: empty dir -> minimal" {
@@ -39,6 +41,22 @@ load test_helper
   echo '{}' >"$PROJ/package.json"
   run "$BS" detect --target "$PROJ"
   [ "${lines[-1]}" = "fullstack" ]
+}
+
+@test "detect: WordPress core tree wins over composer and package manifests" {
+  echo '{}' >"$PROJ/composer.json"
+  echo '{}' >"$PROJ/package.json"
+  mkdir -p "$PROJ/wp-admin" "$PROJ/wp-content" "$PROJ/wp-includes"
+  run "$BS" detect --target "$PROJ"
+  [ "$status" -eq 0 ]
+  [ "${lines[-1]}" = "wordpress" ]
+}
+
+@test "detect: wp-config.php -> wordpress" {
+  touch "$PROJ/wp-config.php"
+  run "$BS" detect --target "$PROJ"
+  [ "$status" -eq 0 ]
+  [ "${lines[-1]}" = "wordpress" ]
 }
 
 @test "detect: tracked shell sources -> shell" {

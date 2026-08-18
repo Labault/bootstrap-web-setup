@@ -1,0 +1,21 @@
+# Managed by bootstrap (wordpress profile). PHPStan level 9 with WordPress
+# stubs and dynamic return types supplied by szepeviktor/phpstan-wordpress.
+includes:
+	- phpstan-baseline.neon
+	- vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+	level: 9
+	paths:
+		- .
+	excludePaths:
+		analyse:
+			- node_modules (?)
+			- vendor
+			- wp-admin (?)
+			- wp-content/cache (?)
+			- wp-content/languages (?)
+			- wp-content/upgrade (?)
+			- wp-content/uploads (?)
+			- wp-includes (?)
+			- wp-*.php

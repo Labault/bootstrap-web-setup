@@ -82,23 +82,26 @@ required**. Profiles inherit from each other.
 | --- | --- | --- |
 | `minimal` | Any web repo (language-agnostic) | pre-commit, EditorConfig, commit-msg lint, gitleaks, shellcheck, markdownlint, actionlint, lychee, base CI/security workflows, Dependabot, transverse files |
 | `symfony` | PHP/Symfony | PHPStan, PHP-CS-Fixer, Rector, hadolint, PHP CI, PHP `make` targets |
+| `wordpress` | WordPress sites, plugins and themes | WordPress Coding Standards, PHPStan with WordPress stubs, PHP CI, WordPress `make` targets |
 | `shell` | Shell/Bash tooling repos | bats, shfmt, `tests.yml` CI, shell `make` targets (on top of the inherited shellcheck) |
 | `fullstack` | Symfony + JS/TS front | ESLint, Prettier, Husky + lint-staged, front CI |
 
-![bootstrap profile inheritance: minimal is the language-agnostic base; symfony extends minimal and adds the PHP tooling; shell also extends minimal (a sibling of symfony) and adds bats and shfmt; fullstack extends symfony and adds the JS/TS front tooling. Detection picks symfony when a composer.json is present, fullstack when a package.json is also present, shell when the repo tracks shell scripts and has no such manifest, otherwise minimal; override with the profile flag](docs/assets/images/profile-inheritance.svg)
+![bootstrap profile inheritance: minimal is the language-agnostic base; symfony, wordpress and shell extend minimal; fullstack extends symfony. WordPress adds WPCS and PHPStan with WordPress stubs, shell adds bats and shfmt, and fullstack adds JS/TS tooling. Detection checks for a WordPress installation before composer, package and tracked shell-script signals; override with the profile flag](docs/assets/images/profile-inheritance.svg)
 
 ### Linting & formatting
 
 EditorConfig, a local-mode `.pre-commit-config.yaml` (editorconfig-checker,
 gitleaks, shellcheck, markdownlint, actionlint, commit-msg lint), and (per profile)
 PHP-CS-Fixer (`@Symfony`), PHPStan (level 9 + auto baseline), Rector, ESLint and
-Prettier (`symfony` / `fullstack`), and `shfmt` (`shell`).
+Prettier (`symfony` / `fullstack`), WordPress Coding Standards plus PHPStan with
+WordPress stubs (`wordpress`), and `shfmt` (`shell`).
 
 ### CI & security
 
 GitHub Actions workflows (`ci.yml` lint + links, `security.yml` gitleaks +
 dependency review, plus per-profile CI: `php.yml` (`symfony`), front CI
-(`fullstack`) and `tests.yml` running `bats tests/` (`shell`)), a
+(`fullstack`), `wordpress.yml` (`wordpress`) and `tests.yml` running
+`bats tests/` (`shell`)), a
 `.gitleaks.toml` secret-scanning config, and a `.github/dependabot.yml`.
 
 ### Docs, hooks & transverse files
@@ -145,12 +148,15 @@ bootstrap apply           # deposit the config + write .bootstrap.yaml + install
 
 ### Choosing a profile
 
-Auto-detection: `composer.json` → `symfony`; `+ package.json` → `fullstack`;
-tracked `*.sh`/`*.bash` with no such manifest → `shell`; otherwise `minimal`.
+Auto-detection checks WordPress first: `wp-config.php` or a complete core tree
+(`wp-admin` + `wp-content` + `wp-includes`) → `wordpress`. Otherwise,
+`composer.json` → `symfony`; `+ package.json` → `fullstack`; tracked
+`*.sh`/`*.bash` with no such manifest → `shell`; everything else → `minimal`.
+Plugins, themes and Bedrock layouts without a core tree stay explicit choices.
 Override anytime with `--profile`:
 
 ```sh
-bootstrap apply --profile symfony
+bootstrap apply --profile wordpress
 ```
 
 ### Files bootstrap deposits
@@ -273,6 +279,7 @@ can later detect drift and merge template updates without forgetting your edits.
 - Per-profile file lists: [`docs/profiles/`](docs/profiles/):
   [minimal](docs/profiles/minimal.md) ·
   [symfony](docs/profiles/symfony.md) ·
+  [wordpress](docs/profiles/wordpress.md) ·
   [shell](docs/profiles/shell.md) ·
   [fullstack](docs/profiles/fullstack.md)
 - How the CLI is built: [`docs/architecture.md`](docs/architecture.md)
