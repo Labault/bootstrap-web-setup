@@ -9,16 +9,17 @@ WordPress would create a very tidy argument between incompatible tools.
 
 `minimal`'s binaries plus `php` and `composer`.
 
-PHPCS, WordPress Coding Standards, PHPCompatibilityWP, PHPStan and Rector live in
-the project's `vendor/bin`. `bootstrap apply` prints the commands to allow WPCS's
-Composer installer and add the missing packages. It never edits `composer.json`.
+PHPCS, WordPress Coding Standards, PHPCompatibilityWP, PHPStan, PHPUnit and Rector
+live in the project's `vendor/bin`. `bootstrap apply` prints the commands to
+allow WPCS's Composer installer and add the missing packages. It never edits
+`composer.json`.
 
 ## Files added
 
 | File | Role |
 | ---- | ---- |
 | `phpcs.xml.dist` | Complete `WordPress` ruleset, scoped away from core, dependencies, uploads and caches |
-| `phpstan.dist.neon` | PHPStan level 9 with WordPress stubs and no baseline |
+| `phpstan.dist.neon` | PHPStan level 9 with WordPress and PHPUnit extensions, without a baseline |
 | `rector.php` | PHP 8.3 and quality refactorings, checked in dry-run mode |
 | `.github/workflows/wordpress.yml` | Composer install, PHPCS, PHPStan, Rector and an optional PHPUnit suite on PHP 8.3 |
 | `AGENTS.md` | Shared WordPress, security and testing conventions for AI collaborators |
@@ -40,7 +41,7 @@ commands in the right order:
 
 ```sh
 composer config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
-composer require --dev phpcompatibility/phpcompatibility-wp phpstan/phpstan rector/rector szepeviktor/phpstan-wordpress wp-coding-standards/wpcs
+composer require --dev phpcompatibility/phpcompatibility-wp phpstan/phpstan phpstan/phpstan-phpunit phpunit/phpunit rector/rector szepeviktor/phpstan-wordpress wp-coding-standards/wpcs
 ```
 
 ## Detection
@@ -61,9 +62,11 @@ bootstrap apply --profile wordpress
 
 The default PHPCS, PHPStan and Rector configs scan the repository, then exclude
 WordPress core, Composer and Node dependencies, uploads, caches, languages and
-upgrade artifacts. Narrow the paths in the deposited configs when the repo also
-vendors third-party plugins or themes. Bootstrap gives you a strict baseline;
-it cannot guess which part of `wp-content` you wrote at 23:47 last Tuesday.
+upgrade artifacts. Core exclusions are anchored to the repository root so they
+never swallow project-owned `wp-content` code. Narrow the paths in the deposited
+configs when the repo also vendors third-party plugins or themes. Bootstrap gives
+you a strict baseline; it cannot guess which part of `wp-content` you wrote at
+23:47 last Tuesday.
 
 Unlike the Symfony profile, WordPress never creates a PHPStan baseline. The
 profile targets greenfield projects, so level 9 starts clean and stays clean.

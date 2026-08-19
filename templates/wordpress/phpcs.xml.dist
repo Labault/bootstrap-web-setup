@@ -14,19 +14,19 @@
     <file>.</file>
 
     <!-- Dependencies and generated or mutable WordPress content. -->
-    <exclude-pattern>/node_modules/*</exclude-pattern>
-    <exclude-pattern>/vendor/*</exclude-pattern>
-    <exclude-pattern>/wp-content/cache/*</exclude-pattern>
-    <exclude-pattern>/wp-content/languages/*</exclude-pattern>
-    <exclude-pattern>/wp-content/upgrade/*</exclude-pattern>
-    <exclude-pattern>/wp-content/uploads/*</exclude-pattern>
+    <exclude-pattern type="relative">^node_modules/</exclude-pattern>
+    <exclude-pattern type="relative">^vendor/</exclude-pattern>
+    <exclude-pattern type="relative">^wp-content/cache/</exclude-pattern>
+    <exclude-pattern type="relative">^wp-content/languages/</exclude-pattern>
+    <exclude-pattern type="relative">^wp-content/upgrade/</exclude-pattern>
+    <exclude-pattern type="relative">^wp-content/uploads/</exclude-pattern>
 
     <!-- WordPress core is a dependency, not project-owned code. -->
-    <exclude-pattern>/index.php</exclude-pattern>
-    <exclude-pattern>/wp-admin/*</exclude-pattern>
-    <exclude-pattern>/wp-includes/*</exclude-pattern>
-    <exclude-pattern>/wp-*.php</exclude-pattern>
-    <exclude-pattern>/xmlrpc.php</exclude-pattern>
+    <exclude-pattern type="relative">^index\.php$</exclude-pattern>
+    <exclude-pattern type="relative">^wp-admin/</exclude-pattern>
+    <exclude-pattern type="relative">^wp-includes/</exclude-pattern>
+    <exclude-pattern type="relative">^wp-[^/]+\.php$</exclude-pattern>
+    <exclude-pattern type="relative">^xmlrpc\.php$</exclude-pattern>
 
     <rule ref="PHPCompatibilityWP"/>
     <rule ref="WordPress"/>

@@ -1,6 +1,7 @@
 # Managed by bootstrap (wordpress profile). PHPStan level 9 with WordPress
 # stubs and dynamic return types supplied by szepeviktor/phpstan-wordpress.
 includes:
+	- vendor/phpstan/phpstan-phpunit/extension.neon
 	- vendor/szepeviktor/phpstan-wordpress/extension.neon
 
 parameters:

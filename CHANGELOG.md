@@ -35,6 +35,9 @@ lives in the [`VERSION`](VERSION) file and is what `bootstrap --version` prints.
   0600 — the state file is meant to be committed, like every deposited file.
 - `validation/run-all.sh` now runs under `set -uo pipefail`, aligned with
   server-setup's harness.
+- The WordPress PHPCS core exclusions are anchored to the repository root, so
+  `wp-content` is analyzed instead of being accidentally matched by
+  `/wp-*.php`. PHPStan also loads its PHPUnit extension when analyzing tests.
 
 ### Security
 

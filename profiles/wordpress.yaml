@@ -19,6 +19,8 @@ allow_composer_plugin:
 suggest_composer:
   - phpcompatibility/phpcompatibility-wp
   - phpstan/phpstan
+  - phpstan/phpstan-phpunit
+  - phpunit/phpunit
   - rector/rector
   - szepeviktor/phpstan-wordpress
   - wp-coding-standards/wpcs

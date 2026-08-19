@@ -100,6 +100,10 @@ load test_helper
   ' "$PROJ/.editorconfig"
   grep -q 'WordPress' "$PROJ/phpcs.xml.dist"
   grep -q 'PHPCompatibilityWP' "$PROJ/phpcs.xml.dist"
+  grep -Fq 'type="relative">^wp-[^/]+\.php$' "$PROJ/phpcs.xml.dist"
+  run grep -Fq '<exclude-pattern>/wp-*.php</exclude-pattern>' "$PROJ/phpcs.xml.dist"
+  [ "$status" -ne 0 ]
+  grep -q 'phpstan-phpunit/extension.neon' "$PROJ/phpstan.dist.neon"
   grep -q 'phpcs' "$PROJ/.pre-commit-config.yaml"
   grep -q 'rector' "$PROJ/.pre-commit-config.yaml"
   grep -q 'package-ecosystem: composer' "$PROJ/.github/dependabot.yml"
@@ -115,6 +119,8 @@ load test_helper
   [[ "$output" == *"composer require --dev"* ]]
   [[ "$output" == *"wp-coding-standards/wpcs"* ]]
   [[ "$output" == *"phpcompatibility/phpcompatibility-wp"* ]]
+  [[ "$output" == *"phpstan/phpstan-phpunit"* ]]
+  [[ "$output" == *"phpunit/phpunit"* ]]
   [[ "$output" == *"rector/rector"* ]]
   [[ "$output" == *"szepeviktor/phpstan-wordpress"* ]]
   [ "$(cat "$PROJ/composer.json")" = '{"name":"x/y"}' ]
