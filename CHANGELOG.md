@@ -39,6 +39,8 @@ lives in the [`VERSION`](VERSION) file and is what `bootstrap --version` prints.
   `wp-content` is analyzed instead of being accidentally matched by
   `/wp-*.php`. PHPStan also loads strict PHPUnit rules and scans PHPUnit's base
   assertion classes, avoiding false undefined-method reports in tests.
+- The WordPress file-name sniff leaves PHPUnit's conventional `*Test.php` files
+  intact while all other WPCS checks continue to analyze the test suite.
 
 ### Security
 

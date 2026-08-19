@@ -68,6 +68,10 @@ configs when the repo also vendors third-party plugins or themes. Bootstrap give
 you a strict baseline; it cannot guess which part of `wp-content` you wrote at
 23:47 last Tuesday.
 
+Test files keep PHPUnit's conventional `*Test.php` names. Only WPCS's file-name
+sniff is disabled under `tests/`; every code, security and compatibility rule
+still applies there.
+
 Unlike the Symfony profile, WordPress never creates a PHPStan baseline. The
 profile targets greenfield projects, so level 9 starts clean and stays clean.
 PHPUnit's base assertion classes are scanned explicitly because recent PHPStan
