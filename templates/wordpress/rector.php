@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
 use Rector\Php54\Rector\Array_\LongArrayToShortArrayRector;
+use Rector\Php81\Rector\Array_\ArrayToFirstClassCallableRector;
 
 return RectorConfig::configure()
 	->withPaths([__DIR__])
@@ -21,6 +22,7 @@ return RectorConfig::configure()
 	)
 	->withSkip(
 		[
+			ArrayToFirstClassCallableRector::class,
 			LongArrayToShortArrayRector::class,
 			__DIR__ . '/index.php',
 			__DIR__ . '/rector.php',

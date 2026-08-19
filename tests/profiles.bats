@@ -119,6 +119,7 @@ load test_helper
   grep -q 'rector' "$PROJ/.pre-commit-config.yaml"
   grep -Fq 'exclude: ^(?:rector\.php|wp-content/' "$PROJ/.pre-commit-config.yaml"
   [ "$(grep -Fc 'pass_filenames: false' "$PROJ/.pre-commit-config.yaml")" -eq 2 ]
+  grep -q 'ArrayToFirstClassCallableRector::class' "$PROJ/rector.php"
   grep -q 'LongArrayToShortArrayRector::class' "$PROJ/rector.php"
   run grep -q 'naming: true' "$PROJ/rector.php"
   [ "$status" -ne 0 ]
