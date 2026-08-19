@@ -53,6 +53,7 @@ repos:
         language: system
         types: [php]
         exclude: ^(?:rector\.php|wp-content/(?:index\.php|plugins/index\.php|themes/index\.php))$
+        require_serial: true
 
       - id: rector
         name: Rector
@@ -60,6 +61,7 @@ repos:
         language: system
         types: [php]
         exclude: ^(?:rector\.php|wp-content/(?:index\.php|plugins/index\.php|themes/index\.php))$
+        require_serial: true
 
       # Commit message
       - id: commit-msg-lint

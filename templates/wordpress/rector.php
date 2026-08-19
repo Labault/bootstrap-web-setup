@@ -6,6 +6,7 @@ declare(strict_types=1);
 // while WordPress core, dependencies and mutable content remain out of scope.
 
 use Rector\Config\RectorConfig;
+use Rector\CodeQuality\Rector\Identical\FlipTypeControlToUseExclusiveTypeRector;
 use Rector\Php54\Rector\Array_\LongArrayToShortArrayRector;
 use Rector\Php81\Rector\Array_\ArrayToFirstClassCallableRector;
 
@@ -23,6 +24,7 @@ return RectorConfig::configure()
 	->withSkip(
 		[
 			ArrayToFirstClassCallableRector::class,
+			FlipTypeControlToUseExclusiveTypeRector::class,
 			LongArrayToShortArrayRector::class,
 			__DIR__ . '/index.php',
 			__DIR__ . '/rector.php',
