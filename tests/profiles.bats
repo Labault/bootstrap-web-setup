@@ -109,7 +109,7 @@ load test_helper
   grep -q 'phpstan-phpunit/extension.neon' "$PROJ/phpstan.dist.neon"
   grep -q 'phpstan-phpunit/rules.neon' "$PROJ/phpstan.dist.neon"
   grep -q 'vendor/phpunit/phpunit/src/Framework/Assert.php' "$PROJ/phpstan.dist.neon"
-  grep -q 'wp-settings.php' "$PROJ/phpstan.dist.neon"
+  grep -Fq 'wp-settings.php (?)' "$PROJ/phpstan.dist.neon"
   run grep -Fq -- '- wp-*.php' "$PROJ/phpstan.dist.neon"
   [ "$status" -ne 0 ]
   grep -q "__DIR__ . '/wp-settings.php'" "$PROJ/rector.php"
