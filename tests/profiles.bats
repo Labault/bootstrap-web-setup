@@ -102,6 +102,7 @@ load test_helper
   grep -q 'PHPCompatibilityWP' "$PROJ/phpcs.xml.dist"
   grep -Fq 'type="relative">^wp-[^/]+\.php$' "$PROJ/phpcs.xml.dist"
   grep -Fq 'ref="WordPress.Files.FileName"' "$PROJ/phpcs.xml.dist"
+  grep -Fq '<exclude name="WordPress.Files.FileName"/>' "$PROJ/phpcs.xml.dist"
   grep -Fq 'type="relative">^tests/' "$PROJ/phpcs.xml.dist"
   run grep -Fq '<exclude-pattern>/wp-*.php</exclude-pattern>' "$PROJ/phpcs.xml.dist"
   [ "$status" -ne 0 ]

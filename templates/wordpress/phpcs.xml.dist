@@ -29,7 +29,9 @@
     <exclude-pattern type="relative">^xmlrpc\.php$</exclude-pattern>
 
     <rule ref="PHPCompatibilityWP"/>
-    <rule ref="WordPress"/>
+    <rule ref="WordPress">
+        <exclude name="WordPress.Files.FileName"/>
+    </rule>
     <rule ref="WordPress.Files.FileName">
         <!-- PHPUnit 11 discovers conventional *Test.php class files by name. -->
         <exclude-pattern type="relative">^tests/</exclude-pattern>
