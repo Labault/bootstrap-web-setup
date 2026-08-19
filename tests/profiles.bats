@@ -104,6 +104,8 @@ load test_helper
   run grep -Fq '<exclude-pattern>/wp-*.php</exclude-pattern>' "$PROJ/phpcs.xml.dist"
   [ "$status" -ne 0 ]
   grep -q 'phpstan-phpunit/extension.neon' "$PROJ/phpstan.dist.neon"
+  grep -q 'phpstan-phpunit/rules.neon' "$PROJ/phpstan.dist.neon"
+  grep -q 'vendor/phpunit/phpunit/src/Framework/Assert.php' "$PROJ/phpstan.dist.neon"
   grep -q 'phpcs' "$PROJ/.pre-commit-config.yaml"
   grep -q 'rector' "$PROJ/.pre-commit-config.yaml"
   grep -q 'package-ecosystem: composer' "$PROJ/.github/dependabot.yml"

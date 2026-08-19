@@ -37,7 +37,8 @@ lives in the [`VERSION`](VERSION) file and is what `bootstrap --version` prints.
   server-setup's harness.
 - The WordPress PHPCS core exclusions are anchored to the repository root, so
   `wp-content` is analyzed instead of being accidentally matched by
-  `/wp-*.php`. PHPStan also loads its PHPUnit extension when analyzing tests.
+  `/wp-*.php`. PHPStan also loads strict PHPUnit rules and scans PHPUnit's base
+  assertion classes, avoiding false undefined-method reports in tests.
 
 ### Security
 

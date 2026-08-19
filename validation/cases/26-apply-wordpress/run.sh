@@ -13,6 +13,7 @@ check "WordPress Coding Standards configuré" "$(file_has "$p/phpcs.xml.dist" 'W
 check "compatibilité PHP WordPress configurée" "$(file_has "$p/phpcs.xml.dist" 'PHPCompatibilityWP')"
 check "exclusions PHPCS ancrées à la racine" "$(file_has "$p/phpcs.xml.dist" 'exclude-pattern type="relative"')"
 check "extension PHPUnit configurée pour PHPStan" "$(file_has "$p/phpstan.dist.neon" 'phpstan-phpunit/extension.neon')"
+check "classes PHPUnit chargées par PHPStan" "$(file_has "$p/phpstan.dist.neon" 'Framework/Assert.php')"
 check "Rector configuré" "$(exists "$p/rector.php")"
 check "indentation PHP par tabulations" "$(file_has "$p/.editorconfig" 'indent_style = tab')"
 check "autorisation du plugin Composer suggérée" "$(out_has 'allow-plugins.dealerdirect/phpcodesniffer-composer-installer')"

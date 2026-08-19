@@ -2,10 +2,14 @@
 # stubs and dynamic return types supplied by szepeviktor/phpstan-wordpress.
 includes:
 	- vendor/phpstan/phpstan-phpunit/extension.neon
+	- vendor/phpstan/phpstan-phpunit/rules.neon
 	- vendor/szepeviktor/phpstan-wordpress/extension.neon
 
 parameters:
 	level: 9
+	scanFiles:
+		- vendor/phpunit/phpunit/src/Framework/Assert.php
+		- vendor/phpunit/phpunit/src/Framework/TestCase.php
 	paths:
 		- .
 	excludePaths:

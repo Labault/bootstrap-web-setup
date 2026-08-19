@@ -19,7 +19,7 @@ allow WPCS's Composer installer and add the missing packages. It never edits
 | File | Role |
 | ---- | ---- |
 | `phpcs.xml.dist` | Complete `WordPress` ruleset, scoped away from core, dependencies, uploads and caches |
-| `phpstan.dist.neon` | PHPStan level 9 with WordPress and PHPUnit extensions, without a baseline |
+| `phpstan.dist.neon` | PHPStan level 9 with WordPress and strict PHPUnit rules, without a baseline |
 | `rector.php` | PHP 8.3 and quality refactorings, checked in dry-run mode |
 | `.github/workflows/wordpress.yml` | Composer install, PHPCS, PHPStan, Rector and an optional PHPUnit suite on PHP 8.3 |
 | `AGENTS.md` | Shared WordPress, security and testing conventions for AI collaborators |
@@ -70,6 +70,8 @@ you a strict baseline; it cannot guess which part of `wp-content` you wrote at
 
 Unlike the Symfony profile, WordPress never creates a PHPStan baseline. The
 profile targets greenfield projects, so level 9 starts clean and stays clean.
+PHPUnit's base assertion classes are scanned explicitly because recent PHPStan
+stubs otherwise lose inherited static assertions in some dependency layouts.
 
 PHPUnit runs only when `vendor/bin/phpunit` exists. The profile does not scaffold
 a fake test suite because a site, plugin and theme need different WordPress
