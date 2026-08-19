@@ -123,6 +123,7 @@ load test_helper
   grep -q 'ArrayToFirstClassCallableRector::class' "$PROJ/rector.php"
   grep -q 'FlipTypeControlToUseExclusiveTypeRector::class' "$PROJ/rector.php"
   grep -q 'LongArrayToShortArrayRector::class' "$PROJ/rector.php"
+  grep -q 'RemoveUselessVarTagRector::class' "$PROJ/rector.php"
   run grep -q 'naming: true' "$PROJ/rector.php"
   [ "$status" -ne 0 ]
   grep -q 'pre-commit run phpstan --all-files' "$PROJ/Makefile"
