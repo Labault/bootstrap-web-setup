@@ -2,31 +2,33 @@
 
 For WordPress sites, plugins and themes. It inherits
 [`minimal`](minimal.md), then adds a PHP quality stack built for WordPress. It
-does not inherit `symfony`: forcing `@Symfony`, Rector and Symfony project rules
-onto WordPress would create a very tidy argument between incompatible tools.
+does not inherit `symfony`: forcing `@Symfony` and Symfony project rules onto
+WordPress would create a very tidy argument between incompatible tools.
 
 ## Required binaries
 
 `minimal`'s binaries plus `php` and `composer`.
 
-PHPCS, WordPress Coding Standards and PHPStan live in the project's `vendor/bin`.
-`bootstrap apply` prints the commands to allow WPCS's Composer installer and add
-the missing packages. It never edits `composer.json`.
+PHPCS, WordPress Coding Standards, PHPCompatibilityWP, PHPStan and Rector live in
+the project's `vendor/bin`. `bootstrap apply` prints the commands to allow WPCS's
+Composer installer and add the missing packages. It never edits `composer.json`.
 
 ## Files added
 
 | File | Role |
 | ---- | ---- |
 | `phpcs.xml.dist` | Complete `WordPress` ruleset, scoped away from core, dependencies, uploads and caches |
-| `phpstan.dist.neon` | PHPStan level 9 with WordPress stubs and dynamic return types |
-| `.github/workflows/wordpress.yml` | Composer install, PHPCS, PHPStan and an optional PHPUnit suite on PHP 8.3 |
+| `phpstan.dist.neon` | PHPStan level 9 with WordPress stubs and no baseline |
+| `rector.php` | PHP 8.3 and quality refactorings, checked in dry-run mode |
+| `.github/workflows/wordpress.yml` | Composer install, PHPCS, PHPStan, Rector and an optional PHPUnit suite on PHP 8.3 |
 | `AGENTS.md` | Shared WordPress, security and testing conventions for AI collaborators |
 
 The profile also overrides five files from `minimal`:
 
 - `.editorconfig` switches PHP indentation from PSR-12 spaces to WPCS tabs;
-- `.pre-commit-config.yaml` adds project-local PHPCS and PHPStan hooks;
-- `Makefile` adds `cs`, `cs-fix`, `stan` and optional `test` targets;
+- `.pre-commit-config.yaml` adds project-local PHPCS, PHPStan and Rector hooks;
+- `Makefile` adds `cs`, `cs-fix`, `rector`, `rector-fix`, `stan` and optional
+  `test` targets;
 - `.github/dependabot.yml` adds Composer updates;
 - `CLAUDE.md` imports the shared `AGENTS.md` and records the WordPress stack.
 
@@ -38,7 +40,7 @@ commands in the right order:
 
 ```sh
 composer config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
-composer require --dev phpstan/phpstan szepeviktor/phpstan-wordpress wp-coding-standards/wpcs
+composer require --dev phpcompatibility/phpcompatibility-wp phpstan/phpstan rector/rector szepeviktor/phpstan-wordpress wp-coding-standards/wpcs
 ```
 
 ## Detection
@@ -57,11 +59,14 @@ bootstrap apply --profile wordpress
 
 ## Scope and customization
 
-The default PHPCS and PHPStan configs scan the repository, then exclude
+The default PHPCS, PHPStan and Rector configs scan the repository, then exclude
 WordPress core, Composer and Node dependencies, uploads, caches, languages and
 upgrade artifacts. Narrow the paths in the deposited configs when the repo also
 vendors third-party plugins or themes. Bootstrap gives you a strict baseline;
 it cannot guess which part of `wp-content` you wrote at 23:47 last Tuesday.
+
+Unlike the Symfony profile, WordPress never creates a PHPStan baseline. The
+profile targets greenfield projects, so level 9 starts clean and stays clean.
 
 PHPUnit runs only when `vendor/bin/phpunit` exists. The profile does not scaffold
 a fake test suite because a site, plugin and theme need different WordPress

@@ -330,13 +330,14 @@ print_suggestions() {
 }
 
 # setup_phpstan_baseline <target>
-# Triggers only when a phpstan.dist.neon was deposited. Ensures the baseline the
-# config includes exists (empty, never clobbering a real one), and on an existing
-# codebase regenerates it so level 9 doesn't break a legacy project (§11.7).
-# bootstrap runs phpstan if present but never installs it.
+# Triggers only when the deposited phpstan.dist.neon explicitly includes a
+# baseline. Ensures that baseline exists (empty, never clobbering a real one),
+# and on an existing codebase regenerates it so level 9 doesn't break a legacy
+# project (§11.7). bootstrap runs phpstan if present but never installs it.
 setup_phpstan_baseline() {
   local target="$1"
   [[ -f "$target/phpstan.dist.neon" ]] || return 0
+  grep -Eq '^[[:space:]]*-[[:space:]]*phpstan-baseline\.neon([[:space:]#]|$)' "$target/phpstan.dist.neon" || return 0
 
   local baseline="$target/phpstan-baseline.neon"
   if [[ ! -f "$baseline" ]]; then

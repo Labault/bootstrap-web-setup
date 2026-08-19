@@ -5,7 +5,7 @@
 # Project-local targets belong in this optional, unmanaged file.
 -include Makefile.local
 
-.PHONY: help qa lint fix hooks cs cs-fix stan test
+.PHONY: help qa lint fix hooks cs cs-fix rector rector-fix stan test
 
 help: ## Show this help
 	@grep -hE '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -16,7 +16,7 @@ qa: lint test ## Run all configured quality checks
 lint: ## Run every pre-commit hook on all files
 	pre-commit run --all-files
 
-fix: cs-fix ## Apply automatic fixes
+fix: cs-fix rector-fix ## Apply automatic fixes
 	pre-commit run --all-files || true
 
 hooks: ## Install git hooks (pre-commit + commit-msg)
@@ -28,6 +28,12 @@ cs: ## Check WordPress coding standards
 
 cs-fix: ## Fix auto-fixable WordPress coding-standard violations
 	vendor/bin/phpcbf
+
+rector: ## Check automated refactorings
+	vendor/bin/rector process --dry-run --no-progress-bar
+
+rector-fix: ## Apply automated refactorings
+	vendor/bin/rector process --no-progress-bar
 
 stan: ## Run PHPStan at level 9
 	vendor/bin/phpstan analyse --configuration=phpstan.dist.neon --memory-limit=512M --no-progress

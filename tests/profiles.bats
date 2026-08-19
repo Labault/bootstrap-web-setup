@@ -88,6 +88,8 @@ load test_helper
   [ "$status" -eq 0 ]
   [ -f "$PROJ/phpcs.xml.dist" ]
   [ -f "$PROJ/phpstan.dist.neon" ]
+  [ -f "$PROJ/rector.php" ]
+  [ ! -f "$PROJ/phpstan-baseline.neon" ]
   [ -f "$PROJ/.github/workflows/wordpress.yml" ]
   [ -f "$PROJ/.github/workflows/ci.yml" ]
   awk '
@@ -97,9 +99,12 @@ load test_helper
     END { exit !found }
   ' "$PROJ/.editorconfig"
   grep -q 'WordPress' "$PROJ/phpcs.xml.dist"
+  grep -q 'PHPCompatibilityWP' "$PROJ/phpcs.xml.dist"
   grep -q 'phpcs' "$PROJ/.pre-commit-config.yaml"
+  grep -q 'rector' "$PROJ/.pre-commit-config.yaml"
   grep -q 'package-ecosystem: composer' "$PROJ/.github/dependabot.yml"
   grep -q 'vendor/bin/phpcbf' "$PROJ/Makefile"
+  grep -q 'vendor/bin/rector' "$PROJ/Makefile"
 }
 
 @test "wordpress suggests its Composer quality tools without changing composer.json" {
@@ -109,6 +114,8 @@ load test_helper
   [[ "$output" == *"composer config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true"* ]]
   [[ "$output" == *"composer require --dev"* ]]
   [[ "$output" == *"wp-coding-standards/wpcs"* ]]
+  [[ "$output" == *"phpcompatibility/phpcompatibility-wp"* ]]
+  [[ "$output" == *"rector/rector"* ]]
   [[ "$output" == *"szepeviktor/phpstan-wordpress"* ]]
   [ "$(cat "$PROJ/composer.json")" = '{"name":"x/y"}' ]
 }

@@ -8,6 +8,9 @@
     <arg name="parallel" value="8"/>
     <arg value="ps"/>
 
+    <config name="minimum_supported_wp_version" value="6.5"/>
+    <config name="testVersion" value="8.3-"/>
+
     <file>.</file>
 
     <!-- Dependencies and generated or mutable WordPress content. -->
@@ -25,6 +28,7 @@
     <exclude-pattern>/wp-*.php</exclude-pattern>
     <exclude-pattern>/xmlrpc.php</exclude-pattern>
 
+    <rule ref="PHPCompatibilityWP"/>
     <rule ref="WordPress"/>
     <rule ref="Generic.Commenting.Todo"/>
 </ruleset>

@@ -17,7 +17,9 @@ allow_composer_plugin:
   - dealerdirect/phpcodesniffer-composer-installer
 
 suggest_composer:
+  - phpcompatibility/phpcompatibility-wp
   - phpstan/phpstan
+  - rector/rector
   - szepeviktor/phpstan-wordpress
   - wp-coding-standards/wpcs
 
@@ -27,6 +29,8 @@ files:
     dest: phpcs.xml.dist
   - src: templates/wordpress/phpstan.dist.neon
     dest: phpstan.dist.neon
+  - src: templates/wordpress/rector.php
+    dest: rector.php
   - src: templates/wordpress/wordpress.yml
     dest: .github/workflows/wordpress.yml
   # Shared AI conventions, specialized for WordPress

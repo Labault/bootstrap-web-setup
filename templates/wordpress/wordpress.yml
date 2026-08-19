@@ -35,6 +35,9 @@ jobs:
       - name: PHPStan
         run: vendor/bin/phpstan analyse --configuration=phpstan.dist.neon --memory-limit=512M --no-progress
 
+      - name: Rector
+        run: vendor/bin/rector process --dry-run --no-progress-bar
+
       - name: Tests
         run: |
           if [ -x vendor/bin/phpunit ]; then

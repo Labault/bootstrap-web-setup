@@ -53,6 +53,13 @@ repos:
         types: [php]
         pass_filenames: false
 
+      - id: rector
+        name: Rector
+        entry: vendor/bin/rector process --dry-run --no-progress-bar
+        language: system
+        types: [php]
+        pass_filenames: false
+
       # Commit message
       - id: commit-msg-lint
         name: commit-msg-lint
