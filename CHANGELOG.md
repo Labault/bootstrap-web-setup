@@ -31,6 +31,8 @@ lives in the [`VERSION`](VERSION) file and is what `bootstrap --version` prints.
 
 ### Fixed
 
+- PHPStan and Rector now exclude WordPress core through explicit root files, so
+  their wildcards cannot swallow project-owned code under `wp-content`.
 - `.bootstrap.yaml` is written with mode 0644 instead of inheriting mktemp's
   0600 — the state file is meant to be committed, like every deposited file.
 - `validation/run-all.sh` now runs under `set -uo pipefail`, aligned with
