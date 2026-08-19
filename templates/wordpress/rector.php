@@ -6,6 +6,7 @@ declare(strict_types=1);
 // while WordPress core, dependencies and mutable content remain out of scope.
 
 use Rector\Config\RectorConfig;
+use Rector\Php54\Rector\Array_\LongArrayToShortArrayRector;
 
 return RectorConfig::configure()
 	->withPaths([__DIR__])
@@ -15,13 +16,14 @@ return RectorConfig::configure()
 		deadCode: true,
 		earlyReturn: true,
 		instanceOf: true,
-		naming: true,
 		privatization: true,
 		typeDeclarations: true,
 	)
 	->withSkip(
 		[
+			LongArrayToShortArrayRector::class,
 			__DIR__ . '/index.php',
+			__DIR__ . '/rector.php',
 			__DIR__ . '/node_modules',
 			__DIR__ . '/vendor',
 			__DIR__ . '/wp-admin',

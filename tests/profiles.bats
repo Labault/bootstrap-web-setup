@@ -117,6 +117,13 @@ load test_helper
   [ "$status" -ne 0 ]
   grep -q 'phpcs' "$PROJ/.pre-commit-config.yaml"
   grep -q 'rector' "$PROJ/.pre-commit-config.yaml"
+  grep -Fq 'exclude: ^(?:rector\.php|wp-content/' "$PROJ/.pre-commit-config.yaml"
+  [ "$(grep -Fc 'pass_filenames: false' "$PROJ/.pre-commit-config.yaml")" -eq 2 ]
+  grep -q 'LongArrayToShortArrayRector::class' "$PROJ/rector.php"
+  run grep -q 'naming: true' "$PROJ/rector.php"
+  [ "$status" -ne 0 ]
+  grep -q 'pre-commit run phpstan --all-files' "$PROJ/Makefile"
+  grep -q 'pre-commit run rector --all-files' "$PROJ/Makefile"
   grep -q 'package-ecosystem: composer' "$PROJ/.github/dependabot.yml"
   grep -q 'vendor/bin/phpcbf' "$PROJ/Makefile"
   grep -q 'vendor/bin/rector' "$PROJ/Makefile"

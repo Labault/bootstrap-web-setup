@@ -30,13 +30,13 @@ cs-fix: ## Fix auto-fixable WordPress coding-standard violations
 	vendor/bin/phpcbf
 
 rector: ## Check automated refactorings
-	vendor/bin/rector process --dry-run --no-progress-bar
+	pre-commit run rector --all-files
 
 rector-fix: ## Apply automated refactorings
 	vendor/bin/rector process --no-progress-bar
 
 stan: ## Run PHPStan at level 9
-	vendor/bin/phpstan analyse --configuration=phpstan.dist.neon --memory-limit=512M --no-progress
+	pre-commit run phpstan --all-files
 
 test: ## Run PHPUnit when the project has a test suite
 	@if [ -x vendor/bin/phpunit ]; then \
