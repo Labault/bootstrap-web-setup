@@ -28,6 +28,11 @@ For this profile, `make cs` and `make rector` check PHP without applying
 corrections; `make stan` runs PHPStan and `make test` runs Pest or PHPUnit.
 `make cs-fix` and `make rector-fix` apply changes. Tools live in `vendor/bin`.
 
+PHPStan runs at level 9 without an automatic baseline. Fix errors rather than
+lowering the level or adding broad ignores. A temporary legacy baseline requires
+the project owner's explicit approval, a documented scope and a removal plan.
+Never generate or refresh it implicitly; keep local gates and CI consistent.
+
 ## Conventions
 
 - Commits use Conventional Commits with a leading Gitmoji. The

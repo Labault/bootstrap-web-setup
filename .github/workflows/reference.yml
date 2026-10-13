@@ -44,12 +44,6 @@ jobs:
           make rector-fix
           make cs-fix
 
-      - name: Snapshot a clean PHPStan baseline
-        working-directory: ref
-        run: |
-          vendor/bin/phpstan analyse --configuration phpstan.dist.neon \
-            --generate-baseline phpstan-baseline.neon --no-progress || true
-
       - name: Run the deposited quality gates (must all pass)
         working-directory: ref
         run: |

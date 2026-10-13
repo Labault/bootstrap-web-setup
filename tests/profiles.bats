@@ -14,10 +14,10 @@ load test_helper
   grep -q 'package-ecosystem: composer' "$PROJ/.github/dependabot.yml"
 }
 
-@test "symfony writes a phpstan baseline on an existing project" {
+@test "symfony leaves an existing project's PHPStan errors visible" {
   echo '{"name":"x/y"}' >"$PROJ/composer.json"
   "$BS" apply --profile symfony --target "$PROJ" --skip-bin-check >/dev/null
-  [ -f "$PROJ/phpstan-baseline.neon" ]
+  [ ! -f "$PROJ/phpstan-baseline.neon" ]
 }
 
 @test "symfony suggests composer dev deps without touching composer.json" {

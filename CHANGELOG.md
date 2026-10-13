@@ -22,6 +22,10 @@ lives in the [`VERSION`](VERSION) file and is what `bootstrap --version` prints.
 
 ### Changed
 
+- PHP profiles now use level 9 without an automatic PHPStan baseline. `apply`
+  no longer runs the analyzer or creates or regenerates suppression files.
+  Legacy exceptions are explicit, documented project decisions. The Symfony
+  reference CI checks analysis without generating a baseline first.
 - markdownlint config gains `MD024: siblings_only` so a changelog can repeat
   `### Added` / `### Changed` once per version; EditorConfig's tab rule now covers
   `Makefile.*` and `*.mk`.

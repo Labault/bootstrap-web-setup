@@ -53,6 +53,10 @@ WordPress Coding Standards are the source of truth for formatting and naming.
 Run `make cs` to check them and `make cs-fix` for safe automatic fixes. PHPStan
 runs at level 9 through `make stan`.
 
+No baseline is generated automatically. A temporary legacy baseline requires
+the project owner's explicit approval, a documented scope and a removal plan.
+Never generate or refresh it implicitly; keep local gates and CI consistent.
+
 - Use early returns to keep callbacks and request handlers flat.
 - Keep hooks thin. Put business logic in focused functions or classes that can
   be tested without booting all of WordPress.

@@ -15,7 +15,7 @@ project's `vendor/bin` (installed via Composer). `bootstrap apply` prints the
 
 | File | Role |
 | ---- | ---- |
-| `phpstan.dist.neon` | PHPStan at **level 9**, includes `phpstan-baseline.neon` |
+| `phpstan.dist.neon` | PHPStan at **level 9**, without a baseline |
 | `.php-cs-fixer.dist.php` | PHP-CS-Fixer with the `@Symfony` ruleset |
 | `rector.php` | Rector with PHP 8.4 + all prepared sets (CI runs dry-run) |
 | `.hadolint.yaml` | Dockerfile lint config |
@@ -29,16 +29,20 @@ client receives the same guidance. Other PHP-aware overrides:
 - `Makefile`: adds `cs`, `cs-fix`, `stan`, `rector`, `rector-fix`, `test`, `fix`
 - `.github/dependabot.yml`: adds the `composer` ecosystem
 
-## PHPStan baseline
+## PHPStan policy
 
-On an **existing** project (a `composer.json` is present), `apply` generates
-`phpstan-baseline.neon` so level 9 doesn't break a legacy codebase. If PHPStan
-isn't available yet, an empty baseline is written and the command to generate it
-later is printed.
+`apply` deposits the level 9 configuration without creating a baseline or
+running PHPStan. Existing baseline files remain project-owned and untouched.
+Fullstack inherits this contract.
+
+The [shared PHPStan policy](../phpstan-policy.md) defines explicit legacy
+exceptions and the review required before reconciling an existing project.
+Removing the former template include can expose existing diagnostics; no
+automatic rollout or debt suppression is performed.
 
 ## Parameters (locked)
 
 - PHP **8.4** only in CI (no matrix)
-- PHPStan **level 9** with auto baseline on existing projects
+- PHPStan **level 9**, without an automatic baseline
 - PHP-CS-Fixer ruleset **`@Symfony`**
 - Rector **all sets** (dry-run in CI; fix locally with `make rector-fix`)

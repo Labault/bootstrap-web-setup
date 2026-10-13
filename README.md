@@ -92,7 +92,7 @@ required**. Profiles inherit from each other.
 
 EditorConfig, a local-mode `.pre-commit-config.yaml` (editorconfig-checker,
 gitleaks, shellcheck, markdownlint, actionlint, commit-msg lint), and (per profile)
-PHP-CS-Fixer (`@Symfony`), PHPStan (level 9 + auto baseline), Rector, ESLint and
+PHP-CS-Fixer (`@Symfony`), PHPStan (level 9 without an automatic baseline), Rector, ESLint and
 Prettier (`symfony` / `fullstack`), WordPress Coding Standards plus PHPStan with
 WordPress stubs (`wordpress`), and `shfmt` (`shell`).
 

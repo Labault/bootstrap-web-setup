@@ -72,8 +72,10 @@ Test files keep PHPUnit's conventional `*Test.php` names. Only WPCS's file-name
 sniff is disabled under `tests/`; every code, security and compatibility rule
 still applies there.
 
-Unlike the Symfony profile, WordPress never creates a PHPStan baseline. The
-profile targets greenfield projects, so level 9 starts clean and stays clean.
+Like the other PHP profiles, WordPress never creates a PHPStan baseline.
+The [shared PHPStan policy](../phpstan-policy.md) covers the strict default and
+any explicitly approved legacy exception. Run analysis to establish whether the
+project is clean; applying the profile alone does not prove it.
 PHPUnit's base assertion classes are scanned explicitly because recent PHPStan
 stubs otherwise lose inherited static assertions in some dependency layouts.
 

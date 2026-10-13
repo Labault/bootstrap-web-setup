@@ -357,7 +357,9 @@ Le script copie des templates, mais ces templates ont un contrat minimal à resp
 7. **Paramètres applicatifs verrouillés :**
    - Détection auto du profil : `composer.json` → `symfony`, `+ package.json` → `fullstack`, `*.sh`/`*.bash` trackés sans manifeste → `shell`, sinon `minimal` ; override par `--profile`.
    - PHP **8.4** seul en CI (pas de matrice).
-   - PHPStan **niveau 9**, avec **baseline auto** générée quand le projet n'est pas vierge.
+   - PHPStan **niveau 9**. Décision historique de baseline automatique remplacée
+     par la [politique PHPStan](phpstan-policy.md) : aucune baseline automatique,
+     exception legacy explicite et documentée par projet.
    - PHP-CS-Fixer : ruleset **`@Symfony`**.
    - Rector : **tous les sets** activés (dry-run en CI, fix manuel via `make rector-fix`).
    - Hooks pre-commit en mode **`local`** (appellent les binaires machine/projet, pas de repos pinnés).

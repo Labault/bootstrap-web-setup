@@ -1,8 +1,8 @@
 # shellcheck shell=bash
 # `bootstrap apply`: deposit the profile's config into the target project.
 # Resolves the profile, runs the blocking binary guard, deposits the files
-# (collisions handled by the engine), writes .bootstrap.yaml, generates the
-# PHPStan baseline, installs hooks, and prints dependency suggestions.
+# (collisions handled by the engine), writes .bootstrap.yaml, installs hooks,
+# and prints dependency suggestions. It never generates a PHPStan baseline.
 
 # shellcheck source=lib/manifest.sh
 source "$BOOTSTRAP_ROOT/lib/manifest.sh"
@@ -86,7 +86,6 @@ EOF
   fi
 
   run_apply "$profile" "$target"
-  setup_phpstan_baseline "$target"
   install_hooks "$target"
   print_suggestions "$target" "$profile"
 }
