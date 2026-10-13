@@ -35,6 +35,9 @@ lives in the [`VERSION`](VERSION) file and is what `bootstrap --version` prints.
 
 ### Fixed
 
+- CI and its shared template pin the EditorConfig setup action and checker
+  version, support the current release archive names, and explicitly run the
+  checker after installation.
 - PHPStan and Rector now exclude WordPress core through explicit root files, so
   their wildcards cannot swallow project-owned code under `wp-content`. PHPStan
   treats those files as optional for repositories that do not commit core.
