@@ -107,7 +107,8 @@ dependency review, plus per-profile CI: `php.yml` (`symfony`), front CI
 ### Docs, hooks & transverse files
 
 `Makefile` (`make qa / lint / fix / hooks`), `SECURITY.md`, `CONTRIBUTING.md`,
-`CLAUDE.md`, pull-request and issue templates, a merged `.gitignore` and
+`AGENTS.md` with shared project guidance, `CLAUDE.md` as its import,
+pull-request and issue templates, a merged `.gitignore` and
 `.vscode/extensions.json`, and the `.bootstrap.yaml` state file.
 
 See the per-profile pages in [`docs/profiles/`](docs/profiles/) for the exact
@@ -276,6 +277,7 @@ can later detect drift and merge template updates without forgetting your edits.
 
 ![Terminal: bootstrap doctor confirms all 8 required binaries are present, then reports drift, two files modified locally (.shellcheckrc and Makefile) with 17 in sync, and suggests running bootstrap reconcile to merge updates while keeping local edits](docs/assets/images/terminal-doctor.svg)
 
+- [Documentation map](docs/README.md).
 - Per-profile file lists: [`docs/profiles/`](docs/profiles/):
   [minimal](docs/profiles/minimal.md) ·
   [symfony](docs/profiles/symfony.md) ·

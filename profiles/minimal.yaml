@@ -47,6 +47,8 @@ files:
     dest: SECURITY.md
   - src: templates/common/CONTRIBUTING.md
     dest: CONTRIBUTING.md
+  - src: templates/common/AGENTS.md
+    dest: AGENTS.md
   - src: templates/common/CLAUDE.md
     dest: CLAUDE.md
   - src: templates/common/.vscode/extensions.json

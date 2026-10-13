@@ -23,7 +23,8 @@ Checked by `bootstrap doctor` (must be on your machine via mac-setup):
 | `.markdownlint-cli2.yaml` | Markdown lint config |
 | `lychee.toml` | Dead-link checker config |
 | `Makefile` | `make qa` / `lint` / `fix` / `hooks` |
-| `SECURITY.md`, `CONTRIBUTING.md`, `CLAUDE.md` | Project docs |
+| `SECURITY.md`, `CONTRIBUTING.md` | Project docs |
+| `AGENTS.md`, `CLAUDE.md` | Shared project context, commands and conventions; Claude imports AGENTS |
 | `.vscode/extensions.json` | Recommended extensions (merged) |
 | `.github/workflows/ci.yml` | Lint + dead-link CI |
 | `.github/workflows/security.yml` | gitleaks + dependency review |

@@ -21,7 +21,9 @@ project's `vendor/bin` (installed via Composer). `bootstrap apply` prints the
 | `.hadolint.yaml` | Dockerfile lint config |
 | `.github/workflows/php.yml` | PHP CI: composer install, CS dry-run, PHPStan, Rector dry-run, tests |
 
-It also **overrides** three `minimal` files with PHP-aware versions:
+It also **overrides** shared `AGENTS.md` with PHP style conventions and keeps
+`CLAUDE.md` as an import. Context and commands belong in `AGENTS.md`, so every
+client receives the same guidance. Other PHP-aware overrides:
 
 - `.pre-commit-config.yaml`: adds `php-cs-fixer`, `phpstan`, `rector`, `hadolint` hooks
 - `Makefile`: adds `cs`, `cs-fix`, `stan`, `rector`, `rector-fix`, `test`, `fix`
