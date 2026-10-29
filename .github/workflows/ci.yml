@@ -28,7 +28,7 @@ jobs:
         uses: ludeeus/action-shellcheck@2.0.0
 
       - name: Markdown
-        uses: DavidAnson/markdownlint-cli2-action@v24
+        uses: DavidAnson/markdownlint-cli2-action@v25
         with:
           globs: "**/*.md"
 
