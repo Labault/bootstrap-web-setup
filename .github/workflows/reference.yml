@@ -68,7 +68,7 @@ jobs:
           shfmt --version
 
       - name: Install bats (pinned)
-        uses: bats-core/bats-action@4.0.0
+        uses: bats-core/bats-action@4.1.0
         with:
           github-token: ${{ github.token }}
           support-install: false
