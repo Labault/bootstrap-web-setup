@@ -147,3 +147,54 @@ load test_helper
   [[ "$output" == *"szepeviktor/phpstan-wordpress"* ]]
   [ "$(cat "$PROJ/composer.json")" = '{"name":"x/y"}' ]
 }
+
+@test "symfony versions .env but still ignores local overrides" {
+  echo '{"name":"x/y"}' >"$PROJ/composer.json"
+  "$BS" apply --profile symfony --target "$PROJ" --skip-bin-check >/dev/null
+  run git -C "$PROJ" check-ignore -q .env
+  [ "$status" -ne 0 ]
+  git -C "$PROJ" check-ignore -q .env.local
+  git -C "$PROJ" check-ignore -q .env.dev.local
+}
+
+@test "fullstack inherits the Symfony .env convention" {
+  "$BS" apply --profile fullstack --target "$PROJ" --skip-bin-check >/dev/null
+  run git -C "$PROJ" check-ignore -q .env
+  [ "$status" -ne 0 ]
+  git -C "$PROJ" check-ignore -q .env.local
+}
+
+@test "minimal and wordpress keep ignoring .env" {
+  apply_minimal "$BS" "$PROJ" >/dev/null
+  git -C "$PROJ" check-ignore -q .env
+  "$BS" apply --profile wordpress --target "$PROJ" --skip-bin-check >/dev/null
+  git -C "$PROJ" check-ignore -q .env
+}
+
+@test "symfony PHP hooks call the project's vendor/bin tools" {
+  echo '{"name":"x/y"}' >"$PROJ/composer.json"
+  "$BS" apply --profile symfony --target "$PROJ" --skip-bin-check >/dev/null
+  grep -q 'entry: vendor/bin/php-cs-fixer fix' "$PROJ/.pre-commit-config.yaml"
+  grep -q 'entry: vendor/bin/phpstan analyse' "$PROJ/.pre-commit-config.yaml"
+  grep -q 'entry: vendor/bin/rector process' "$PROJ/.pre-commit-config.yaml"
+  run grep -Eq 'entry: (php-cs-fixer|phpstan|rector) ' "$PROJ/.pre-commit-config.yaml"
+  [ "$status" -ne 0 ]
+}
+
+@test "PHP-CS-Fixer allows newer PHP through its config, not the deprecated env var" {
+  for profile in symfony fullstack; do
+    rm -rf "$PROJ" && mkdir -p "$PROJ" && git -C "$PROJ" init -q
+    "$BS" apply --profile "$profile" --target "$PROJ" --skip-bin-check >/dev/null
+    grep -q 'setUnsupportedPhpVersionAllowed(true)' "$PROJ/.php-cs-fixer.dist.php"
+    run grep -rq 'PHP_CS_FIXER_IGNORE_ENV' "$PROJ/Makefile" "$PROJ/.github/workflows/php.yml"
+    [ "$status" -ne 0 ]
+  done
+}
+
+@test "symfony Rector config drops the deprecated naming set" {
+  echo '{"name":"x/y"}' >"$PROJ/composer.json"
+  "$BS" apply --profile symfony --target "$PROJ" --skip-bin-check >/dev/null
+  run grep -q 'naming:' "$PROJ/rector.php"
+  [ "$status" -ne 0 ]
+  grep -q 'earlyReturn: true' "$PROJ/rector.php"
+}

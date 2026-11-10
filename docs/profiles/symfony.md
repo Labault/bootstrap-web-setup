@@ -17,7 +17,7 @@ project's `vendor/bin` (installed via Composer). `bootstrap apply` prints the
 | ---- | ---- |
 | `phpstan.dist.neon` | PHPStan at **level 9**, without a baseline |
 | `.php-cs-fixer.dist.php` | PHP-CS-Fixer with the `@Symfony` ruleset |
-| `rector.php` | Rector with PHP 8.4 + all prepared sets (CI runs dry-run) |
+| `rector.php` | Rector with PHP 8.4 + the prepared sets except the deprecated `naming` (CI runs dry-run) |
 | `.hadolint.yaml` | Dockerfile lint config |
 | `.github/workflows/php.yml` | PHP CI: composer install, CS dry-run, PHPStan, Rector dry-run, tests |
 
@@ -25,7 +25,10 @@ It also **overrides** shared `AGENTS.md` with PHP style conventions and keeps
 `CLAUDE.md` as an import. Context and commands belong in `AGENTS.md`, so every
 client receives the same guidance. Other PHP-aware overrides:
 
-- `.pre-commit-config.yaml`: adds `php-cs-fixer`, `phpstan`, `rector`, `hadolint` hooks
+- `.gitignore`: versions `.env` (Symfony keeps documented defaults there) and
+  ignores only `.env.local` / `.env.*.local`
+- `.pre-commit-config.yaml`: adds `php-cs-fixer`, `phpstan`, `rector` (called
+  from `vendor/bin`, no `PATH` setup needed) and `hadolint` hooks
 - `Makefile`: adds `cs`, `cs-fix`, `stan`, `rector`, `rector-fix`, `test`, `fix`
 - `.github/dependabot.yml`: adds the `composer` ecosystem
 
@@ -45,4 +48,6 @@ automatic rollout or debt suppression is performed.
 - PHP **8.4** only in CI (no matrix)
 - PHPStan **level 9**, without an automatic baseline
 - PHP-CS-Fixer ruleset **`@Symfony`**
-- Rector **all sets** (dry-run in CI; fix locally with `make rector-fix`)
+- Rector **all prepared sets except `naming`**, deprecated upstream (dry-run in CI; fix locally with `make rector-fix`)
+- PHP-CS-Fixer **>= 3.76**: the config allows newer PHP runtimes with
+  `setUnsupportedPhpVersionAllowed(true)` instead of `PHP_CS_FIXER_IGNORE_ENV`

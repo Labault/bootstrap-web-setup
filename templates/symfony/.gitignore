@@ -1,0 +1,20 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+*.iml
+
+# Environment / secrets
+# Symfony versions .env itself: it holds documented defaults, never secrets.
+# Machine-specific values and real credentials go in the ignored *.local files.
+.env.local
+.env.*.local
+
+# Logs
+*.log
+
+# Dependency / build output
+/vendor/
+/node_modules/

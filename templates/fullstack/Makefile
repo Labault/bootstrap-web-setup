@@ -16,10 +16,10 @@ lint: ## Run every pre-commit hook and the front linters on all files
 	$(MAKE) front
 
 cs: ## Check coding style (PHP-CS-Fixer, dry-run)
-	PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer fix --dry-run --diff
+	vendor/bin/php-cs-fixer fix --dry-run --diff
 
 cs-fix: ## Fix coding style (PHP-CS-Fixer)
-	PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer fix
+	vendor/bin/php-cs-fixer fix
 
 stan: ## Static analysis (PHPStan)
 	vendor/bin/phpstan analyse --no-progress

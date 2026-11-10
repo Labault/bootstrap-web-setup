@@ -95,9 +95,8 @@ log "installing the latest PHP tools from Composer (floating versions)"
 composer require --dev --no-interaction --no-progress \
   phpstan/phpstan friendsofphp/php-cs-fixer rector/rector >&2
 
-# The deposited hooks call bare binaries; a real bootstrapped project keeps
-# vendor/bin on PATH (see the .pre-commit-config.yaml header). Mirror that.
-export PATH="$PROJ/vendor/bin:$PATH"
+# No PATH setup on purpose: the deposited hooks call vendor/bin/* themselves,
+# so this proves a fresh clone's hooks work without shell configuration.
 
 git add -A
 

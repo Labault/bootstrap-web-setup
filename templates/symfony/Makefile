@@ -14,10 +14,10 @@ lint: ## Run every pre-commit hook on all files
 	pre-commit run --all-files
 
 cs: ## Check coding style (PHP-CS-Fixer, dry-run)
-	PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer fix --dry-run --diff
+	vendor/bin/php-cs-fixer fix --dry-run --diff
 
 cs-fix: ## Fix coding style (PHP-CS-Fixer)
-	PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer fix
+	vendor/bin/php-cs-fixer fix
 
 stan: ## Static analysis (PHPStan)
 	vendor/bin/phpstan analyse --no-progress

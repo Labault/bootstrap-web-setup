@@ -35,6 +35,19 @@ lives in the [`VERSION`](VERSION) file and is what `bootstrap --version` prints.
 
 ### Fixed
 
+- `symfony` (and `fullstack`) no longer ignore `.env`: Symfony versions it with
+  documented defaults, so the profile's `.gitignore` block only ignores
+  `.env.local` and `.env.*.local`. `minimal`, `shell` and `wordpress` still
+  ignore `.env`. Before reconciling an existing project, check that its `.env`
+  holds no real secret.
+- `symfony` pre-commit hooks call `vendor/bin/php-cs-fixer`, `vendor/bin/phpstan`
+  and `vendor/bin/rector`, like the Makefile and CI. They no longer fail with
+  `Executable not found` when `vendor/bin` is not on `PATH`.
+- PHP-CS-Fixer allows newer PHP runtimes through
+  `setUnsupportedPhpVersionAllowed(true)` in `.php-cs-fixer.dist.php`, replacing
+  the deprecated `PHP_CS_FIXER_IGNORE_ENV` in the Makefiles and `php.yml`.
+  Requires PHP-CS-Fixer 3.76 or later.
+- The Symfony Rector config drops the `naming` prepared set, deprecated upstream.
 - CI and its shared template pin the EditorConfig setup action and checker
   version, support the current release archive names, and explicitly run the
   checker after installation.

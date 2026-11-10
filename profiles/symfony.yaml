@@ -35,6 +35,10 @@ files:
   - src: templates/symfony/AGENTS.md
     dest: AGENTS.md
   # Overrides of common files that need PHP-aware content (child wins by dest)
+  # Symfony versions .env (defaults only), so only the *.local files are ignored.
+  - src: templates/symfony/.gitignore
+    dest: .gitignore
+    strategy: merge-gitignore
   - src: templates/symfony/.pre-commit-config.yaml
     dest: .pre-commit-config.yaml
   - src: templates/symfony/CLAUDE.md
