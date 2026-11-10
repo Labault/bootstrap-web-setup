@@ -19,7 +19,7 @@ project's `vendor/bin` (installed via Composer). `bootstrap apply` prints the
 | `.php-cs-fixer.dist.php` | PHP-CS-Fixer with the `@Symfony` ruleset |
 | `rector.php` | Rector with PHP 8.4 + the prepared sets except the deprecated `naming` (CI runs dry-run) |
 | `.hadolint.yaml` | Dockerfile lint config |
-| `.github/workflows/php.yml` | PHP CI: composer install, CS dry-run, PHPStan, Rector dry-run, tests |
+| `.github/workflows/php.yml` | PHP CI: composer install, CS dry-run, PHPStan, Rector dry-run, tests against PostgreSQL |
 
 It also **overrides** shared `AGENTS.md` with PHP style conventions and keeps
 `CLAUDE.md` as an import. Context and commands belong in `AGENTS.md`, so every
@@ -43,9 +43,24 @@ exceptions and the review required before reconciling an existing project.
 Removing the former template include can expose existing diagnostics; no
 automatic rollout or debt suppression is performed.
 
+## Test database in CI
+
+`php.yml` starts a `postgres:18-alpine` service and sets `DATABASE_URL` to
+`postgresql://app:!ChangeMe!@127.0.0.1:5432/app?serverVersion=18&charset=utf8`,
+the Symfony recipe's throwaway credentials. Doctrine's `dbname_suffix` turns
+`app` into `app_test` in the test env. Before the tests, CI runs
+`doctrine:database:create --if-not-exists` then
+`doctrine:migrations:migrate --allow-no-migration`, both with `--env=test`.
+
+Each step runs only when its command is registered: a project without
+DoctrineBundle or without DoctrineMigrationsBundle still passes, at the cost of
+an unused service container. To move to another PostgreSQL major, change the
+image tag and `serverVersion` together.
+
 ## Parameters (locked)
 
 - PHP **8.4** only in CI (no matrix)
+- PostgreSQL **18** service for the tests
 - PHPStan **level 9**, without an automatic baseline
 - PHP-CS-Fixer ruleset **`@Symfony`**
 - Rector **all prepared sets except `naming`**, deprecated upstream (dry-run in CI; fix locally with `make rector-fix`)

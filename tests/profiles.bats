@@ -198,3 +198,15 @@ load test_helper
   [ "$status" -ne 0 ]
   grep -q 'earlyReturn: true' "$PROJ/rector.php"
 }
+
+@test "symfony PHP workflow runs the tests against a PostgreSQL service" {
+  echo '{"name":"x/y"}' >"$PROJ/composer.json"
+  "$BS" apply --profile symfony --target "$PROJ" --skip-bin-check >/dev/null
+  wf="$PROJ/.github/workflows/php.yml"
+  grep -q 'image: postgres:18-alpine' "$wf"
+  grep -q -- '--health-cmd pg_isready' "$wf"
+  grep -q 'extensions: pdo_pgsql' "$wf"
+  grep -q 'DATABASE_URL: "postgresql://app:!ChangeMe!@127.0.0.1:5432/app?serverVersion=18&charset=utf8"' "$wf"
+  grep -q 'doctrine:database:create --env=test --if-not-exists' "$wf"
+  grep -q 'doctrine:migrations:migrate --env=test --no-interaction --allow-no-migration' "$wf"
+}

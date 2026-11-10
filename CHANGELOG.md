@@ -19,6 +19,10 @@ lives in the [`VERSION`](VERSION) file and is what `bootstrap --version` prints.
   commits, tags `vX.Y.Z`, pushes, and creates the GitHub release. Repo-local
   targets live in an optional, unmanaged `Makefile.local`, loaded by the deposited
   Makefile via a new `-include Makefile.local` extension point.
+- The Symfony `php.yml` workflow (inherited by `fullstack`) runs the tests
+  against a `postgres:18-alpine` service with `pdo_pgsql`, a test
+  `DATABASE_URL`, and creates and migrates the test database first. Both
+  Doctrine steps are skipped when their commands are not installed.
 
 ### Changed
 
