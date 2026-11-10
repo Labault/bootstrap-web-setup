@@ -7,6 +7,10 @@ lives in the [`VERSION`](VERSION) file and is what `bootstrap --version` prints.
 
 ## [Unreleased]
 
+- Nothing yet.
+
+## [0.7.0] - 2026-11-10
+
 ### Added
 
 - A `wordpress` profile for sites, plugins and themes: WPCS,
@@ -109,5 +113,6 @@ documented.
   [`docs/proposals/intensity-levels.md`](docs/proposals/intensity-levels.md). The
   project keeps a single, highest-intensity baseline.
 
-[Unreleased]: https://github.com/Labault/bootstrap-web-setup/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/Labault/bootstrap-web-setup/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/Labault/bootstrap-web-setup/releases/tag/v0.7.0
 [0.5.0]: https://github.com/Labault/bootstrap-web-setup/releases/tag/v0.5.0
