@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Install bats (pinned)
-        uses: bats-core/bats-action@4.0.0
+        uses: bats-core/bats-action@4.1.0
         with:
           # Hand the action the job token so release downloads don't hit the
           # unauthenticated GitHub rate limit. The helper libraries (support,

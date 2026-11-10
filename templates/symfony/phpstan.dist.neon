@@ -1,7 +1,4 @@
-# Managed by bootstrap. PHPStan static analysis at the strictest level (§11.7).
-includes:
-	- phpstan-baseline.neon
-
+# Managed by bootstrap. PHPStan level 9, without an automatic baseline.
 parameters:
 	level: 9
 	paths:

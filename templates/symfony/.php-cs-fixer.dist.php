@@ -8,6 +8,9 @@ declare(strict_types=1);
 // placement. We enforce strict types right after `<?php` (no blank line in
 // between) so it agrees with Rector's declare handling. Otherwise the cs and
 // rector dry-run gates fight over that one line.
+//
+// Running on a PHP newer than the fixer officially supports is allowed here
+// (needs PHP-CS-Fixer >= 3.76), replacing the deprecated PHP_CS_FIXER_IGNORE_ENV.
 
 $finder = (new PhpCsFixer\Finder())
     ->in(__DIR__)
@@ -20,6 +23,7 @@ $finder = (new PhpCsFixer\Finder())
 
 return (new PhpCsFixer\Config())
     ->setRiskyAllowed(true)
+    ->setUnsupportedPhpVersionAllowed(true)
     ->setRules([
         '@Symfony' => true,
         '@Symfony:risky' => true,

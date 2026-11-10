@@ -4,6 +4,44 @@ Shared conventions for this project, read by Claude Code (via `CLAUDE.md`'s
 `@AGENTS.md` import), Codex and other AI tools. Committed, so every collaborator
 gets the same rules.
 
+## Stack
+
+Use the project's manifests and lockfiles for the installed languages, framework
+versions and dependencies. Read its README and deployment configuration for the
+runtime and datastore; do not infer them from the bootstrap profile alone.
+
+## Commands
+
+Read the Makefile, any Makefile.local and the CI before running checks. The
+project's wrappers define the runtime; machine tools and project-local tools
+are provisioned separately, not installed by bootstrap.
+
+- `make qa`: run the configured quality gate.
+- `make lint`: run all configured pre-commit hooks; check their effects first.
+- `make fix`: apply automatic corrections.
+- `make hooks`: install pre-commit and commit-message hooks.
+
+For an audit, use the available dry-run checks. Do not implicitly run automatic
+fixes, migrations or destructive resets. Never bypass hooks to obtain a pass.
+
+For this profile, `make cs` and `make rector` check PHP without applying
+corrections; `make stan` runs PHPStan and `make test` runs Pest or PHPUnit.
+`make cs-fix` and `make rector-fix` apply changes. Tools live in `vendor/bin`.
+
+PHPStan runs at level 9 without an automatic baseline. Fix errors rather than
+lowering the level or adding broad ignores. A temporary legacy baseline requires
+the project owner's explicit approval, a documented scope and a removal plan.
+Never generate or refresh it implicitly; keep local gates and CI consistent.
+
+## Conventions
+
+- Commits use Conventional Commits with a leading Gitmoji. The
+  `scripts/lint-commit-msg.sh` hook validates the message format.
+  Do not add an AI co-author trailer.
+- Keep secrets out of source control; Gitleaks runs locally and in CI.
+- Read `docs/README.md` when present and update affected documentation with the
+  change. Keep project rules here and procedures in their canonical documents.
+
 ## Code style
 
 Conventions to apply by hand. Yoda conditions are already enforced by
